@@ -1,45 +1,17 @@
 
+import 'package:dam2_2627_a/LoginView.dart';
 import 'package:flutter/material.dart';
 
 class Miapp extends StatelessWidget {
   double dbNumber=0.0;
-  late BuildContext globalContext;
-
-  void funClickLogin(){
-    print("---->>>>>>>> LOGIN CLICKED");
-
-  }
-
-  void funClickRegistro(){
-    print("---->>>>>>>> REGISTRO CLICKED");
-  }
 
   @override
   Widget build(BuildContext context) {
-    globalContext=context;
-    TextStyle tsEstiloTexto=new TextStyle(fontSize: 30,backgroundColor:Colors.red);
 
     return new MaterialApp(
       title: "MI APP 1",
-      home: new Scaffold(
-        appBar: new AppBar(title:new Text("MI APP 1"),),
-        body: Column(
-          mainAxisAlignment:MainAxisAlignment.start,
-          children: [
-            Text("LOGIN",style: tsEstiloTexto,),
-            TextField(decoration: InputDecoration(hintText: "Usuario"),),
-            TextField(decoration: InputDecoration(hintText: "Contraseña"),),
-            Row(mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(onPressed: funClickLogin, child: Text("Login")),
-                TextButton(onPressed: funClickRegistro, child: Text("Registrarse"))
-              ],
-            )
-          ],
-        ),
-      ),
       routes: {
-        "LoginView" =>
+        "LoginView" : (context) =>  Loginview(),
       },
       initialRoute: "LoginView",
     );
