@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 class Loginview extends StatelessWidget{
+  late BuildContext miContext;
+
 
   void funClickLogin(){
     print("---->>>>>>>> LOGIN PRESIONADO");
+    //Navigator.pushNamed(miContext, "/HomeView");
+    Navigator.popAndPushNamed(miContext, "/HomeView");
 
   }
 
@@ -13,11 +17,12 @@ class Loginview extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    miContext=context;
     TextStyle tsEstiloTexto=new TextStyle(fontSize: 30,backgroundColor:Colors.red);
 
     // TODO: implement build
     return Scaffold(
-      appBar: new AppBar(title:new Text("MI APP 1"),),
+      appBar: new AppBar(title:new Text("MI APP DAM2627"),),
       body: Column(
         mainAxisAlignment:MainAxisAlignment.start,
         children: [
@@ -34,4 +39,5 @@ class Loginview extends StatelessWidget{
       ),
     );
   }
+
 }
