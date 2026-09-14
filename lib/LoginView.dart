@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 
 class Loginview extends StatelessWidget{
   late BuildContext miContext;
-
+  TextEditingController userController = new TextEditingController();
+  TextEditingController passwordController = new TextEditingController();
 
   void funClickLogin(){
-    print("---->>>>>>>> LOGIN PRESIONADO");
+    String usuario=userController.text;
+    String pass=passwordController.text;
+    print("---->>>>>>>> LOGIN PRESIONADO "+usuario+"   "+pass);
+    if(usuario=="Yony" && pass=="123456"){
+      Navigator.popAndPushNamed(miContext, "/HomeView");
+    }
     //Navigator.pushNamed(miContext, "/HomeView");
-    Navigator.popAndPushNamed(miContext, "/HomeView");
+    //Navigator.popAndPushNamed(miContext, "/HomeView");
 
   }
 
@@ -27,8 +33,8 @@ class Loginview extends StatelessWidget{
         mainAxisAlignment:MainAxisAlignment.start,
         children: [
           Text("LOGIN",style: tsEstiloTexto,),
-          TextField(decoration: InputDecoration(hintText: "Usuario"),),
-          TextField(decoration: InputDecoration(hintText: "Contraseña"),),
+          TextField(controller: userController,decoration: InputDecoration(hintText: "Usuario"),),
+          TextField(controller:passwordController,decoration: InputDecoration(hintText: "Contraseña"),),
           Row(mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(onPressed: funClickLogin, child: Text("Login")),
