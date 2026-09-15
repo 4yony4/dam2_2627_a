@@ -55,7 +55,7 @@ class Loginview extends StatelessWidget{
         children: [
           Text("LOGIN",style: tsEstiloTexto,),
           TextField(controller: userController,decoration: InputDecoration(hintText: "Usuario"),),
-          TextField(controller:passwordController,decoration: InputDecoration(hintText: "Contraseña"),),
+          TextField(obscureText: true,controller:passwordController,decoration: InputDecoration(hintText: "Contraseña"),),
           Row(mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(onPressed: funClickLogin, child: Text("Login")),
