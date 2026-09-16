@@ -2,6 +2,7 @@
 import 'package:dam2_2627_a/HomeView.dart';
 import 'package:dam2_2627_a/LoginView.dart';
 import 'package:dam2_2627_a/RegisterView.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Miapp extends StatelessWidget {
@@ -10,6 +11,11 @@ class Miapp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    String rutaInicial="/LoginView";
+    if(FirebaseAuth.instance.currentUser!=null){
+      rutaInicial="/HomeView";
+    }
+
     return new MaterialApp(
       title: "MI APP 1",
       routes: {
@@ -17,7 +23,7 @@ class Miapp extends StatelessWidget {
         "/HomeView" : (context) =>  Homeview(),
         "/RegisterView" : (context) =>  Registerview(),
       },
-      initialRoute: "/LoginView",
+      initialRoute: rutaInicial,
     );
   }
 

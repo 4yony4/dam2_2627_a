@@ -10,8 +10,31 @@ class Registerview extends StatelessWidget{
   TextEditingController repasswordController = new TextEditingController();
 
 
-  void funClickRegistro(){
+  Future<void> funClickRegistro() async {
 
+    if(repasswordController.text!=passwordController.text){
+      print("CONTRASEÑAS NO COINCIDEN");
+    }
+    else{
+      try {
+        final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: userController.text,
+          password: passwordController.text,
+        );
+        if(credential.user!=null){
+          Navigator.popAndPushNamed(miContext, "/HomeView");
+        }
+
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          print('The password provided is too weak.');
+        } else if (e.code == 'email-already-in-use') {
+          print('The account already exists for that email.');
+        }
+      } catch (e) {
+        print(e);
+      }
+    }
   }
 
   void funClickCancelar(){
@@ -32,7 +55,7 @@ class Registerview extends StatelessWidget{
           Text("REGISTRO",style: tsEstiloTexto,),
           TextField(controller: userController,decoration: InputDecoration(hintText: "Usuario"),),
           TextField(obscureText: true,controller:passwordController,decoration: InputDecoration(hintText: "Contraseña"),),
-          TextField(obscureText: true,controller:passwordController,decoration: InputDecoration(hintText: "Repetir Contraseña"),),
+          TextField(obscureText: true,controller:repasswordController,decoration: InputDecoration(hintText: "Repetir Contraseña"),),
           Row(mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(onPressed: funClickRegistro, child: Text("Registrar")),
