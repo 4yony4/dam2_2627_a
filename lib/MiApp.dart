@@ -1,6 +1,7 @@
 
 import 'package:dam2_2627_a/HomeView.dart';
 import 'package:dam2_2627_a/LoginView.dart';
+import 'package:dam2_2627_a/RegisterView.dart';
 import 'package:flutter/material.dart';
 
 class Miapp extends StatelessWidget {
@@ -14,6 +15,7 @@ class Miapp extends StatelessWidget {
       routes: {
         "/LoginView" : (context) =>  Loginview(),
         "/HomeView" : (context) =>  Homeview(),
+        "/RegisterView" : (context) =>  Registerview(),
       },
       initialRoute: "/LoginView",
     );

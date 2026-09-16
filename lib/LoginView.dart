@@ -40,6 +40,7 @@ class Loginview extends StatelessWidget{
 
   void funClickRegistro(){
     print("---->>>>>>>> REGISTRO PRESIONADO");
+    Navigator.popAndPushNamed(miContext, "/RegisterView");
   }
 
   @override
