@@ -5,6 +5,8 @@ import 'package:dam2_2627_a/RegisterView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'OnBoardingView.dart';
+
 class Miapp extends StatelessWidget {
   double dbNumber=0.0;
 
@@ -22,8 +24,9 @@ class Miapp extends StatelessWidget {
         "/LoginView" : (context) =>  Loginview(),
         "/HomeView" : (context) =>  Homeview(),
         "/RegisterView" : (context) =>  Registerview(),
+        "/Onboardingview":(context) => Onboardingview()
       },
-      initialRoute: rutaInicial,
+      initialRoute: "/Onboardingview",
     );
   }
 

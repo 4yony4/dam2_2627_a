@@ -45,6 +45,7 @@ class Loginview extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    print("PINTADO LOGIN");
     miContext=context;
     TextStyle tsEstiloTexto=new TextStyle(fontSize: 30,backgroundColor:Colors.red);
 
