@@ -46,13 +46,16 @@ class _Onboardingview extends State<Onboardingview> {
       final docRef = db.collection("Perfiles").doc(uid);
       docRef.get().then(
             (DocumentSnapshot doc) {
+              if(doc.data()==null){
+                Navigator.popAndPushNamed(context, "/Profileview");
+              }
           final data = doc.data() as Map<String, dynamic>;
           print("EL UID DEL URUSARIO LOGEADO ES: "+data["altura"].toString());
 
           Navigator.popAndPushNamed(context, "/HomeView");
           // ...
         },
-        onError: (e) => Navigator.popAndPushNamed(context, "/RegisterView"),
+        onError: (e) => print(e.toString()),
       );
 
     }
