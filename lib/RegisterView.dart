@@ -22,7 +22,7 @@ class Registerview extends StatelessWidget{
           password: passwordController.text,
         );
         if(credential.user!=null){
-          Navigator.popAndPushNamed(miContext, "/HomeView");
+          Navigator.popAndPushNamed(miContext, "/Profileview");
         }
 
       } on FirebaseAuthException catch (e) {

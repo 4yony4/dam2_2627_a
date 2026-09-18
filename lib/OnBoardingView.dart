@@ -40,7 +40,7 @@ class _Onboardingview extends State<Onboardingview> {
     if(FirebaseAuth.instance.currentUser==null){
       Navigator.popAndPushNamed(context, "/LoginView");
     }
-    else{
+    else{//SIEMPRE Y CUANDO SE HAYA LOGEADO O REGISTRO ANTES
       String uid=FirebaseAuth.instance.currentUser!.uid;
       print("EL UID DEL URUSARIO LOGEADO ES: "+uid);
       final docRef = db.collection("Perfiles").doc(uid);

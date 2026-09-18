@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +9,7 @@ class Profileview extends StatelessWidget{
   TextEditingController edadController=TextEditingController();
   TextEditingController alturaController=TextEditingController();
   FirebaseFirestore db=FirebaseFirestore.instance;
+  late BuildContext miContext;
 
   void funConfirmar(){
     if(edadController.text.isNotEmpty &&
@@ -20,15 +23,17 @@ class Profileview extends StatelessWidget{
         "asignaturas": ["PMDM", "PSP", "AD", "MMEQ"]
       };
       perfiles.doc(FirebaseAuth.instance.currentUser!.uid).set(perfil);
+      Navigator.popAndPushNamed(miContext, "/HomeView");
     }
   }
 
   void funSalir(){
-
+    exit(0);
   }
 
   @override
   Widget build(BuildContext context) {
+    miContext=context;
     return Scaffold(
       body: Center(
         child: Column(
