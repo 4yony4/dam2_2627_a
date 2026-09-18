@@ -46,13 +46,18 @@ class _Onboardingview extends State<Onboardingview> {
       final docRef = db.collection("Perfiles").doc(uid);
       docRef.get().then(
             (DocumentSnapshot doc) {
-              if(doc.data()==null){
-                Navigator.popAndPushNamed(context, "/Profileview");
-              }
-          final data = doc.data() as Map<String, dynamic>;
-          print("EL UID DEL URUSARIO LOGEADO ES: "+data["altura"].toString());
+          if(doc.data()==null){//NO TIENE PERFIL EN LA BASE DE DATOS
+            Navigator.popAndPushNamed(context, "/Profileview");
+          }
+          else{
+            //SI TIENE PERFIL EN LA BASE DATOS
+            final data = doc.data() as Map<String, dynamic>;
+            print("EL UID DEL URUSARIO LOGEADO ES: "+data["altura"].toString());
 
-          Navigator.popAndPushNamed(context, "/HomeView");
+            Navigator.popAndPushNamed(context, "/HomeView");
+          }
+
+
           // ...
         },
         onError: (e) => print(e.toString()),
@@ -67,11 +72,11 @@ class _Onboardingview extends State<Onboardingview> {
   }
 
   Future<void> recursos2() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 1));
   }
 
   Future<void> recursos3() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
   }
 
   @override
