@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +7,7 @@ class Loginview extends StatelessWidget{
   late BuildContext miContext;
   TextEditingController userController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
+  FirebaseFirestore db=FirebaseFirestore.instance;
 
   void funClickLogin() async{
     String usuario=userController.text;
@@ -18,7 +20,21 @@ class Loginview extends StatelessWidget{
           password: pass
       );
       print("LOGIN BIEN!!!");
-      Navigator.popAndPushNamed(miContext, "/HomeView");
+
+      final docRef = db.collection("Perfiles").doc(FirebaseAuth.instance.currentUser!.uid);
+      docRef.get().then(
+            (DocumentSnapshot doc) {
+          if(doc.data()==null){//NO TIENE PERFIL EN LA BASE DE DATOS
+            Navigator.popAndPushNamed(miContext, "/Profileview");
+          }
+          else{
+            //SI TIENE PERFIL EN LA BASE DATOS
+            final data = doc.data() as Map<String, dynamic>;
+            Navigator.popAndPushNamed(miContext, "/HomeView");
+          }
+        },
+        onError: (e) => print(e.toString()),
+      );
 
     } on FirebaseAuthException catch (e) {
       print("----------------->>>>>> "+e.toString());
