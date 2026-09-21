@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dam2_2627_a/Perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -43,25 +44,25 @@ class _Onboardingview extends State<Onboardingview> {
     else{//SIEMPRE Y CUANDO SE HAYA LOGEADO O REGISTRO ANTES
       String uid=FirebaseAuth.instance.currentUser!.uid;
       print("EL UID DEL URUSARIO LOGEADO ES: "+uid);
-      final docRef = db.collection("Perfiles").doc(uid);
-      docRef.get().then(
-            (DocumentSnapshot doc) {
-          if(doc.data()==null){//NO TIENE PERFIL EN LA BASE DE DATOS
-            Navigator.popAndPushNamed(context, "/Profileview");
-          }
-          else{
-            //SI TIENE PERFIL EN LA BASE DATOS
-            final data = doc.data() as Map<String, dynamic>;
-            print("EL UID DEL URUSARIO LOGEADO ES: "+data["altura"].toString());
 
-            Navigator.popAndPushNamed(context, "/HomeView");
-          }
-
-
-          // ...
-        },
-        onError: (e) => print(e.toString()),
+      final docRef = db.collection("Perfiles").doc(uid).withConverter(
+        fromFirestore: Perfil.fromFirestore,
+        toFirestore: (Perfil perfil, _) => perfil.toFirestore(),
       );
+
+      final docSnap = await docRef.get();
+      Perfil? perfil=docSnap.data();
+
+      if(perfil==null){//NO TIENE PERFIL EN LA BASE DE DATOS
+        Navigator.popAndPushNamed(context, "/Profileview");
+      }
+      else{
+        //SI TIENE PERFIL EN LA BASE DATOS
+        print("EL UID DEL URUSARIO LOGEADO ES: "+perfil.altura.toString());
+
+        Navigator.popAndPushNamed(context, "/HomeView");
+      }
+
 
     }
 

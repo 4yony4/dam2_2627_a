@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'Perfil.dart';
+
 class Profileview extends StatelessWidget{
   TextEditingController edadController=TextEditingController();
   TextEditingController alturaController=TextEditingController();
@@ -15,14 +17,13 @@ class Profileview extends StatelessWidget{
     if(edadController.text.isNotEmpty &&
         alturaController.text.isNotEmpty) {
       final perfiles = db.collection("Perfiles");
-      final perfil = <String, dynamic>{
-        "name": "Yony",
-        "edad": edadController.text,
-        "altura": alturaController.text,
-        "profe": true,
-        "asignaturas": ["PMDM", "PSP", "AD", "MMEQ"]
-      };
-      perfiles.doc(FirebaseAuth.instance.currentUser!.uid).set(perfil);
+      final perfil = new Perfil(
+        uid:FirebaseAuth.instance.currentUser!.uid,
+        name: "Yony",
+        edad: int.parse(edadController.text),
+        altura: double.parse(alturaController.text)
+      );
+      perfiles.doc(FirebaseAuth.instance.currentUser!.uid).set(perfil.toFirestore());
       Navigator.popAndPushNamed(miContext, "/HomeView");
     }
   }

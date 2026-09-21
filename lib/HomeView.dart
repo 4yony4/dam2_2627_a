@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 class Homeview extends StatelessWidget{
   late BuildContext miContext;
 
+  void actualizarNombre(){
+
+  }
+
   void funClickLogout(){
     FirebaseAuth.instance.signOut();
     Navigator.popAndPushNamed(miContext, "/LoginView");
@@ -18,6 +22,7 @@ class Homeview extends StatelessWidget{
         mainAxisAlignment: .center,
         children: [
           Text("HOME VIEW"),
+          //TextField(controller: edadController,decoration: InputDecoration(hintText: "NOMBRE"),),
           TextButton(onPressed: funClickLogout, child: Text("Logout"))
         ],
       )

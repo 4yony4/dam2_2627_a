@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Perfil {
+  String? uid;
+  String? name;
+  int? edad;
+  double? altura=0.0;
 
-  final String? name;
-  final int? edad;
-  final double? altura;
-
-  Perfil({this.name, this.edad, this.altura});
+  Perfil({this.uid,this.name, this.edad, this.altura});
 
   factory Perfil.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -14,9 +14,10 @@ class Perfil {
       ) {
     final data = snapshot.data();
     return Perfil(
-      name: data?['name'],
-      edad: data?['edad'],
-      altura: data?['altura'],
+      uid:snapshot.id,
+      name: data?['name'] as String?,
+      edad: (data?['edad'] as num?)?.toInt(),
+      altura: (data?['altura'] as num?)?.toDouble(),
     );
   }
 
