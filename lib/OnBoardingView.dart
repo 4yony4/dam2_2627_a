@@ -22,6 +22,9 @@ class _Onboardingview extends State<Onboardingview> {
 
   }
 
+  /**
+   *
+   */
   void cargarRecursos() async{
     await recursos1();
     setState(() {
