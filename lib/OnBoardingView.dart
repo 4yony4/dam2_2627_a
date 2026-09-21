@@ -3,6 +3,8 @@ import 'package:dam2_2627_a/Perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'DataHolder.dart';
+
 class Onboardingview extends StatefulWidget {
   const Onboardingview({ super.key });
 
@@ -54,14 +56,15 @@ class _Onboardingview extends State<Onboardingview> {
       );
 
       final docSnap = await docRef.get();
-      Perfil? perfil=docSnap.data();
+      //Perfil? perfil=docSnap.data();
+      Dataholder.instance.perfilUsuario=docSnap.data()!;
 
-      if(perfil==null){//NO TIENE PERFIL EN LA BASE DE DATOS
+      if(Dataholder.instance.perfilUsuario==null){//NO TIENE PERFIL EN LA BASE DE DATOS
         Navigator.popAndPushNamed(context, "/Profileview");
       }
       else{
         //SI TIENE PERFIL EN LA BASE DATOS
-        print("EL UID DEL URUSARIO LOGEADO ES: "+perfil.altura.toString());
+        print("EL UID DEL URUSARIO LOGEADO ES: "+Dataholder.instance.perfilUsuario.altura.toString());
 
         Navigator.popAndPushNamed(context, "/HomeView");
       }

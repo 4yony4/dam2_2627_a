@@ -6,4 +6,6 @@ class Dataholder {
   static final Dataholder instance = Dataholder._();
 
   late Perfil perfilUsuario;
+
+
 }
