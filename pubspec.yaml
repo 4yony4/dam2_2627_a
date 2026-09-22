@@ -38,6 +38,8 @@ dependencies:
   firebase_core: ^4.15.0
   firebase_auth: ^6.7.0
   cloud_firestore: ^6.10.0
+  mask_text_input_formatter: ^2.9.0
+  pin_input_text_field: ^4.5.3
 
 dev_dependencies:
   flutter_test:
