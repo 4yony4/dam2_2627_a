@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 
+import 'insLib/InsBotBarStyle1.dart';
+
 class Homeview extends StatefulWidget{
   @override
   State<Homeview> createState() => _HomeviewState();
@@ -19,7 +21,7 @@ class _HomeviewState extends State<Homeview> {
   String sNombre=Dataholder.instance.perfilUsuario.name!;
   FirebaseFirestore db=FirebaseFirestore.instance;
 
-  int _bottomNavIndex=0;
+
   List<IconData> iconList=[
     Icons.home,
     Icons.inbox,
@@ -27,8 +29,7 @@ class _HomeviewState extends State<Homeview> {
     Icons.person
   ];
 
-  bool _isNotificationBadgeEnable=true;
-  bool _isMessagesBadgeEnable=true;
+
 
   MaskTextInputFormatter maskFormatter =  MaskTextInputFormatter(
       mask: '+# (###) ###-##-##',
@@ -92,6 +93,15 @@ class _HomeviewState extends State<Homeview> {
           ),
         ],
       ),
+      drawer: Column(
+        children: [
+          TextButton(onPressed: (){}, child: Text("MENU1")),
+          TextButton(onPressed: (){}, child: Text("MENU2")),
+          TextButton(onPressed: (){}, child: Text("MENU3")),
+          TextButton(onPressed: (){}, child: Text("MENU4"))
+        ],
+
+      ),
       body: Container(
         //width: 200,
         color: Color.fromARGB(255, 146, 183, 123),
@@ -124,46 +134,7 @@ class _HomeviewState extends State<Homeview> {
           ],
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        onDestinationSelected: (int index) {
-          switch (index){
-            case 0: print("HOME");
-            case 1: {
-              print("NOTIFICATION");
-              setState(() {
-                _isNotificationBadgeEnable=false;
-              });
-            }
-            case 2: {
-              print("MESSAGES");
-              setState(() {
-                _isMessagesBadgeEnable=false;
-              });
-            }
-
-          }
-          setState(() {
-            _bottomNavIndex = index;
-          });
-        },
-        indicatorColor: Colors.amber,
-        selectedIndex: _bottomNavIndex,
-        destinations: <Widget>[
-          NavigationDestination(
-            selectedIcon: Icon(Icons.home),
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Badge(isLabelVisible:_isNotificationBadgeEnable, child: Icon(Icons.notifications_sharp)),
-            label: 'Notifications',
-          ),
-          NavigationDestination(
-            icon: Badge(isLabelVisible:_isMessagesBadgeEnable, label: Text('2'), child: Icon(Icons.messenger_sharp)),
-            label: 'Messages',
-          ),
-        ],
-      )
+      bottomNavigationBar:Insbotbarstyle1()
 
       /*AnimatedBottomNavigationBar(
         icons: iconList,
