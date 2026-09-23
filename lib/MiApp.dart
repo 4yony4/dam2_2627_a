@@ -1,12 +1,12 @@
 
-import 'package:dam2_2627_a/HomeView.dart';
-import 'package:dam2_2627_a/LoginView.dart';
-import 'package:dam2_2627_a/RegisterView.dart';
+import 'package:dam2_2627_a/views/HomeView.dart';
+import 'package:dam2_2627_a/views/LoginView.dart';
+import 'package:dam2_2627_a/views/RegisterView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'OnBoardingView.dart';
-import 'ProfileView.dart';
+import 'views/OnBoardingView.dart';
+import 'views/ProfileView.dart';
 
 class Miapp extends StatelessWidget {
   double dbNumber=0.0;

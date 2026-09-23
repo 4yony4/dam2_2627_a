@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 
-import 'insLib/InsBotBarStyle1.dart';
+import '../insLib/bot_bars/InsBotBarStyle1.dart';
 
 class Homeview extends StatefulWidget{
   @override

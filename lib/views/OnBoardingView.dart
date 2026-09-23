@@ -3,7 +3,7 @@ import 'package:dam2_2627_a/Perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import 'DataHolder.dart';
+import '../DataHolder.dart';
 
 class Onboardingview extends StatefulWidget {
   const Onboardingview({ super.key });
