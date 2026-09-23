@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'Mensaje.dart';
+
 class Perfil {
   String? uid;
   String? name;
   int? edad;
   double? altura=0.0;
+  List<Mensaje> mensajes=<Mensaje>[];
 
   Perfil({this.uid,this.name, this.edad, this.altura});
 
@@ -27,6 +30,23 @@ class Perfil {
       if (edad != null) "edad": edad,
       if (altura != null) "altura": altura,
     };
+  }
+  
+  Future<void> descargarMensajes() async{
+    FirebaseFirestore db=FirebaseFirestore.instance;
+    final docRef=db.collection("Perfiles/"+uid!+"/Mensajes")
+        .where("leido",isEqualTo: false).limit(20)
+        .withConverter(
+        fromFirestore: Mensaje.fromFirestore,
+        toFirestore: (Mensaje mensaje, _) => mensaje.toFirestore());
+
+    final querySnapshot=await docRef.get();
+
+    for (var docSnapshot in querySnapshot.docs) {
+      mensajes.add(docSnapshot.data());
+    }
+    print("HAY EN TOTAL: "+mensajes.length.toString());
+
   }
 
 

@@ -1,6 +1,6 @@
 import 'package:dam2_2627_a/insLib/bot_bars/InsBotBarStyle1.dart';
 
-import 'Perfil.dart';
+import 'FbObjects/Perfil.dart';
 
 class Dataholder {
   Dataholder._();

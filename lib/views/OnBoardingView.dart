@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dam2_2627_a/Perfil.dart';
+import 'package:dam2_2627_a/FbObjects/Perfil.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -64,7 +64,9 @@ class _Onboardingview extends State<Onboardingview> {
       }
       else{
         //SI TIENE PERFIL EN LA BASE DATOS
-        print("EL UID DEL URUSARIO LOGEADO ES: "+Dataholder.instance.perfilUsuario.altura.toString());
+        //print("EL UID DEL URUSARIO LOGEADO ES: "+Dataholder.instance.perfilUsuario.altura.toString());
+        await Dataholder.instance.perfilUsuario.descargarMensajes();
+        Dataholder.instance.sMessagesBadgeText=Dataholder.instance.perfilUsuario.mensajes.length.toString();
 
         Navigator.popAndPushNamed(context, "/HomeView");
       }

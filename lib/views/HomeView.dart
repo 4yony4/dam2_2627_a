@@ -41,7 +41,6 @@ class _HomeviewState extends State<Homeview> {
   void initState() {
     super.initState();
     Dataholder.instance.iBotBarIndex=0;
-    Dataholder.instance.sMessagesBadgeText="3";
 
   }
 
