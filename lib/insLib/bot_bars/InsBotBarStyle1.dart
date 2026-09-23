@@ -1,44 +1,54 @@
 import 'package:flutter/material.dart';
 
 class Insbotbarstyle1 extends StatefulWidget{
+  bool blBadge1=true;
+  String sBadge2="";
+  int iBarIndex=0;
+
+  Insbotbarstyle1({required this.blBadge1,required this.sBadge2,required this.iBarIndex});
 
   @override
   State<Insbotbarstyle1> createState() => _Insbotbarstyle1State();
 }
 
 class _Insbotbarstyle1State extends State<Insbotbarstyle1> {
-  bool _isNotificationBadgeEnable=true;
 
-  bool _isMessagesBadgeEnable=true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
 
-  int _bottomNavIndex=0;
+  }
+
+  void BotBarItemSelected(int index){
+    switch (index){
+      case 0: print("HOME");
+      case 1: {
+        print("NOTIFICATION");
+        setState(() {
+          widget.blBadge1=false;
+        });
+      }
+      case 2: {
+        print("MESSAGES");
+        setState(() {
+          widget.sBadge2="";
+        });
+        Navigator.popAndPushNamed(context, "/Messagesview");
+      }
+
+    }
+    setState(() {
+      widget.iBarIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return NavigationBar(
-      onDestinationSelected: (int index) {
-        switch (index){
-          case 0: print("HOME");
-          case 1: {
-            print("NOTIFICATION");
-            setState(() {
-              _isNotificationBadgeEnable=false;
-            });
-          }
-          case 2: {
-            print("MESSAGES");
-            setState(() {
-              _isMessagesBadgeEnable=false;
-            });
-          }
-
-        }
-        setState(() {
-          _bottomNavIndex = index;
-        });
-      },
+      onDestinationSelected:BotBarItemSelected,
       indicatorColor: Colors.amber,
-      selectedIndex: _bottomNavIndex,
+      selectedIndex: widget.iBarIndex,
       destinations: <Widget>[
         NavigationDestination(
           selectedIcon: Icon(Icons.home),
@@ -46,11 +56,11 @@ class _Insbotbarstyle1State extends State<Insbotbarstyle1> {
           label: 'Principal',
         ),
         NavigationDestination(
-          icon: Badge(isLabelVisible:_isNotificationBadgeEnable, child: Icon(Icons.notifications_sharp)),
+          icon: Badge(isLabelVisible:widget.blBadge1, child: Icon(Icons.notifications_sharp)),
           label: 'Notifications',
         ),
         NavigationDestination(
-          icon: Badge(isLabelVisible:_isMessagesBadgeEnable, label: Text('2'), child: Icon(Icons.messenger_sharp)),
+          icon: Badge(isLabelVisible:widget.sBadge2.isNotEmpty, label: Text(widget.sBadge2), child: Icon(Icons.messenger_sharp)),
           label: 'Messages',
         ),
       ],

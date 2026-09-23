@@ -134,7 +134,7 @@ class _HomeviewState extends State<Homeview> {
           ],
         ),
       ),
-      bottomNavigationBar:Insbotbarstyle1()
+      bottomNavigationBar:Dataholder.instance.insbotbarstyle1
 
       /*AnimatedBottomNavigationBar(
         icons: iconList,
