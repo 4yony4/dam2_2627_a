@@ -37,6 +37,14 @@ class _HomeviewState extends State<Homeview> {
       type: MaskAutoCompletionType.lazy
   );
 
+  @override
+  void initState() {
+    super.initState();
+    Dataholder.instance.iBotBarIndex=0;
+    Dataholder.instance.sMessagesBadgeText="3";
+
+  }
+
   void clickActualizarNombre(){
     setState(() {
       sNombre=nombreController.text;
@@ -134,7 +142,11 @@ class _HomeviewState extends State<Homeview> {
           ],
         ),
       ),
-      bottomNavigationBar:Dataholder.instance.insbotbarstyle1
+      bottomNavigationBar:Insbotbarstyle1(
+          blBadge1: Dataholder.instance.blNotificacionesBadge,
+          sBadge2: Dataholder.instance.sMessagesBadgeText,
+          iBarIndex: Dataholder.instance.iBotBarIndex
+      )
 
       /*AnimatedBottomNavigationBar(
         icons: iconList,

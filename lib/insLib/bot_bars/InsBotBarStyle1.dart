@@ -22,7 +22,9 @@ class _Insbotbarstyle1State extends State<Insbotbarstyle1> {
 
   void BotBarItemSelected(int index){
     switch (index){
-      case 0: print("HOME");
+      case 0: {
+        Navigator.popAndPushNamed(context, "/HomeView");
+      }
       case 1: {
         print("NOTIFICATION");
         setState(() {

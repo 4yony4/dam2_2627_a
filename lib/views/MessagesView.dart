@@ -9,12 +9,26 @@ class Messagesview extends StatefulWidget{
 }
 
 class _MessagesviewState extends State<Messagesview> {
+
+  @override
+  void initState() {
+    super.initState();
+    Dataholder.instance.iBotBarIndex=2;
+    Dataholder.instance.sMessagesBadgeText="";
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return
       Scaffold(
         body: Text("MESSAGES VIEW"),
-        bottomNavigationBar: Dataholder.instance.insbotbarstyle1,
+        bottomNavigationBar: Insbotbarstyle1(
+            blBadge1: Dataholder.instance.blNotificacionesBadge,
+            sBadge2: Dataholder.instance.sMessagesBadgeText,
+            iBarIndex: Dataholder.instance.iBotBarIndex
+        ),
     );
   }
 }
