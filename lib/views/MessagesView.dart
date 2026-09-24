@@ -25,14 +25,21 @@ class _MessagesviewState extends State<Messagesview> {
   Widget? creadorDeItem(BuildContext context, int indice){
     Color color=Colors.cyanAccent;
     double altura=15+Random().nextDouble()*100;
+    String sUrlImg="https://i.pinimg.com/originals/78/1a/51/781a5128e733c6a36aa6a10814e19548.gif";
     if(indice%2==0){
       color=Colors.deepOrangeAccent;
+      sUrlImg="https://media.tenor.com/aGj-frNYMFEAAAAM/cat-cat-dance.gif";
     }
 
     return Container(
       color: color,
       height: altura,
-      child: Text("ITEM "+indice.toString()),
+      child: Row(
+        children: [
+          Image.network(sUrlImg),
+          Text("ITEM "+indice.toString()),
+        ],
+      )
     );
 
   }
