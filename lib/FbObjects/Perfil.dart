@@ -36,11 +36,12 @@ class Perfil {
   Future<void> descargarMensajes() async{
     FirebaseFirestore db=FirebaseFirestore.instance;
 
-    Timestamp timestamp=Timestamp.fromDate(DateTime.utc(2024, 01, 01));
+    Timestamp timestamp=Timestamp.fromDate(DateTime.utc(2026, 01, 01));
 
     final docRef=db.collection("Perfiles/"+uid!+"/Mensajes")
-        //.where("leido",isEqualTo: false).limit(20)
-        .where("enviado",isGreaterThan: timestamp);
+        //.where("leido",isEqualTo: false)
+        .where("enviado",isGreaterThan: timestamp)
+        .limit(20);
         /*.withConverter(
         fromFirestore: Mensaje.fromFirestore,
         toFirestore: (Mensaje mensaje, _) => mensaje.toFirestore());*/
