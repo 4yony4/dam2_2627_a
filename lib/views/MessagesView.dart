@@ -44,14 +44,43 @@ class _MessagesviewState extends State<Messagesview> {
 
   }
 
+  Widget creadorDeSeparador(BuildContext context, int indice){
+      return Container(
+        height: 10,
+      );
+  }
+
+  Widget crearLista(){
+    return ListView.separated(
+        itemCount: 25,
+        itemBuilder: creadorDeItem,
+        //scrollDirection:Axis.horizontal
+        separatorBuilder:creadorDeSeparador
+    );
+  }
+
+  Widget crearGridItem(BuildContext context, int index){
+    return Card(
+      color: Colors.amber,
+      child: Center(child: Text('$index')),
+    );
+  }
+  
+  Widget crearGrid(){
+    return GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+        ),
+        itemCount: 300,
+        itemBuilder: crearGridItem
+    );
+  }
+  
   @override
   Widget build(BuildContext context) {
     return
       Scaffold(
-        body: ListView.builder(
-          itemCount: 25,
-            itemBuilder: creadorDeItem
-        ),
+        body: crearGrid(),
         bottomNavigationBar: Insbotbarstyle1(
             blBadge1: Dataholder.instance.blNotificacionesBadge,
             sBadge2: Dataholder.instance.sMessagesBadgeText,
