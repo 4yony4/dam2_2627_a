@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:dam2_2627_a/insLib/bot_bars/InsBotBarStyle1.dart';
+import 'package:dam2_2627_a/views/HomeView.dart';
+import 'package:dam2_2627_a/views/LoginView.dart';
 import 'package:flutter/material.dart';
 
 import '../DataHolder.dart';
@@ -18,12 +22,29 @@ class _MessagesviewState extends State<Messagesview> {
 
   }
 
+  Widget? creadorDeItem(BuildContext context, int indice){
+    Color color=Colors.cyanAccent;
+    double altura=15+Random().nextDouble()*100;
+    if(indice%2==0){
+      color=Colors.deepOrangeAccent;
+    }
+
+    return Container(
+      color: color,
+      height: altura,
+      child: Text("ITEM "+indice.toString()),
+    );
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return
       Scaffold(
-        body: Text("MESSAGES VIEW"),
+        body: ListView.builder(
+          itemCount: 25,
+            itemBuilder: creadorDeItem
+        ),
         bottomNavigationBar: Insbotbarstyle1(
             blBadge1: Dataholder.instance.blNotificacionesBadge,
             sBadge2: Dataholder.instance.sMessagesBadgeText,
