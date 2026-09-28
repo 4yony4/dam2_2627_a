@@ -1,9 +1,11 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/FbObjects/Mensaje.dart';
 import 'package:dam2_2627_a/insLib/bot_bars/InsBotBarStyle1.dart';
 import 'package:dam2_2627_a/views/HomeView.dart';
 import 'package:dam2_2627_a/views/LoginView.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../DataHolder.dart';
@@ -14,6 +16,8 @@ class Messagesview extends StatefulWidget{
 }
 
 class _MessagesviewState extends State<Messagesview> {
+
+  FirebaseFirestore db=FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -80,6 +84,24 @@ class _MessagesviewState extends State<Messagesview> {
       ),
     );
   }
+
+  void onPressedFloatingBotton() async{
+    Mensaje mensajeNuevo=Mensaje.initCampos(
+        "",
+        "Nuevo Mensaje 1",
+        "Cuerpo del nuevo mensaje",
+        false,
+        Timestamp.fromDate(DateTime.now()));
+
+    final mensajes = db.collection("Perfiles/" +Dataholder.instance.perfilUsuario.uid!+ "/Mensajes");
+    await mensajes.add(mensajeNuevo.toFirestore());
+
+    setState(() {
+      Dataholder.instance.perfilUsuario.mensajes.add(mensajeNuevo);
+    });
+
+
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -90,6 +112,11 @@ class _MessagesviewState extends State<Messagesview> {
             blBadge1: Dataholder.instance.blNotificacionesBadge,
             sBadge2: Dataholder.instance.sMessagesBadgeText,
             iBarIndex: Dataholder.instance.iBotBarIndex
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: onPressedFloatingBotton,
+          tooltip: 'Add Messages',
+          child: const Icon(Icons.add),
         ),
     );
   }

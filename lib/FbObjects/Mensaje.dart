@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dam2_2627_a/views/MessagesView.dart';
 
 class Mensaje {
   String? uid;
@@ -11,6 +12,8 @@ class Mensaje {
     //enviado=Timestamp.fromDate(DateTime.now());
   }*/
 
+  Mensaje.initCampos(this.uid,this.titulo, this.cuerpo, this.leido,this.enviado);
+
   Mensaje(Map<String,dynamic> fila){
 
       this.titulo=fila["titulo"] as String;
@@ -19,6 +22,7 @@ class Mensaje {
     this.enviado=fila["enviado"] as Timestamp;
 
   }
+
 
   /*
   factory Mensaje.fromFirestore(
