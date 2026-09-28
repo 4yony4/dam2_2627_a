@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dam2_2627_a/FbObjects/Mensaje.dart';
 import 'package:dam2_2627_a/insLib/bot_bars/InsBotBarStyle1.dart';
 import 'package:dam2_2627_a/views/HomeView.dart';
 import 'package:dam2_2627_a/views/LoginView.dart';
@@ -37,7 +38,8 @@ class _MessagesviewState extends State<Messagesview> {
       child: Row(
         children: [
           Image.network(sUrlImg),
-          Text("ITEM "+indice.toString()),
+          Text(Dataholder.instance.perfilUsuario.mensajes[indice].titulo!),
+          Text(Dataholder.instance.perfilUsuario.mensajes[indice].cuerpo!),
         ],
       )
     );
@@ -52,7 +54,7 @@ class _MessagesviewState extends State<Messagesview> {
 
   Widget crearLista(){
     return ListView.separated(
-        itemCount: 25,
+        itemCount: Dataholder.instance.perfilUsuario.mensajes.length,
         itemBuilder: creadorDeItem,
         //scrollDirection:Axis.horizontal
         separatorBuilder:creadorDeSeparador
@@ -67,12 +69,15 @@ class _MessagesviewState extends State<Messagesview> {
   }
   
   Widget crearGrid(){
-    return GridView.builder(
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-        ),
-        itemCount: 300,
-        itemBuilder: crearGridItem
+    return Container(
+      height: 300,
+      child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+          ),
+          itemCount: 300,
+          itemBuilder: crearGridItem
+      ),
     );
   }
   
@@ -80,7 +85,7 @@ class _MessagesviewState extends State<Messagesview> {
   Widget build(BuildContext context) {
     return
       Scaffold(
-        body: crearGrid(),
+        body: crearLista(),
         bottomNavigationBar: Insbotbarstyle1(
             blBadge1: Dataholder.instance.blNotificacionesBadge,
             sBadge2: Dataholder.instance.sMessagesBadgeText,

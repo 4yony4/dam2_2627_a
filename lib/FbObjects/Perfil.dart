@@ -40,7 +40,7 @@ class Perfil {
 
     final docRef=db.collection("Perfiles/"+uid!+"/Mensajes")
         //.where("leido",isEqualTo: false)
-        .where("enviado",isGreaterThan: timestamp)
+        //.where("enviado",isGreaterThan: timestamp)
         .limit(20);
         /*.withConverter(
         fromFirestore: Mensaje.fromFirestore,
