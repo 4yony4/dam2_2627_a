@@ -4,6 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'Mensaje.dart';
 
 class Perfil {
+  var db=FirebaseFirestore.instance;
+
   String? uid;
   String? name;
   int? edad;
@@ -53,6 +55,22 @@ class Perfil {
       mensajes.add(Mensaje(fila));
     }
     print("HAY EN TOTAL: "+mensajes.length.toString());
+
+  }
+
+  void agregarNuevoMensaje(Mensaje m) async{
+    this.mensajes.add(m);
+    final mensajes = db.collection("Perfiles/" +this.uid!+ "/Mensajes");
+    await mensajes.add(m.toFirestore());
+  }
+
+  void marcarMensajesLeidos(){
+    for(Mensaje m in mensajes){
+      if(!m.leido){
+        m.leido=true;
+        m.update(uid!);
+      }
+    }
 
   }
 

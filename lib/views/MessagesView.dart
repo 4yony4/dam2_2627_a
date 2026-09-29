@@ -24,6 +24,8 @@ class _MessagesviewState extends State<Messagesview> {
     super.initState();
     Dataholder.instance.iBotBarIndex=2;
     Dataholder.instance.sMessagesBadgeText="";
+    Dataholder.instance.perfilUsuario.marcarMensajesLeidos();
+
 
   }
 
@@ -93,11 +95,8 @@ class _MessagesviewState extends State<Messagesview> {
         false,
         Timestamp.fromDate(DateTime.now()));
 
-    final mensajes = db.collection("Perfiles/" +Dataholder.instance.perfilUsuario.uid!+ "/Mensajes");
-    await mensajes.add(mensajeNuevo.toFirestore());
-
     setState(() {
-      Dataholder.instance.perfilUsuario.mensajes.add(mensajeNuevo);
+      Dataholder.instance.perfilUsuario.agregarNuevoMensaje(mensajeNuevo);
     });
 
 

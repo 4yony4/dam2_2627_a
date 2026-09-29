@@ -2,10 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/views/MessagesView.dart';
 
 class Mensaje {
+  var db=FirebaseFirestore.instance;
+
   String? uid;
   String? titulo;
   String? cuerpo;
-  bool? leido;
+  bool leido=false;
   Timestamp? enviado;
 
   /*Mensaje({this.uid,this.titulo, this.cuerpo, this.leido,this.enviado}){
@@ -46,6 +48,10 @@ class Mensaje {
       if (leido != null) "leido": leido,
       if (enviado != null) "enviado": enviado,
     };
+  }
+
+  void update(String sPerfilUID){
+    db.collection("Perfiles/"+sPerfilUID+"/Mensajes").doc(uid).set(toFirestore());
   }
 
 
