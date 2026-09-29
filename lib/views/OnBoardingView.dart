@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../DataHolder.dart';
+import '../FbObjects/Mensaje.dart';
 
 class Onboardingview extends StatefulWidget {
   const Onboardingview({ super.key });
@@ -59,6 +60,8 @@ class _Onboardingview extends State<Onboardingview> {
       //Perfil? perfil=docSnap.data();
       Dataholder.instance.perfilUsuario=docSnap.data()!;
 
+      Dataholder.instance.initFirebaseListeners();
+
       if(Dataholder.instance.perfilUsuario==null){//NO TIENE PERFIL EN LA BASE DE DATOS
         Navigator.popAndPushNamed(context, "/Profileview");
       }
@@ -66,14 +69,17 @@ class _Onboardingview extends State<Onboardingview> {
         //SI TIENE PERFIL EN LA BASE DATOS
         //print("EL UID DEL URUSARIO LOGEADO ES: "+Dataholder.instance.perfilUsuario.altura.toString());
         await Dataholder.instance.perfilUsuario.descargarMensajes();
-        Dataholder.instance.sMessagesBadgeText=Dataholder.instance.perfilUsuario.mensajes.length.toString();
+
+        int numNoLeido=0;
+        for(Mensaje m in Dataholder.instance.perfilUsuario.mensajes){
+          if(!m.leido)numNoLeido++;
+        }
+
+        Dataholder.instance.sMessagesBadgeText=numNoLeido.toString();
 
         Navigator.popAndPushNamed(context, "/HomeView");
       }
-
-
     }
-
   }
 
   Future<void> recursos1() async {

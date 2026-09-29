@@ -52,7 +52,8 @@ class Perfil {
 
     for (var docSnapshot in querySnapshot.docs) {
       Map<String,dynamic> fila=docSnapshot.data();
-      mensajes.add(Mensaje(fila));
+
+      mensajes.add(Mensaje(docSnapshot.id,fila));
     }
     print("HAY EN TOTAL: "+mensajes.length.toString());
 
@@ -64,11 +65,11 @@ class Perfil {
     await mensajes.add(m.toFirestore());
   }
 
-  void marcarMensajesLeidos(){
+  void marcarMensajesLeidos() async{
     for(Mensaje m in mensajes){
       if(!m.leido){
         m.leido=true;
-        m.update(uid!);
+        await m.update(uid!);
       }
     }
 

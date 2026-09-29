@@ -16,7 +16,7 @@ class Mensaje {
 
   Mensaje.initCampos(this.uid,this.titulo, this.cuerpo, this.leido,this.enviado);
 
-  Mensaje(Map<String,dynamic> fila){
+  Mensaje(this.uid,Map<String,dynamic> fila){
 
       this.titulo=fila["titulo"] as String;
     this.cuerpo=fila["cuerpo"] as String;
@@ -50,8 +50,8 @@ class Mensaje {
     };
   }
 
-  void update(String sPerfilUID){
-    db.collection("Perfiles/"+sPerfilUID+"/Mensajes").doc(uid).set(toFirestore());
+  Future<void> update(String sPerfilUID)async{
+    return await db.collection("Perfiles/"+sPerfilUID+"/Mensajes").doc(uid).set(toFirestore());
   }
 
 
