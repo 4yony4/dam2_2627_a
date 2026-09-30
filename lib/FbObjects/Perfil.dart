@@ -11,8 +11,13 @@ class Perfil {
   int? edad;
   double? altura=0.0;
   List<Mensaje> mensajes=<Mensaje>[];
+  Function(int numeroMensajes)? onMessageReceived;
 
   Perfil({this.uid,this.name, this.edad, this.altura});
+
+  void setOnMessageReceived(Function(int numeroMensajes)? onMessageReceived){
+    this.onMessageReceived=onMessageReceived;
+  }
 
   factory Perfil.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot,
@@ -48,14 +53,30 @@ class Perfil {
         fromFirestore: Mensaje.fromFirestore,
         toFirestore: (Mensaje mensaje, _) => mensaje.toFirestore());*/
 
+
+
+    docRef.snapshots().listen(
+          (event) {
+            mensajes.clear();
+            for (var docSnapshot in event.docs) {
+              Map<String,dynamic> fila=docSnapshot.data();
+              mensajes.add(Mensaje(docSnapshot.id,fila));
+            }
+            onMessageReceived!(mensajes.length);
+          } ,
+      onError: (error) => print("Listen failed: $error"),
+    );
+
+    /*
     final querySnapshot=await docRef.get();
 
     for (var docSnapshot in querySnapshot.docs) {
       Map<String,dynamic> fila=docSnapshot.data();
 
       mensajes.add(Mensaje(docSnapshot.id,fila));
-    }
+    }*/
     print("HAY EN TOTAL: "+mensajes.length.toString());
+
 
   }
 

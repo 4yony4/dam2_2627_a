@@ -18,6 +18,7 @@ class Messagesview extends StatefulWidget{
 class _MessagesviewState extends State<Messagesview> {
 
   FirebaseFirestore db=FirebaseFirestore.instance;
+  int iNumeroMensajes=0;
 
   @override
   void initState() {
@@ -25,6 +26,8 @@ class _MessagesviewState extends State<Messagesview> {
     Dataholder.instance.iBotBarIndex=2;
     Dataholder.instance.sMessagesBadgeText="";
     Dataholder.instance.perfilUsuario.marcarMensajesLeidos();
+    Dataholder.instance.perfilUsuario.setOnMessageReceived(mensajeRecibido);
+    iNumeroMensajes=Dataholder.instance.perfilUsuario.mensajes.length;
 
 
   }
@@ -60,7 +63,7 @@ class _MessagesviewState extends State<Messagesview> {
 
   Widget crearLista(){
     return ListView.separated(
-        itemCount: Dataholder.instance.perfilUsuario.mensajes.length,
+        itemCount: iNumeroMensajes,
         itemBuilder: creadorDeItem,
         //scrollDirection:Axis.horizontal
         separatorBuilder:creadorDeSeparador
@@ -98,8 +101,12 @@ class _MessagesviewState extends State<Messagesview> {
     setState(() {
       Dataholder.instance.perfilUsuario.agregarNuevoMensaje(mensajeNuevo);
     });
+  }
 
-
+  void mensajeRecibido(int iMensajesTotales){
+    setState(() {
+      iNumeroMensajes=iMensajesTotales;
+    });
   }
   
   @override
