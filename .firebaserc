@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "dam-daw-lm1"
+  },
+  "targets": {
+    "dam-daw-lm1": {
+      "hosting": {
+        "app": [
+          "dam2627"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

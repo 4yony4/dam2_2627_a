@@ -14,6 +14,10 @@ import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../DataHolder.dart';
+import '../FbObjects/Mensaje.dart';
+import '../FbObjects/Perfil.dart';
+
 // NOTA: un StatelessWidget debería tener solo campos `final` (el analizador
 // avisa con must_be_immutable). Funciona, pero lo correcto sería un
 // StatefulWidget con los controllers en su State.
@@ -55,7 +59,43 @@ class Loginview extends StatelessWidget{
       // Leemos el documento "Perfiles/{uid}" para saber si ya creó su perfil.
       // .then(...) es otra forma de usar un Future (en lugar de await): la
       // función se ejecuta cuando llega el resultado.
-      final docRef = db.collection("Perfiles").doc(FirebaseAuth.instance.currentUser!.uid);
+      final docRef = db.collection("Perfiles")
+          .doc(FirebaseAuth.instance.currentUser!.uid).withConverter(
+        fromFirestore: Perfil.fromFirestore,
+        toFirestore: (Perfil perfil, _) => perfil.toFirestore(),
+      );
+
+      final docSnap = await docRef.get();
+
+      Dataholder.instance.perfilUsuario=docSnap.data()!;
+
+      // Escucha en tiempo real el documento del perfil (ver Dataholder).
+      Dataholder.instance.initFirebaseListeners();
+
+      if(Dataholder.instance.perfilUsuario==null){//NO TIENE PERFIL EN LA BASE DE DATOS
+        Navigator.popAndPushNamed(miContext, "/Profileview");
+      }
+      else{
+        //SI TIENE PERFIL EN LA BASE DATOS
+        //print("EL UID DEL URUSARIO LOGEADO ES: "+Dataholder.instance.perfilUsuario.altura.toString());
+        // Empieza a escuchar los mensajes del usuario (Perfiles/{uid}/Mensajes).
+        // NOTA: este `await` no espera a que lleguen los mensajes (listen() es
+        // asíncrono), así que la lista puede estar todavía vacía al contarlos.
+        await Dataholder.instance.perfilUsuario.descargarMensajes();
+
+        // Contamos los mensajes no leídos para el badge de la barra inferior.
+        int numNoLeido=0;
+        for(Mensaje m in Dataholder.instance.perfilUsuario.mensajes){
+          if(!m.leido)numNoLeido++;
+        }
+
+        // Se guarda en Dataholder para que la barra inferior de HomeView lo muestre.
+        Dataholder.instance.sMessagesBadgeText=numNoLeido.toString();
+
+        Navigator.popAndPushNamed(miContext, "/HomeView");
+      }
+
+      /*
       docRef.get().then(
             (DocumentSnapshot doc) {
           // NOTA: aquí no se guarda el perfil en Dataholder.perfilUsuario y HomeView
@@ -72,7 +112,7 @@ class Loginview extends StatelessWidget{
           }
         },
         onError: (e) => print(e.toString()),
-      );
+      );*/
 
     } on FirebaseAuthException catch (e) {
       // NOTA: los errores solo se imprimen en consola; el usuario no ve ningún

@@ -37,6 +37,7 @@ en la que el usuario:
 13. [Dependencias](#-dependencias)
 14. [Conceptos de Flutter que aparecen](#-conceptos-de-flutter-que-aparecen)
 15. [Ejercicios y mejoras propuestas](#-ejercicios-y-mejoras-propuestas)
+16. [Documentación con Codex](#-documentación-con-codex)
 
 ---
 
@@ -644,6 +645,15 @@ Puntos del código que se pueden mejorar. Son buenos ejercicios para clase:
 - [ ] **Modo oscuro:** añade un `darkTheme` usando los tokens de `AppTheme.dart`.
 - [ ] **Código de plantilla:** `main.dart` todavía contiene `MyApp` y `MyHomePage` del proyecto
       de ejemplo de Flutter, que no se usan.
+
+---
+
+## 📝 Documentación con Codex
+
+Este repositorio incluye la habilidad local [`documentar-cambios`](.codex/skills/documentar-cambios/SKILL.md).
+Las instrucciones de [`AGENTS.md`](AGENTS.md) piden a Codex revisar el impacto documental al terminar tareas que cambien la app, sus dependencias o su configuración. Para hacer una revisión puntual, solicita a Codex: **«Usa `$documentar-cambios` para revisar los cambios y actualizar el README y `docs/`»**.
+
+La habilidad compara los cambios de Git con el código actual y actualiza solo la documentación afectada. Se ejecuta durante una tarea de Codex; no vigila archivos en segundo plano.
 
 ---
 

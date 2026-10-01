@@ -41,6 +41,7 @@ dependencies:
   mask_text_input_formatter: ^2.9.0
   pin_input_text_field: ^4.5.3
   animated_bottom_navigation_bar: ^1.4.1
+  google_sign_in: ^7.2.0
 
 dev_dependencies:
   flutter_test:

@@ -1,0 +1,11 @@
+{
+  "allowedTools": [
+    "Edit(**)",
+    "Write(**)",
+    "MultiEdit(**)",
+    "Bash(*)"
+  ],
+  "allowedWritePaths": [
+    "**"
+  ]
+}
