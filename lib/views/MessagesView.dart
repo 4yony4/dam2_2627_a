@@ -41,16 +41,22 @@ class _MessagesviewState extends State<Messagesview> {
       sUrlImg="https://media.tenor.com/aGj-frNYMFEAAAAM/cat-cat-dance.gif";
     }
 
-    return Container(
-      color: color,
-      height: altura,
-      child: Row(
-        children: [
-          Image.network(sUrlImg),
-          Text(Dataholder.instance.perfilUsuario.mensajes[indice].titulo!),
-          Text(Dataholder.instance.perfilUsuario.mensajes[indice].cuerpo!),
-        ],
-      )
+    return GestureDetector(
+      onTap: () {
+        Dataholder.instance.mensajeSeleccionado=Dataholder.instance.perfilUsuario.mensajes[indice];
+        Navigator.pushNamed(context, "/MessageDetailview");
+      },
+      child: Container(
+        color: color,
+        height: altura,
+        child: Row(
+          children: [
+            Image.network(sUrlImg),
+            Text(Dataholder.instance.perfilUsuario.mensajes[indice].titulo!),
+            Text(Dataholder.instance.perfilUsuario.mensajes[indice].cuerpo!),
+          ],
+        )
+      ),
     );
 
   }

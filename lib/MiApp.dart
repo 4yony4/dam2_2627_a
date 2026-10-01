@@ -1,6 +1,7 @@
 
 import 'package:dam2_2627_a/views/HomeView.dart';
 import 'package:dam2_2627_a/views/LoginView.dart';
+import 'package:dam2_2627_a/views/MessageDetailView.dart';
 import 'package:dam2_2627_a/views/MessagesView.dart';
 import 'package:dam2_2627_a/views/RegisterView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,6 +30,7 @@ class Miapp extends StatelessWidget {
         "/Onboardingview":(context) => Onboardingview(),
         "/Profileview":(context) => Profileview(),
         "/Messagesview":(context) => Messagesview(),
+        "/MessageDetailview":(context) => Messagedetailview(),
 
       },
       initialRoute: "/Onboardingview",

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/insLib/bot_bars/InsBotBarStyle1.dart';
 
+import 'FbObjects/Mensaje.dart';
 import 'FbObjects/Perfil.dart';
 
 class Dataholder {
@@ -11,6 +12,7 @@ class Dataholder {
   static final Dataholder instance = Dataholder._();
 
   late Perfil perfilUsuario;
+  Mensaje? mensajeSeleccionado;
 
   //Variables compartidas del boton bar
   bool blNotificacionesBadge=true;
