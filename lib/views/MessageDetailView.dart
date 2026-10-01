@@ -1,12 +1,10 @@
 import 'package:dam2_2627_a/FbObjects/Mensaje.dart';
+import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
 import 'package:flutter/material.dart';
 
 import '../DataHolder.dart';
 
 class Messagedetailview extends StatelessWidget{
-
-  final Color colorPrincipal=Color.fromARGB(255, 146, 183, 123);
-  final Color colorOscuro=Color.fromARGB(255, 70, 110, 60);
 
   String formatearFecha(DateTime fecha){
     String dosCifras(int n) => n.toString().padLeft(2, '0');
@@ -17,85 +15,146 @@ class Messagedetailview extends StatelessWidget{
   Widget crearCabecera(Mensaje mensaje){
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(24, 24, 24, 32),
+      // Abajo dejamos espacio extra porque la tarjeta del cuerpo "se monta" encima.
+      padding: EdgeInsets.fromLTRB(AppEspacios.lg, AppEspacios.md, AppEspacios.lg, AppEspacios.xl+AppEspacios.lg),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [colorPrincipal, colorOscuro],
-          begin: Alignment.topLeft,
+          colors: [AppColores.principal, AppColores.oscuro],
+          begin: Alignment.topCenter,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(AppRadios.cabecera)),
       ),
       child: Column(
         crossAxisAlignment: .start,
         children: [
-          CircleAvatar(
-            radius: 28,
-            backgroundColor: Colors.white,
-            child: Icon(Icons.mail_rounded, color: colorOscuro, size: 30),
-          ),
-          SizedBox(height: 16),
-          Text(
-            mensaje.titulo!,
-            style: TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 12),
           Row(
             children: [
+              crearIcono(),
+              Spacer(),
               crearEtiquetaLeido(mensaje.leido),
-              SizedBox(width: 12),
-              Icon(Icons.schedule, color: Colors.white70, size: 16),
-              SizedBox(width: 4),
-              Text(
-                formatearFecha(mensaje.enviado!.toDate()),
-                style: TextStyle(color: Colors.white70, fontSize: 13),
-              ),
             ],
           ),
+          SizedBox(height: AppEspacios.lg),
+          Text(
+            mensaje.titulo ?? "",
+            style: AppTextos.tituloCabecera,
+          ),
+          SizedBox(height: AppEspacios.sm),
+          crearFecha(mensaje),
         ],
       ),
     );
   }
 
+  Widget crearIcono(){
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        color: AppColores.tarjeta,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(color: Colors.black26, blurRadius: 12, offset: Offset(0, 4)),
+        ],
+      ),
+      child: Icon(Icons.mail_rounded, color: AppColores.oscuro, size: 28),
+    );
+  }
+
+  Widget crearFecha(Mensaje mensaje){
+    if(mensaje.enviado==null){
+      return SizedBox.shrink();
+    }
+    // Wrap en vez de Row: si la pantalla es estrecha, baja de línea en vez de desbordar.
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppEspacios.xs,
+      children: [
+        Icon(Icons.schedule_rounded, color: AppColores.sobrePrincipalSuave, size: 16),
+        Text(
+          formatearFecha(mensaje.enviado!.toDate()),
+          style: AppTextos.fecha,
+        ),
+      ],
+    );
+  }
+
   Widget crearEtiquetaLeido(bool leido){
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: AppEspacios.md-AppEspacios.xs, vertical: AppEspacios.xs+2),
       decoration: BoxDecoration(
-        color: Colors.white24,
-        borderRadius: BorderRadius.circular(20),
+        color: AppColores.pastilla,
+        borderRadius: BorderRadius.circular(AppRadios.pastilla),
+        border: Border.all(color: AppColores.pastilla),
       ),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(leido ? Icons.done_all : Icons.mark_email_unread_outlined, color: Colors.white, size: 14),
-          SizedBox(width: 4),
-          Text(leido ? "Leído" : "No leído", style: TextStyle(color: Colors.white, fontSize: 12)),
+          Icon(leido ? Icons.done_all_rounded : Icons.mark_email_unread_outlined, color: AppColores.sobrePrincipal, size: 14),
+          SizedBox(width: AppEspacios.xs+2),
+          Text(leido ? "Leído" : "No leído", style: AppTextos.etiqueta),
         ],
       ),
     );
   }
 
   Widget crearCuerpo(Mensaje mensaje){
-    return Card(
-      margin: EdgeInsets.all(20),
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: .start,
-          children: [
-            Text(
-              "MENSAJE",
-              style: TextStyle(color: colorOscuro, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.5),
-            ),
-            Divider(height: 24),
-            Text(
-              mensaje.cuerpo!,
-              style: TextStyle(fontSize: 17, height: 1.5, color: Colors.black87),
-            ),
-          ],
-        ),
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: AppEspacios.md+AppEspacios.xs),
+      padding: EdgeInsets.all(AppEspacios.lg),
+      decoration: BoxDecoration(
+        color: AppColores.tarjeta,
+        borderRadius: BorderRadius.circular(AppRadios.tarjeta),
+        boxShadow: [
+          BoxShadow(color: Colors.black12, blurRadius: 24, offset: Offset(0, 8)),
+        ],
       ),
+      child: Column(
+        crossAxisAlignment: .start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(AppEspacios.sm-2),
+                decoration: BoxDecoration(
+                  color: AppColores.suave,
+                  borderRadius: BorderRadius.circular(AppEspacios.sm),
+                ),
+                child: Icon(Icons.notes_rounded, color: AppColores.oscuro, size: 18),
+              ),
+              SizedBox(width: AppEspacios.sm+2),
+              Text("MENSAJE", style: AppTextos.seccion),
+            ],
+          ),
+          Divider(height: AppEspacios.xl, color: AppColores.divisor),
+          // SelectableText permite al usuario copiar el texto del mensaje.
+          SelectableText(
+            mensaje.cuerpo ?? "",
+            style: AppTextos.cuerpo,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Animación de entrada sencilla: aparece y sube un poco al abrir la pantalla.
+  Widget animarEntrada(Widget hijo){
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: Duration(milliseconds: 450),
+      curve: Curves.easeOutCubic,
+      child: hijo,
+      builder: (context, valor, child) {
+        return Opacity(
+          opacity: valor,
+          child: Transform.translate(
+            offset: Offset(0, 24*(1-valor)),
+            child: child,
+          ),
+        );
+      },
     );
   }
 
@@ -104,19 +163,34 @@ class Messagedetailview extends StatelessWidget{
     Mensaje mensaje=Dataholder.instance.mensajeSeleccionado!;
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 243, 246, 240),
+      backgroundColor: AppColores.fondo,
       appBar: AppBar(
-        backgroundColor: colorPrincipal,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColores.principal,
+        foregroundColor: AppColores.sobrePrincipal,
         elevation: 0,
-        title: Text("Detalle del mensaje"),
+        scrolledUnderElevation: 0,
+        title: Text("Detalle del mensaje", style: TextStyle(fontWeight: FontWeight.w600)),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            crearCabecera(mensaje),
-            crearCuerpo(mensaje),
-          ],
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(bottom: AppEspacios.xl),
+          child: Column(
+            children: [
+              crearCabecera(mensaje),
+              // En tablets u horizontal limitamos el ancho para que se lea mejor.
+              Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: AppEspacios.anchoMaximo),
+                  child: Transform.translate(
+                    // La tarjeta sube y se solapa con la cabecera.
+                    offset: Offset(0, -AppEspacios.lg),
+                    child: animarEntrada(crearCuerpo(mensaje)),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
