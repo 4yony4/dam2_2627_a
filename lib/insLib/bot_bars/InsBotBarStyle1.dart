@@ -49,20 +49,22 @@ class _Insbotbarstyle1State extends State<Insbotbarstyle1> {
   Widget build(BuildContext context) {
     return NavigationBar(
       onDestinationSelected:BotBarItemSelected,
-      indicatorColor: Colors.amber,
+      // Los colores (fondo e indicador verde suave) vienen del tema global (MiApp.dart).
       selectedIndex: widget.iBarIndex,
       destinations: <Widget>[
         NavigationDestination(
-          selectedIcon: Icon(Icons.home),
+          selectedIcon: Icon(Icons.home_rounded),
           icon: Icon(Icons.home_outlined),
           label: 'Principal',
         ),
         NavigationDestination(
-          icon: Badge(isLabelVisible:widget.blBadge1, child: Icon(Icons.notifications_sharp)),
+          selectedIcon: Badge(isLabelVisible:widget.blBadge1, child: Icon(Icons.notifications_rounded)),
+          icon: Badge(isLabelVisible:widget.blBadge1, child: Icon(Icons.notifications_outlined)),
           label: 'Notifications',
         ),
         NavigationDestination(
-          icon: Badge(isLabelVisible:widget.sBadge2.isNotEmpty, label: Text(widget.sBadge2), child: Icon(Icons.messenger_sharp)),
+          selectedIcon: Badge(isLabelVisible:widget.sBadge2.isNotEmpty, label: Text(widget.sBadge2), child: Icon(Icons.chat_bubble_rounded)),
+          icon: Badge(isLabelVisible:widget.sBadge2.isNotEmpty, label: Text(widget.sBadge2), child: Icon(Icons.chat_bubble_outline_rounded)),
           label: 'Messages',
         ),
       ],

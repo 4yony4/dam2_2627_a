@@ -86,7 +86,7 @@ class Messagedetailview extends StatelessWidget{
       decoration: BoxDecoration(
         color: AppColores.pastilla,
         borderRadius: BorderRadius.circular(AppRadios.pastilla),
-        border: Border.all(color: AppColores.pastilla),
+        border: Border.all(color: AppColores.pastillaBorde),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -163,13 +163,9 @@ class Messagedetailview extends StatelessWidget{
     Mensaje mensaje=Dataholder.instance.mensajeSeleccionado!;
 
     return Scaffold(
-      backgroundColor: AppColores.fondo,
       appBar: AppBar(
-        backgroundColor: AppColores.principal,
-        foregroundColor: AppColores.sobrePrincipal,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text("Detalle del mensaje", style: TextStyle(fontWeight: FontWeight.w600)),
+        // Colores y estilo del título vienen del tema global (MiApp.dart).
+        title: Text("Detalle del mensaje"),
       ),
       body: SafeArea(
         top: false,

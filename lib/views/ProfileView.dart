@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,25 +37,42 @@ class Profileview extends StatelessWidget{
   Widget build(BuildContext context) {
     miContext=context;
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: .center,
-          children: [
-            TextField(controller: edadController,decoration: InputDecoration(hintText: "Edad"),),
-            TextField(controller: alturaController,decoration: InputDecoration(hintText: "Altura"),),
-            Row(
-              mainAxisAlignment: .center,
-              children: [
-                TextButton(onPressed: funConfirmar, child: Text("Confirmar")),
-                TextButton(onPressed: funSalir, child: Text("Salir")),
-              ],
-            )
-          ],
-
+      body: SafeArea(
+        // Center + SingleChildScrollView: el formulario queda centrado y,
+        // si se abre el teclado, se puede hacer scroll en vez de desbordar.
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(AppEspacios.lg),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: AppEspacios.anchoFormulario),
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(AppEspacios.lg),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Icon(Icons.badge_outlined, size: AppEspacios.iconoGrande, color: AppColores.principal),
+                      SizedBox(height: AppEspacios.lg),
+                      TextField(controller: edadController,decoration: InputDecoration(hintText: "Edad",prefixIcon: Icon(Icons.cake_outlined)),),
+                      SizedBox(height: AppEspacios.md),
+                      TextField(controller: alturaController,decoration: InputDecoration(hintText: "Altura",prefixIcon: Icon(Icons.height_rounded)),),
+                      SizedBox(height: AppEspacios.lg),
+                      Row(
+                        children: [
+                          Expanded(child: OutlinedButton(onPressed: funSalir, child: Text("Salir"))),
+                          SizedBox(width: AppEspacios.md),
+                          Expanded(child: FilledButton(onPressed: funConfirmar, child: Text("Confirmar"))),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
-
       ),
-
     );
   }
 

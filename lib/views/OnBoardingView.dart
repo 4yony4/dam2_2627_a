@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/FbObjects/Perfil.dart';
+import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -97,19 +98,46 @@ class _Onboardingview extends State<Onboardingview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: .center,
-          children: [
-            Image.network('https://docs.flutter.dev/assets/images/dash/dash-fainting.gif'),
-            /*Padding(padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
-              child: CircularProgressIndicator(),
-            ),*/
-            Padding(padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
-              child: LinearProgressIndicator(value: _iProgress/100,)
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(AppEspacios.xl),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: AppEspacios.anchoFormulario),
+              child: Column(
+                mainAxisAlignment: .center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(AppRadios.tarjeta),
+                    child: Image.network(
+                      'https://docs.flutter.dev/assets/images/dash/dash-fainting.gif',
+                      // Si no hay conexión mostramos un icono en vez del error rojo.
+                      errorBuilder: (context, error, stackTrace) => Icon(Icons.flutter_dash, size: AppEspacios.iconoGrande*2, color: AppColores.principal),
+                    ),
+                  ),
+                  /*Padding(padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                    child: CircularProgressIndicator(),
+                  ),*/
+                  Padding(padding: EdgeInsets.fromLTRB(0, AppEspacios.xl+AppEspacios.md, 0, AppEspacios.md),
+                    // TweenAnimationBuilder: la barra avanza suavemente en vez de "saltar".
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween(begin: 0, end: _iProgress/100),
+                      duration: Duration(milliseconds: 400),
+                      curve: Curves.easeOut,
+                      builder: (context, valor, child) {
+                        return LinearProgressIndicator(
+                          value: valor,
+                          minHeight: AppEspacios.sm,
+                          borderRadius: BorderRadius.circular(AppEspacios.sm),
+                        );
+                      },
+                    )
+                  ),
+                  Text("$_iProgress%", style: AppTextos.tituloLista.copyWith(color: AppColores.oscuro))
+                ],
+              ),
             ),
-            Text("$_iProgress%")
-          ],
+          ),
         ),
       ),
     );

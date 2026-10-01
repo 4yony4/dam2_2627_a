@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/FbObjects/Mensaje.dart';
 import 'package:dam2_2627_a/insLib/bot_bars/InsBotBarStyle1.dart';
+import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
 import 'package:dam2_2627_a/views/HomeView.dart';
 import 'package:dam2_2627_a/views/LoginView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,11 +32,12 @@ class _MessagesviewState extends State<Messagesview> {
   }
 
   Widget? creadorDeItem(BuildContext context, int indice){
-    Color color=Colors.cyanAccent;
-    double altura=15+Random().nextDouble()*100;
+    // Antes la altura era aleatoria (Random) y la lista "saltaba" en cada repintado.
+    // Ahora todos los elementos tienen el mismo diseño, tipo tarjeta.
+    Color color=AppColores.suave;
     String sUrlImg="https://i.pinimg.com/originals/78/1a/51/781a5128e733c6a36aa6a10814e19548.gif";
     if(indice%2==0){
-      color=Colors.deepOrangeAccent;
+      color=AppColores.divisor;
       sUrlImg="https://media.tenor.com/aGj-frNYMFEAAAAM/cat-cat-dance.gif";
     }
 
@@ -46,16 +46,51 @@ class _MessagesviewState extends State<Messagesview> {
         Dataholder.instance.mensajeSeleccionado=Dataholder.instance.perfilUsuario.mensajes[indice];
         Navigator.pushNamed(context, "/MessageDetailview");
       },
-      child: Container(
-        color: color,
-        height: altura,
-        child: Row(
-          children: [
-            Image.network(sUrlImg),
-            Text(Dataholder.instance.perfilUsuario.mensajes[indice].titulo!),
-            Text(Dataholder.instance.perfilUsuario.mensajes[indice].cuerpo!),
-          ],
-        )
+      child: Card(
+        child: Padding(
+          padding: EdgeInsets.all(AppEspacios.md-AppEspacios.xs),
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadios.imagen),
+                child: Container(
+                  color: color,
+                  width: AppEspacios.imagenLista,
+                  height: AppEspacios.imagenLista,
+                  child: Image.network(
+                    sUrlImg,
+                    fit: BoxFit.cover,
+                    // Si la imagen no carga, mostramos un icono de mensaje.
+                    errorBuilder: (context, error, stackTrace) => Icon(Icons.mail_rounded, color: AppColores.oscuro),
+                  ),
+                ),
+              ),
+              SizedBox(width: AppEspacios.md),
+              // Expanded + ellipsis: los textos largos se cortan con "..." en vez de desbordar.
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      Dataholder.instance.perfilUsuario.mensajes[indice].titulo!,
+                      style: AppTextos.tituloLista,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: AppEspacios.xs),
+                    Text(
+                      Dataholder.instance.perfilUsuario.mensajes[indice].cuerpo!,
+                      style: AppTextos.secundario,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: AppColores.textoSecundario),
+            ],
+          ),
+        ),
       ),
     );
 
@@ -63,12 +98,14 @@ class _MessagesviewState extends State<Messagesview> {
 
   Widget creadorDeSeparador(BuildContext context, int indice){
       return Container(
-        height: 10,
+        height: AppEspacios.md-AppEspacios.xs,
       );
   }
 
   Widget crearLista(){
     return ListView.separated(
+        // Abajo dejamos sitio extra para que el botón flotante no tape el último mensaje.
+        padding: EdgeInsets.fromLTRB(AppEspacios.md, AppEspacios.md, AppEspacios.md, AppEspacios.xl*3),
         itemCount: iNumeroMensajes,
         itemBuilder: creadorDeItem,
         //scrollDirection:Axis.horizontal
@@ -119,7 +156,10 @@ class _MessagesviewState extends State<Messagesview> {
   Widget build(BuildContext context) {
     return
       Scaffold(
-        body: crearLista(),
+        body: SafeArea(
+          bottom: false,
+          child: crearLista(),
+        ),
         bottomNavigationBar: Insbotbarstyle1(
             blBadge1: Dataholder.instance.blNotificacionesBadge,
             sBadge2: Dataholder.instance.sMessagesBadgeText,

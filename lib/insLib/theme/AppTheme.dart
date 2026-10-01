@@ -41,6 +41,16 @@ class AppColores {
 
   /// Color de líneas divisorias.
   static const Color divisor = Color.fromARGB(255, 228, 233, 224);
+
+  /// Borde de las "pastillas" sobre la cabecera verde. Es algo más opaco que
+  /// [pastilla] para que el contorno se vea.
+  static const Color pastillaBorde = Color.fromARGB(110, 255, 255, 255);
+
+  /// Borde de los campos de texto cuando no tienen el foco.
+  static const Color bordeCampo = Color.fromARGB(255, 205, 214, 199);
+
+  /// Color de errores (por ejemplo, un PIN incorrecto).
+  static const Color error = Color.fromARGB(255, 186, 26, 26);
 }
 
 /// Espacios (márgenes y paddings) en múltiplos de 4.
@@ -54,6 +64,18 @@ class AppEspacios {
   /// Ancho máximo del contenido en tablets / horizontal, para que las
   /// líneas de texto no sean demasiado largas.
   static const double anchoMaximo = 720;
+
+  /// Ancho máximo de los formularios (login, registro, perfil...).
+  static const double anchoFormulario = 440;
+
+  /// Altura mínima de botones y elementos pulsables (accesibilidad: 48dp).
+  static const double alturaBoton = 48;
+
+  /// Tamaño de los iconos decorativos grandes (cabecera de formularios).
+  static const double iconoGrande = 48;
+
+  /// Tamaño de las imágenes/iconos grandes de los elementos de una lista.
+  static const double imagenLista = 56;
 }
 
 /// Radios de las esquinas redondeadas.
@@ -61,6 +83,12 @@ class AppRadios {
   static const double pastilla = 20;
   static const double tarjeta = 20;
   static const double cabecera = 32;
+
+  /// Campos de texto y botones.
+  static const double campo = 14;
+
+  /// Imágenes pequeñas dentro de tarjetas (por ejemplo, en la lista de mensajes).
+  static const double imagen = 12;
 }
 
 /// Estilos de texto reutilizables.
@@ -94,5 +122,40 @@ class AppTextos {
     color: AppColores.texto,
     fontSize: 17,
     height: 1.6,
+  );
+
+  /// Título de la barra superior (AppBar).
+  static const TextStyle tituloBarra = TextStyle(
+    color: AppColores.sobrePrincipal,
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+  );
+
+  /// Título grande de una pantalla sobre fondo claro (por ejemplo, "LOGIN").
+  static const TextStyle tituloPantalla = TextStyle(
+    color: AppColores.oscuro,
+    fontSize: 26,
+    fontWeight: FontWeight.bold,
+    letterSpacing: 1.5,
+  );
+
+  /// Título de un elemento de una lista.
+  static const TextStyle tituloLista = TextStyle(
+    color: AppColores.texto,
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+  );
+
+  /// Texto secundario sobre fondo claro (subtítulos, descripciones cortas).
+  static const TextStyle secundario = TextStyle(
+    color: AppColores.textoSecundario,
+    fontSize: 14,
+    height: 1.4,
+  );
+
+  /// Texto de los botones.
+  static const TextStyle boton = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
   );
 }
