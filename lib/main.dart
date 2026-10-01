@@ -1,18 +1,48 @@
+// =====================================================================
+// main.dart — PUNTO DE ENTRADA DE LA APP
+// ---------------------------------------------------------------------
+// Es el primer código que se ejecuta: Dart siempre empieza por main().
+// Su trabajo es muy corto:
+//   1. Preparar el motor de Flutter (WidgetsFlutterBinding).
+//   2. Conectar la app con nuestro proyecto de Firebase (Firebase.initializeApp).
+//   3. Lanzar el widget raíz Miapp (MiApp.dart) con runApp().
+// Las rutas (pantallas), el tema y la primera pantalla se configuran en
+// MiApp.dart; la primera pantalla real es OnBoardingView.
+// =====================================================================
 import 'package:dam2_2627_a/MiApp.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
 
+/// Función principal: lo primero que se ejecuta al abrir la app.
+///
+/// Es `async` porque tiene que ESPERAR (`await`) a que Firebase termine de
+/// inicializarse antes de mostrar ninguna pantalla: si una vista usara Auth
+/// o Firestore sin Firebase inicializado, la app fallaría.
 void main() async{
 
+  // Obligatorio cuando hay código asíncrono (como Firebase) ANTES de runApp():
+  // asegura que el "puente" entre Dart y la plataforma nativa (Android/Web)
+  // ya está creado.
   WidgetsFlutterBinding.ensureInitialized();
+  // Inicializa Firebase con la configuración de la plataforma actual (Android
+  // o Web), que está en firebase_options.dart (generado por `flutterfire configure`).
+  // Devuelve un Future: con `await` esperamos a que termine.
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // runApp() recibe el widget raíz y lo dibuja ocupando toda la pantalla.
   runApp(Miapp());
 }
 
+// NOTA: MyApp, MyHomePage y _MyHomePageState son el ejemplo del contador que
+// genera `flutter create`. NO se usan en ninguna parte (runApp lanza Miapp,
+// no MyApp). Se han dejado como referencia: sus comentarios en inglés
+// explican muy bien setState y build. ¿Qué pasaría si las borrásemos?
+//
+/// Widget raíz de la plantilla de ejemplo de Flutter (NO se usa en esta app).
+/// Es un StatelessWidget porque no guarda ningún dato que cambie.
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -44,6 +74,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// Página de ejemplo con un contador (plantilla; NO se usa en esta app).
+/// Es un StatefulWidget porque el número del contador cambia y la pantalla
+/// tiene que redibujarse cuando eso ocurre.
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
@@ -56,17 +89,25 @@ class MyHomePage extends StatefulWidget {
   // used by the build method of the State. Fields in a Widget subclass are
   // always marked "final".
 
+  /// Título de la AppBar. Es `final` porque los widgets son inmutables.
   final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+/// State del contador: aquí viven los datos que cambian (_counter) y el
+/// método build() que pinta la pantalla.
 class _MyHomePageState extends State<MyHomePage> {
+  /// Veces que se ha pulsado el botón. El `_` inicial lo hace privado al archivo.
   int _counter = 0;
 
+  /// Suma 1 al contador dentro de setState() para que se vea en pantalla.
   void _incrementCounter() {
     setState(() {
+      // (ES) setState() avisa a Flutter de que el estado ha cambiado: vuelve a
+      // ejecutar build() y la pantalla muestra el nuevo valor. Sin setState la
+      // variable cambiaría, pero la pantalla NO se actualizaría.
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values. If we changed
@@ -76,6 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  /// Dibuja la pantalla del contador. Se vuelve a ejecutar tras cada setState().
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done

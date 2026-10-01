@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 
+// =====================================================================
+// AppTheme.dart — TOKENS DE DISEÑO (colores, espacios, radios y textos)
+// ---------------------------------------------------------------------
+// Los usan MiApp.crearTema() (tema global) y todas las vistas.
+// Son clases con miembros `static const`: no se crean objetos, se usan
+// directamente (AppColores.principal). `const` = valor fijo que se conoce
+// al compilar, por eso Flutter puede reutilizarlo sin recrearlo.
+// =====================================================================
 /// Tokens de diseño de la app (colores, espacios, radios y textos).
 ///
 /// En vez de escribir números y colores "a mano" en cada vista, se usan
@@ -55,6 +63,8 @@ class AppColores {
 
 /// Espacios (márgenes y paddings) en múltiplos de 4.
 class AppEspacios {
+  // Escala de espacios: xs=4, sm=8, md=16, lg=24, xl=32. Un nombre corto
+  // ("md") es más fácil de recordar y de cambiar que un número suelto.
   static const double xs = 4;
   static const double sm = 8;
   static const double md = 16;
@@ -80,6 +90,7 @@ class AppEspacios {
 
 /// Radios de las esquinas redondeadas.
 class AppRadios {
+  // Radios de las pastillas (etiquetas), las tarjetas y la cabecera verde.
   static const double pastilla = 20;
   static const double tarjeta = 20;
   static const double cabecera = 32;
@@ -93,6 +104,7 @@ class AppRadios {
 
 /// Estilos de texto reutilizables.
 class AppTextos {
+  /// Título grande blanco sobre la cabecera verde (HomeView, detalle).
   static const TextStyle tituloCabecera = TextStyle(
     color: AppColores.sobrePrincipal,
     fontSize: 26,
@@ -100,17 +112,20 @@ class AppTextos {
     height: 1.25,
   );
 
+  /// Texto de la "pastilla" leído / no leído.
   static const TextStyle etiqueta = TextStyle(
     color: AppColores.sobrePrincipal,
     fontSize: 12,
     fontWeight: FontWeight.w600,
   );
 
+  /// Fecha del mensaje en la cabecera del detalle.
   static const TextStyle fecha = TextStyle(
     color: AppColores.sobrePrincipalSuave,
     fontSize: 13,
   );
 
+  /// Título de sección en mayúsculas (por ejemplo, "MENSAJE").
   static const TextStyle seccion = TextStyle(
     color: AppColores.oscuro,
     fontSize: 12,
@@ -118,6 +133,7 @@ class AppTextos {
     letterSpacing: 1.5,
   );
 
+  /// Cuerpo del mensaje en el detalle (interlineado amplio para leer mejor).
   static const TextStyle cuerpo = TextStyle(
     color: AppColores.texto,
     fontSize: 17,

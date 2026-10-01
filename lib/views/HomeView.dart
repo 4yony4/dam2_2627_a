@@ -1,3 +1,16 @@
+// =====================================================================
+// HomeView.dart — PANTALLA PRINCIPAL (ruta "/HomeView")
+// ---------------------------------------------------------------------
+// Saluda al usuario y le deja cambiar su nombre (se guarda en Firestore).
+// También sirve de muestrario de widgets: menú lateral (Drawer), menú
+// emergente (PopupMenuButton), campo con máscara de teléfono y campo de PIN.
+// Navegación:
+//   - Barra inferior (Insbotbarstyle1) -> "/Messagesview"
+//   - Logout (botón o menú "Salir")    -> cierra sesión -> "/LoginView"
+// Dataholder: LEE perfilUsuario, badges e índice de la barra; ESCRIBE
+// iBotBarIndex y perfilUsuario.name.
+// Firestore: escribe "Perfiles/{uid}" al pulsar "Guardar".
+// =====================================================================
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/DataHolder.dart';
@@ -10,19 +23,29 @@ import 'package:pin_input_text_field/pin_input_text_field.dart';
 
 import '../insLib/bot_bars/InsBotBarStyle1.dart';
 
+/// Pantalla principal. Es un StatefulWidget porque el nombre del saludo
+/// (sNombre) cambia y hay que redibujar la cabecera al guardarlo.
 class Homeview extends StatefulWidget{
+  /// Crea el State donde vive todo lo que cambia en esta pantalla.
   @override
   State<Homeview> createState() => _HomeviewState();
 }
 
+/// State de HomeView: datos que cambian y métodos de la pantalla.
 class _HomeviewState extends State<Homeview> {
+  /// BuildContext guardado en build() para navegar desde funClickLogout.
   late BuildContext miContext;
 
+  /// Controlador del campo "NOMBRE".
   TextEditingController nombreController=TextEditingController();
+  /// Nombre que se muestra en la cabecera. Se inicializa con el perfil de
+  /// Dataholder (`!` porque name es String? y damos por hecho que existe).
   String sNombre=Dataholder.instance.perfilUsuario.name!;
+  /// Acceso a Cloud Firestore.
   FirebaseFirestore db=FirebaseFirestore.instance;
 
 
+  /// Iconos para AnimatedBottomNavigationBar (comentada al final); ahora no se usa.
   List<IconData> iconList=[
     Icons.home,
     Icons.inbox,
@@ -32,37 +55,47 @@ class _HomeviewState extends State<Homeview> {
 
 
 
+  /// Formateador del paquete mask_text_input_formatter: obliga al campo de
+  /// teléfono a seguir el patrón '+# (###) ###-##-##', donde # es un dígito.
   MaskTextInputFormatter maskFormatter =  MaskTextInputFormatter(
       mask: '+# (###) ###-##-##',
       filter: { "#": RegExp(r'[0-9]') },
       type: MaskAutoCompletionType.lazy
   );
 
+  /// Al entrar, marca "Principal" (índice 0) como pestaña activa de la barra.
   @override
   void initState() {
     super.initState();
+    // Se guarda en Dataholder porque la barra se crea en build() leyendo de ahí.
     Dataholder.instance.iBotBarIndex=0;
 
   }
 
+  /// Botón "Guardar": cambia el nombre en pantalla, en Dataholder y en Firestore.
   void clickActualizarNombre(){
+    // setState: cambia sNombre y redibuja, así la cabecera muestra el nuevo nombre.
     setState(() {
       sNombre=nombreController.text;
     });
     Dataholder.instance.perfilUsuario.name=sNombre;
 
+    // set() sobrescribe "Perfiles/{uid}" con el perfil completo (toFirestore).
+    // NOTA: sin await ni control de errores: si falla, nadie se entera.
     db.collection("Perfiles")
         .doc(Dataholder.instance.perfilUsuario.uid)
         .set(Dataholder.instance.perfilUsuario.toFirestore());
 
   }
 
+  /// Cierra la sesión en Firebase Auth y vuelve al login (sin "atrás").
   void funClickLogout(){
     FirebaseAuth.instance.signOut();
     Navigator.popAndPushNamed(miContext, "/LoginView");
   }
 
   // Cabecera verde con degradado, igual que en la vista de detalle del mensaje.
+  // Es un método que devuelve un Widget: así build() queda más corto y legible.
   Widget crearCabecera(){
     return Container(
       width: double.infinity,
@@ -80,6 +113,8 @@ class _HomeviewState extends State<Homeview> {
     );
   }
 
+  /// Menú lateral (Drawer) que se abre con el botón de menú de la AppBar.
+  /// Los botones MENU1..MENU4 aún no hacen nada (onPressed vacío).
   Widget crearMenuLateral(){
     return Drawer(
       child: ListView(
@@ -123,14 +158,22 @@ class _HomeviewState extends State<Homeview> {
     );
   }
 
+  /// Dibuja la pantalla principal.
   @override
   Widget build(BuildContext context) {
+    // Guardamos el context para navegar desde funClickLogout.
     miContext=context;
+    // NOTA: esta línea está DENTRO de build(), que se ejecuta cada vez que la
+    // pantalla se redibuja (por ejemplo, tras el setState de "Guardar"). Por eso
+    // el campo vuelve a "HOLA HOLA HOLA" y se pierde lo escrito. ¿Dónde debería
+    // ir? (pista: initState).
     nombreController.text="HOLA HOLA HOLA";
     return Scaffold(
       appBar: AppBar(
         title: Text("HOMEVIEW"),
         actions: [
+          // PopupMenuButton: menú de "tres puntos" en la AppBar. onSelected recibe
+          // el `value` de la opción pulsada.
           PopupMenuButton<String>(
             tooltip: 'Opciones',
             onSelected: (opcion) {
@@ -138,6 +181,7 @@ class _HomeviewState extends State<Homeview> {
               if (opcion == 'perfil') print("PERFIL");
               if (opcion == 'salir') funClickLogout();
             },
+            // itemBuilder construye la lista de opciones cuando se abre el menú.
             itemBuilder: (context) => [
               PopupMenuItem(
                 value: 'buscar',
@@ -161,7 +205,9 @@ class _HomeviewState extends State<Homeview> {
           ),
         ],
       ),
+      // drawer: al indicarlo, el Scaffold añade solo el botón de menú en la AppBar.
       drawer: crearMenuLateral(),
+      // SafeArea con top:false: la AppBar ya protege la parte de arriba.
       body: SafeArea(
         top: false,
         // SingleChildScrollView: al abrir el teclado se puede hacer scroll en vez de desbordar.
@@ -185,14 +231,18 @@ class _HomeviewState extends State<Homeview> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
+                              // Campo del nombre: lo escrito se guarda al pulsar "Guardar".
                               TextField(controller: nombreController,decoration: InputDecoration(hintText: "NOMBRE",prefixIcon: Icon(Icons.person_outline_rounded)),),
                               SizedBox(height: AppEspacios.md),
+                              // Campo de teléfono con máscara: solo números y con formato fijo.
                               TextField(
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [maskFormatter],
                                 decoration: InputDecoration(hintText: "+# (###) ###-##-##",prefixIcon: Icon(Icons.phone_outlined)),
                               ),
                               SizedBox(height: AppEspacios.lg),
+                              // PinInputTextField (paquete pin_input_text_field): 4 círculos para un PIN.
+                              // No se guarda en ningún sitio: es solo un ejemplo de widget.
                               SizedBox(
                                 height: 64,
                                 child: PinInputTextField(
@@ -224,12 +274,15 @@ class _HomeviewState extends State<Homeview> {
           ),
         ),
       ),
+      // Barra de navegación inferior propia (insLib). Le pasamos los datos de
+      // Dataholder para que todas las pantallas la muestren igual.
       bottomNavigationBar:Insbotbarstyle1(
           blBadge1: Dataholder.instance.blNotificacionesBadge,
           sBadge2: Dataholder.instance.sMessagesBadgeText,
           iBarIndex: Dataholder.instance.iBotBarIndex
       )
 
+      // Alternativa con el paquete animated_bottom_navigation_bar (comentada).
       /*AnimatedBottomNavigationBar(
         icons: iconList,
         activeIndex: _bottomNavIndex,
