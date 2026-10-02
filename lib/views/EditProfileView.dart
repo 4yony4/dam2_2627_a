@@ -10,6 +10,8 @@
 // Firestore: escribe "Perfiles/{uid}" con update().
 // (No confundir con ProfileView, que CREA el perfil la primera vez.)
 // =====================================================================
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/DataHolder.dart';
 import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
@@ -100,6 +102,11 @@ class _EditprofileviewState extends State<Editprofileview> {
     });
 
     Perfil perfil=Dataholder.instance.perfilUsuario;
+
+    if(perfil.avatar!=null){
+      Dataholder.instance.storageadmin.subirImagen(perfil.avatar);
+    }
+
     perfil.name=nombreController.text.trim();
     perfil.edad=int.parse(edadController.text.trim());
     perfil.altura=double.parse(alturaController.text.trim().replaceAll(",", "."));
@@ -202,6 +209,9 @@ class _EditprofileviewState extends State<Editprofileview> {
     // XFile -> bytes -> Image. Image.memory funciona en Android y en Web
     // (Image.file necesita dart:io, que no existe en Web).
     final bytes = await image.readAsBytes();
+
+
+
     // `mounted`: tras un await la pantalla podría haberse cerrado ya.
     if(!mounted) return;
     setState(() {
