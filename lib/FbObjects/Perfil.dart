@@ -31,6 +31,9 @@ class Perfil {
   double? altura=0.0;
   /// Mensajes de "Perfiles/{uid}/Mensajes". Los rellena descargarMensajes().
   List<Mensaje> mensajes=<Mensaje>[];
+  /// Foto de avatar elegida en EditProfileView (solo en memoria, no se sube
+  /// a Firestore). null = sin avatar: se muestra el icono por defecto.
+  Image? avatar;
   /// CALLBACK: una función guardada en una variable. El perfil la llama cuando
   /// cambian los mensajes, pasando el número total. Así el modelo avisa a la
   /// pantalla (MessagesView) sin necesidad de conocerla. Es nullable (`?`)

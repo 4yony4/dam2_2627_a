@@ -6,6 +6,7 @@
 // emergente (PopupMenuButton), campo con máscara de teléfono y campo de PIN.
 // Navegación:
 //   - Barra inferior (Insbotbarstyle1) -> "/Messagesview"
+//   - Menú "Perfil"                    -> "/EditProfileview"
 //   - Logout (botón o menú "Salir")    -> cierra sesión -> "/LoginView"
 // Dataholder: LEE perfilUsuario, badges e índice de la barra; ESCRIBE
 // iBotBarIndex y perfilUsuario.name.
@@ -86,6 +87,17 @@ class _HomeviewState extends State<Homeview> {
         .doc(Dataholder.instance.perfilUsuario.uid)
         .set(Dataholder.instance.perfilUsuario.toFirestore());
 
+  }
+
+  /// Opción "Perfil" del menú: abre la pantalla de edición del perfil.
+  /// `await` espera a que el usuario vuelva; entonces refrescamos el saludo
+  /// por si ha cambiado el nombre.
+  Future<void> funClickPerfil() async{
+    await Navigator.pushNamed(miContext, "/EditProfileview");
+    if(!mounted) return;
+    setState(() {
+      sNombre=Dataholder.instance.perfilUsuario.name ?? "";
+    });
   }
 
   /// Cierra la sesión en Firebase Auth y vuelve al login (sin "atrás").
@@ -178,7 +190,7 @@ class _HomeviewState extends State<Homeview> {
             tooltip: 'Opciones',
             onSelected: (opcion) {
               if (opcion == 'buscar') print("BUSCAR");
-              if (opcion == 'perfil') print("PERFIL");
+              if (opcion == 'perfil') funClickPerfil();
               if (opcion == 'salir') funClickLogout();
             },
             // itemBuilder construye la lista de opciones cuando se abre el menú.

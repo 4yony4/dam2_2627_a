@@ -22,6 +22,7 @@ import 'package:dam2_2627_a/views/RegisterView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'views/EditProfileView.dart';
 import 'views/OnBoardingView.dart';
 import 'views/ProfileView.dart';
 
@@ -196,6 +197,7 @@ class Miapp extends StatelessWidget {
         "/RegisterView" : (context) =>  Registerview(),
         "/Onboardingview":(context) => Onboardingview(),
         "/Profileview":(context) => Profileview(),
+        "/EditProfileview":(context) => Editprofileview(),
         "/Messagesview":(context) => Messagesview(),
         "/MessageDetailview":(context) => Messagedetailview(),
 

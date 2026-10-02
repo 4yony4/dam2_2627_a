@@ -82,6 +82,7 @@ lib/
 │   ├── LoginView.dart         ← Inicio de sesión
 │   ├── RegisterView.dart      ← Registro de usuario nuevo
 │   ├── ProfileView.dart       ← Crear el perfil (edad y altura)
+│   ├── EditProfileView.dart   ← Editar el perfil (nombre, edad y altura)
 │   ├── HomeView.dart          ← Pantalla principal
 │   ├── MessagesView.dart      ← Lista de mensajes
 │   └── MessageDetailView.dart ← Detalle de un mensaje
@@ -106,6 +107,7 @@ flowchart TB
         V1[OnBoardingView]
         V2[LoginView / RegisterView]
         V3[ProfileView]
+        V7[EditProfileView]
         V4[HomeView]
         V5[MessagesView]
         V6[MessageDetailView]
@@ -132,6 +134,7 @@ flowchart TB
     P -->|contiene muchos| M
     V2 -->|login / registro| AUTH
     V3 -->|guarda perfil| FS
+    V7 -->|actualiza perfil| FS
     P -->|escucha cambios| FS
     M -->|update| FS
     TH -.->|estilos| UI
@@ -156,6 +159,7 @@ Todas las pantallas están registradas como **rutas con nombre** en `MiApp.dart`
 | `/LoginView` | `Loginview` |
 | `/RegisterView` | `Registerview` |
 | `/Profileview` | `Profileview` |
+| `/EditProfileview` | `Editprofileview` |
 | `/HomeView` | `Homeview` |
 | `/Messagesview` | `Messagesview` |
 | `/MessageDetailview` | `Messagedetailview` |
@@ -289,7 +293,19 @@ sequenceDiagram
 ```
 - **Guardar** actualiza el nombre del perfil en Firestore.
 - **Logout** cierra sesión (`FirebaseAuth.signOut()`) y vuelve a `LoginView`.
+- El menú **⋮ → Perfil** abre `EditProfileView`; al volver, el saludo se refresca con el nombre nuevo.
 - Muestra ejemplos de paquetes externos: `mask_text_input_formatter` y `pin_input_text_field`.
+
+### ✏️ EditProfileView — Editar perfil
+- Se abre desde el menú de tres puntos de `HomeView` (opción **Perfil**).
+- Formulario (`Form` + `TextFormField`) con **nombre**, **edad** y **altura**, relleno con
+  `Dataholder.instance.perfilUsuario` en `initState`.
+- Valida con `tryParse` (la altura acepta `1,80` o `1.80`) y teclado numérico.
+- **Avatar** abre la cámara (`image_picker`), convierte el `XFile` en `Image.memory` y lo guarda en
+  `perfilUsuario.avatar`; la cabecera lo muestra en círculo en lugar del icono. De momento solo
+  vive en memoria: no se sube a Storage ni se guarda en Firestore.
+- **Guardar** actualiza `perfilUsuario` y `Perfiles/{uid}` (`set` con `merge: true`), muestra un
+  `SnackBar` y vuelve atrás. **Cancelar** vuelve sin guardar.
 
 ### 💬 MessagesView — Lista de mensajes
 ```
