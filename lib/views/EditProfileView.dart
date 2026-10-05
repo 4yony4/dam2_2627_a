@@ -44,6 +44,8 @@ class _EditprofileviewState extends State<Editprofileview> {
   /// true mientras se está guardando en Firestore (desactiva el botón).
   bool bGuardando=false;
 
+  XFile? ficheroCargado;
+
   /// Rellena los campos con los datos actuales del perfil.
   /// Se hace en initState (UNA vez) y no en build(): si estuviera en build(),
   /// cada redibujado borraría lo que el usuario ha escrito.
@@ -104,7 +106,7 @@ class _EditprofileviewState extends State<Editprofileview> {
     Perfil perfil=Dataholder.instance.perfilUsuario;
 
     if(perfil.avatar!=null){
-      Dataholder.instance.storageadmin.subirImagen(perfil.avatar);
+      await Dataholder.instance.storageadmin.subirImagen(ficheroCargado!);
     }
 
     perfil.name=nombreController.text.trim();
@@ -184,31 +186,31 @@ class _EditprofileviewState extends State<Editprofileview> {
   void elegirAvatarCamara() async{
     ImagePicker imagePicker = ImagePicker();
 
-    final XFile? image = await imagePicker.pickImage(source: ImageSource.camera);
+    ficheroCargado = await imagePicker.pickImage(source: ImageSource.camera);
     // null = el usuario ha cerrado la cámara sin hacer foto.
-    if(image==null) return;
+    if(ficheroCargado==null) return;
 
     // XFile -> bytes -> Image. Image.memory funciona en Android y en Web
     // (Image.file necesita dart:io, que no existe en Web).
-    final bytes = await image.readAsBytes();
+    final bytes = await ficheroCargado?.readAsBytes();
     // `mounted`: tras un await la pantalla podría haberse cerrado ya.
     if(!mounted) return;
     setState(() {
       // fit: cover rellena el círculo entero sin deformar la foto.
-      Dataholder.instance.perfilUsuario.avatar=Image.memory(bytes, fit: BoxFit.cover);
+      Dataholder.instance.perfilUsuario.avatar=Image.memory(bytes!, fit: BoxFit.cover);
     });
   }
 
   void elegirAvatarGaleria() async{
     ImagePicker imagePicker = ImagePicker();
 
-    final XFile? image = await imagePicker.pickImage(source: ImageSource.gallery);
+    ficheroCargado = await imagePicker.pickImage(source: ImageSource.gallery);
     // null = el usuario ha cerrado la cámara sin hacer foto.
-    if(image==null) return;
+    if(ficheroCargado==null) return;
 
     // XFile -> bytes -> Image. Image.memory funciona en Android y en Web
     // (Image.file necesita dart:io, que no existe en Web).
-    final bytes = await image.readAsBytes();
+    final bytes = await ficheroCargado?.readAsBytes();
 
 
 
@@ -216,7 +218,7 @@ class _EditprofileviewState extends State<Editprofileview> {
     if(!mounted) return;
     setState(() {
       // fit: cover rellena el círculo entero sin deformar la foto.
-      Dataholder.instance.perfilUsuario.avatar=Image.memory(bytes, fit: BoxFit.cover);
+      Dataholder.instance.perfilUsuario.avatar=Image.memory(bytes!, fit: BoxFit.cover);
     });
   }
 

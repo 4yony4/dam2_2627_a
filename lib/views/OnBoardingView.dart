@@ -117,6 +117,7 @@ class _Onboardingview extends State<Onboardingview> {
         Navigator.popAndPushNamed(context, "/Profileview");
       }
       else{
+        print("HEY HEY HEY!!!!!");
         //SI TIENE PERFIL EN LA BASE DATOS
         //print("EL UID DEL URUSARIO LOGEADO ES: "+Dataholder.instance.perfilUsuario.altura.toString());
         // Empieza a escuchar los mensajes del usuario (Perfiles/{uid}/Mensajes).
