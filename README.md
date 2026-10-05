@@ -304,6 +304,7 @@ sequenceDiagram
 - **Avatar** abre la cámara (`image_picker`), convierte el `XFile` en `Image.memory` y lo guarda en
   `perfilUsuario.avatar`; la cabecera lo muestra en círculo en lugar del icono. De momento solo
   vive en memoria: no se sube a Storage ni se guarda en Firestore.
+  En iOS la cámara necesita la clave `NSCameraUsageDescription` en `ios/Runner/Info.plist` (ya añadida).
 - **Guardar** actualiza `perfilUsuario` y `Perfiles/{uid}` (`set` con `merge: true`), muestra un
   `SnackBar` y vuelve atrás. **Cancelar** vuelve sin guardar.
 
