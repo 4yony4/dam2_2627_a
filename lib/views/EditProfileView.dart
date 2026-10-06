@@ -106,7 +106,7 @@ class _EditprofileviewState extends State<Editprofileview> {
     Perfil perfil=Dataholder.instance.perfilUsuario;
 
     if(perfil.avatar!=null){
-      await Dataholder.instance.storageadmin.subirImagen(ficheroCargado!);
+      perfil.urlAvatar=await Dataholder.instance.storageadmin.subirAvatar(ficheroCargado!);
     }
 
     perfil.name=nombreController.text.trim();

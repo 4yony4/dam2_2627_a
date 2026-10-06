@@ -34,6 +34,8 @@ class Perfil {
   /// Foto de avatar elegida en EditProfileView (solo en memoria, no se sube
   /// a Firestore). null = sin avatar: se muestra el icono por defecto.
   Image? avatar;
+
+  String? urlAvatar;
   /// CALLBACK: una función guardada en una variable. El perfil la llama cuando
   /// cambian los mensajes, pasando el número total. Así el modelo avisa a la
   /// pantalla (MessagesView) sin necesidad de conocerla. Es nullable (`?`)
@@ -41,7 +43,9 @@ class Perfil {
   Function(int numeroMensajes)? onMessageReceived;
 
   /// Constructor con parámetros con nombre (y opcionales): Perfil(uid: ..., name: ...).
-  Perfil({this.uid,this.name, this.edad, this.altura});
+  Perfil({this.uid,this.name, this.edad, this.altura, this.urlAvatar}){
+    avatar=Image.network(this.urlAvatar!);
+  }
 
   /// Registra la función que se llamará cuando cambien los mensajes
   /// (MessagesView le pasa su método mensajeRecibido en initState).
@@ -66,6 +70,7 @@ class Perfil {
       name: data?['name'] as String?,
       edad: (data?['edad'] as num?)?.toInt(),
       altura: (data?['altura'] as num?)?.toDouble(),
+      urlAvatar:data?['urlAvatar'] as String?,
     );
   }
 
@@ -76,6 +81,7 @@ class Perfil {
       if (name != null) "name": name,
       if (edad != null) "edad": edad,
       if (altura != null) "altura": altura,
+      if (urlAvatar != null) "urlAvatar": urlAvatar,
     };
   }
   
