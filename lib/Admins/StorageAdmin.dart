@@ -25,14 +25,21 @@ class Storageadmin {
     // Create a reference to 'images/mountains.jpg'
     String ruta="usuarios/"+Dataholder.instance.perfilUsuario.uid!+"/imagenes/avatar.jpg";
     final rutaImagen = storageRef.child(ruta);
+    int tam1=await f.length();
+
+    print("TAMAÑO ANTES DE COMPRIMIR "+tam1.toString());
 
     final result = await FlutterImageCompress.compressWithFile(
       f.path,
       minWidth: 2300,
       minHeight: 1500,
-      quality: 94,
-      rotate: 90,
+      quality: 35,
+      rotate: 0,
     );
+
+    tam1=result!.length;
+
+    print("TAMAÑO DESPUES DE COMPRIMIR "+tam1.toString());
 
     try {
       await rutaImagen.putData(result!);
