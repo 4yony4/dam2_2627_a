@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 
+/// Gestiona la subida del avatar del perfil a Firebase Storage.
 class Storageadmin {
 
   final storage = FirebaseStorage.instance;
@@ -16,6 +17,9 @@ class Storageadmin {
 
   }
 
+  /// Comprime [f], sobrescribe `usuarios/{uid}/imagenes/avatar.jpg` y devuelve
+  /// su URL de descarga. La compresión y la subida requieren comprobar errores
+  /// en el llamador; actualmente una compresión nula lanza una excepción.
   Future<String> subirAvatar(XFile f) async {
     String rutaURL="";
 

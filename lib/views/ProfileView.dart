@@ -34,7 +34,7 @@ class Profileview extends StatelessWidget{
 
   /// Botón "Confirmar": si los dos campos tienen texto, crea un Perfil y lo
   /// guarda en Firestore con set() en "Perfiles/{uid}".
-  void funConfirmar(){
+  Future<void> funConfirmar() async{
     if(edadController.text.isNotEmpty &&
         alturaController.text.isNotEmpty) {
       // Referencia a la colección "Perfiles".
@@ -49,12 +49,10 @@ class Profileview extends StatelessWidget{
         edad: int.parse(edadController.text),
         altura: double.parse(alturaController.text)
       );
-      // set() crea (o reemplaza) el documento con id = uid. Sin await: navegamos
-      // sin saber si se ha guardado bien.
-      // NOTA: tampoco se guarda el perfil en Dataholder.perfilUsuario, y HomeView
-      // lo necesita al crearse.
-      perfiles.doc(FirebaseAuth.instance.currentUser!.uid).set(perfil.toFirestore());
-      Navigator.popAndPushNamed(miContext, "/HomeView");
+      // Esperamos la escritura antes de abrir HomeProfileGate, que volverá a
+      // leer el perfil desde Firestore.
+      await perfiles.doc(FirebaseAuth.instance.currentUser!.uid).set(perfil.toFirestore());
+      if (miContext.mounted) Navigator.popAndPushNamed(miContext, "/HomeView");
     }
   }
 

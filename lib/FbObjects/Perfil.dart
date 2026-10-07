@@ -2,7 +2,7 @@
 // Perfil.dart — MODELO DEL PERFIL DEL USUARIO (Y SUS MENSAJES)
 // ---------------------------------------------------------------------
 // Representa un documento de la colección "Perfiles" de Firestore:
-//     Perfiles/{uid}   ->  { name, edad, altura }
+//     Perfiles/{uid}   ->  { name, edad, altura, urlAvatar? }
 // El id del documento es el uid del usuario en Firebase Auth: así cada
 // cuenta tiene exactamente un perfil.
 // Además, el perfil "es dueño" de la subcolección de mensajes:
@@ -31,10 +31,11 @@ class Perfil {
   double? altura=0.0;
   /// Mensajes de "Perfiles/{uid}/Mensajes". Los rellena descargarMensajes().
   List<Mensaje> mensajes=<Mensaje>[];
-  /// Foto de avatar elegida en EditProfileView (solo en memoria, no se sube
-  /// a Firestore). null = sin avatar: se muestra el icono por defecto.
+  /// Imagen mostrada en la vista: en memoria al elegirla o desde la URL
+  /// guardada en Firestore al volver a cargar el perfil.
   Image? avatar;
 
+  /// URL de descarga del avatar en Firebase Storage, persistida en Firestore.
   String? urlAvatar;
   /// CALLBACK: una función guardada en una variable. El perfil la llama cuando
   /// cambian los mensajes, pasando el número total. Así el modelo avisa a la
@@ -44,7 +45,9 @@ class Perfil {
 
   /// Constructor con parámetros con nombre (y opcionales): Perfil(uid: ..., name: ...).
   Perfil({this.uid,this.name, this.edad, this.altura, this.urlAvatar}){
-    avatar=Image.network(this.urlAvatar!);
+    if (urlAvatar != null && urlAvatar!.isNotEmpty) {
+      avatar=Image.network(urlAvatar!);
+    }
   }
 
   /// Registra la función que se llamará cuando cambien los mensajes
@@ -120,10 +123,8 @@ class Perfil {
               Map<String,dynamic> fila=docSnapshot.data();
               mensajes.add(Mensaje(docSnapshot.id,fila));
             }
-            // NOTA: el `!` hace fallar este código si nadie ha llamado antes a
-            // setOnMessageReceived (onMessageReceived sería null). Al arrancar desde
-            // OnBoardingView todavía no hay nadie suscrito. ¿Cómo lo evitarías? (pista: `?.call`)
-            onMessageReceived!(mensajes.length);
+            // La pantalla de mensajes puede no estar abierta todavía.
+            onMessageReceived?.call(mensajes.length);
           } ,
       // NOTA: si falla la escucha (por ejemplo, por permisos) solo se imprime.
       onError: (error) => print("Listen failed: $error"),

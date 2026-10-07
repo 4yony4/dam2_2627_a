@@ -13,8 +13,12 @@
 // No usa Dataholder ni Firestore; solo consulta FirebaseAuth para calcular
 // rutaInicial (ver NOTA en build()).
 // =====================================================================
+import 'package:dam2_2627_a/DataHolder.dart';
 import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
+import 'package:dam2_2627_a/views/HomeDesktopView.dart';
+import 'package:dam2_2627_a/views/HomeProfileGate.dart';
 import 'package:dam2_2627_a/views/HomeView.dart';
+import 'package:dam2_2627_a/views/LoginDesktopView.dart';
 import 'package:dam2_2627_a/views/LoginView.dart';
 import 'package:dam2_2627_a/views/MessageDetailView.dart';
 import 'package:dam2_2627_a/views/MessagesView.dart';
@@ -174,6 +178,33 @@ class Miapp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    Dataholder.instance.initDeviceadmin(context);
+
+    Map<String, Widget Function(BuildContext)> rutasApp=
+    {
+      "/LoginView" : (context) =>  Loginview(),
+      "/HomeView" : (context) => HomeProfileGate(homeBuilder: (_) => Homeview()),
+      "/RegisterView" : (context) =>  Registerview(),
+      "/Onboardingview":(context) => Onboardingview(),
+      "/Profileview":(context) => Profileview(),
+      "/EditProfileview":(context) => Editprofileview(),
+      "/Messagesview":(context) => Messagesview(),
+      "/MessageDetailview":(context) => Messagedetailview(),
+    };
+
+    if(Dataholder.instance.deviceadmin!.getDeviceWidth()>1000){
+      rutasApp={
+        "/LoginView" : (context) =>  Loginview(),
+        "/HomeView" : (context) => HomeProfileGate(homeBuilder: (_) => HomeDesktopView()),
+        "/RegisterView" : (context) =>  Registerview(),
+        "/Onboardingview":(context) => Onboardingview(),
+        "/Profileview":(context) => Profileview(),
+        "/EditProfileview":(context) => Editprofileview(),
+        "/Messagesview":(context) => Messagesview(),
+        "/MessageDetailview":(context) => Messagedetailview(),
+      };
+    }
+
     // NOTA: aquí se calcula rutaInicial según haya o no un usuario con sesión
     // iniciada (FirebaseAuth.instance.currentUser != null)... pero después
     // initialRoute está fijado a "/Onboardingview" y rutaInicial NO se usa.
@@ -191,17 +222,7 @@ class Miapp extends StatelessWidget {
       // RUTAS CON NOMBRE: un mapa "nombre de ruta -> función que crea la pantalla".
       // Navigator.pushNamed / popAndPushNamed usan estas claves, que deben
       // escribirse EXACTAMENTE igual (mayúsculas incluidas).
-      routes: {
-        "/LoginView" : (context) =>  Loginview(),
-        "/HomeView" : (context) =>  Homeview(),
-        "/RegisterView" : (context) =>  Registerview(),
-        "/Onboardingview":(context) => Onboardingview(),
-        "/Profileview":(context) => Profileview(),
-        "/EditProfileview":(context) => Editprofileview(),
-        "/Messagesview":(context) => Messagesview(),
-        "/MessageDetailview":(context) => Messagedetailview(),
-
-      },
+      routes:rutasApp ,
       // Primera pantalla que se muestra al arrancar la app.
       initialRoute: "/Onboardingview",
     );

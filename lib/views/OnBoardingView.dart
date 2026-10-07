@@ -79,6 +79,10 @@ class _Onboardingview extends State<Onboardingview> {
       _iProgress=100;
     });
 
+    // Al abrir directamente /HomeView en Web, esta ruta puede quedar debajo
+    // de Home. En ese caso HomeProfileGate se encarga de restaurar el perfil.
+    if (!mounted || ModalRoute.of(context)?.isCurrent != true) return;
+
 
 
     // Firebase Auth recuerda la sesión entre aperturas de la app:
@@ -102,21 +106,18 @@ class _Onboardingview extends State<Onboardingview> {
 
       // get() lee el documento UNA sola vez (no en tiempo real). Es un Future: await.
       final docSnap = await docRef.get();
-      // NOTA: si el usuario NO tiene perfil, docSnap.data() devuelve null y el
-      // `!` hace que la app falle justo aquí. Por eso la comprobación
-      // `perfilUsuario==null` de más abajo nunca llega a ejecutarse (además,
-      // perfilUsuario no es nullable, así que siempre sería false). La línea
-      // comentada con `Perfil?` apunta a la solución.
-      //Perfil? perfil=docSnap.data();
-      Dataholder.instance.perfilUsuario=docSnap.data()!;
+      final perfil = docSnap.data();
+      if (!mounted) return;
+      if (perfil == null) {
+        Navigator.popAndPushNamed(context, "/Profileview");
+        return;
+      }
+      Dataholder.instance.perfilUsuario=perfil;
 
       // Escucha en tiempo real el documento del perfil (ver Dataholder).
       Dataholder.instance.initFirebaseListeners();
 
-      if(Dataholder.instance.perfilUsuario==null){//NO TIENE PERFIL EN LA BASE DE DATOS
-        Navigator.popAndPushNamed(context, "/Profileview");
-      }
-      else{
+      {
         print("HEY HEY HEY!!!!!");
         //SI TIENE PERFIL EN LA BASE DATOS
         //print("EL UID DEL URUSARIO LOGEADO ES: "+Dataholder.instance.perfilUsuario.altura.toString());
@@ -134,6 +135,7 @@ class _Onboardingview extends State<Onboardingview> {
         // Se guarda en Dataholder para que la barra inferior de HomeView lo muestre.
         Dataholder.instance.sMessagesBadgeText=numNoLeido.toString();
 
+        if (!mounted) return;
         Navigator.popAndPushNamed(context, "/HomeView");
       }
     }

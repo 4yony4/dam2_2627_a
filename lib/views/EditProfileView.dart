@@ -7,7 +7,8 @@
 //   - "Guardar"  -> valida, actualiza Dataholder y "Perfiles/{uid}" -> vuelve atrás
 //   - "Cancelar" -> vuelve atrás sin guardar
 // Dataholder: LEE y ESCRIBE perfilUsuario (name, edad, altura).
-// Firestore: escribe "Perfiles/{uid}" con update().
+// Firestore: escribe "Perfiles/{uid}" con set(merge: true).
+// Firebase Storage: al guardar, comprime y sube el avatar elegido.
 // (No confundir con ProfileView, que CREA el perfil la primera vez.)
 // =====================================================================
 import 'dart:io';
@@ -44,6 +45,7 @@ class _EditprofileviewState extends State<Editprofileview> {
   /// true mientras se está guardando en Firestore (desactiva el botón).
   bool bGuardando=false;
 
+  /// Última imagen elegida con cámara o galería; se sube al guardar.
   XFile? ficheroCargado;
 
   /// Rellena los campos con los datos actuales del perfil.
@@ -94,7 +96,9 @@ class _EditprofileviewState extends State<Editprofileview> {
   }
 
   /// Botón "Guardar": valida, actualiza el perfil en Dataholder y en Firestore,
-  /// y vuelve a la pantalla anterior.
+  /// sube el avatar a Storage cuando hay imagen y vuelve a la pantalla anterior.
+  /// NOTA: la condición actual usa perfil.avatar, que también puede existir
+  /// tras cargar un perfil anterior sin haber elegido un XFile en esta vista.
   Future<void> clickGuardar() async{
     // validate() ejecuta los validadores de todos los campos y pinta los errores.
     if(!formKey.currentState!.validate()) return;
@@ -181,7 +185,7 @@ class _EditprofileviewState extends State<Editprofileview> {
     );
   }
 
-  /// Botón "Avatar": abre la cámara, convierte la foto (XFile) en un widget
+  /// Botón "Avatar Cámara": abre la cámara, convierte la foto (XFile) en un widget
   /// Image, la guarda en el perfil de Dataholder y redibuja la cabecera.
   void elegirAvatarCamara() async{
     ImagePicker imagePicker = ImagePicker();
@@ -201,6 +205,8 @@ class _EditprofileviewState extends State<Editprofileview> {
     });
   }
 
+  /// Botón "Avatar Galería": muestra una foto elegida de la galería y guarda
+  /// el XFile para subirlo cuando se pulse Guardar.
   void elegirAvatarGaleria() async{
     ImagePicker imagePicker = ImagePicker();
 

@@ -15,7 +15,9 @@
 // =====================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/insLib/bot_bars/InsBotBarStyle1.dart';
+import 'package:flutter/cupertino.dart';
 
+import 'Admins/DeviceAdmin.dart';
 import 'Admins/StorageAdmin.dart';
 import 'FbObjects/Mensaje.dart';
 import 'FbObjects/Perfil.dart';
@@ -27,6 +29,7 @@ import 'FbObjects/Perfil.dart';
 class Dataholder {
 
   Storageadmin storageadmin=Storageadmin();
+  Deviceadmin? deviceadmin;
 
   /// Acceso a Cloud Firestore (FirebaseFirestore.instance también es un singleton).
   var db = FirebaseFirestore.instance;
@@ -72,6 +75,10 @@ class Dataholder {
           (event) => print("---->>>>current data: ${event.data()}"),
       onError: (error) => print("Listen failed: $error"),
     );
+  }
+
+  void initDeviceadmin(BuildContext context){
+    deviceadmin = Deviceadmin(context);
   }
 
 

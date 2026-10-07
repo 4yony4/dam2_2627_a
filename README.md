@@ -11,8 +11,12 @@ en la que el usuario:
 
 1. 🔐 **Se registra o inicia sesión** con email y contraseña (Firebase Authentication).
 2. 👤 **Crea su perfil** (edad y altura), que se guarda en Cloud Firestore.
-3. 💬 **Ve su lista de mensajes** en tiempo real, puede añadir mensajes nuevos y
+3. 💬 **Ve su lista de mensajes** en tiempo real y puede añadir mensajes nuevos.
 4. 🔎 **Abre el detalle** de cualquier mensaje pulsando sobre él.
+5. 🖼️ **Elige un avatar** desde la cámara o la galería y, al guardar el perfil, intenta subirlo a Firebase Storage.
+
+> ⚠️ El flujo del avatar tiene fallos conocidos al volver a guardar una foto ya cargada.
+> Consulta [Estado del avatar y Storage](#estado-del-avatar-y-storage) antes de probarlo.
 
 > 🎯 **Objetivo didáctico:** ver en un proyecto pequeño y completo cómo se conectan las piezas
 > típicas de una app real: pantallas, navegación, estado compartido, autenticación, base de datos
@@ -35,9 +39,10 @@ en la que el usuario:
 11. [De la lista al detalle](#-de-la-lista-al-detalle)
 12. [Sistema de estilos (tema)](#-sistema-de-estilos-tema)
 13. [Dependencias](#-dependencias)
-14. [Conceptos de Flutter que aparecen](#-conceptos-de-flutter-que-aparecen)
-15. [Ejercicios y mejoras propuestas](#-ejercicios-y-mejoras-propuestas)
-16. [Documentación con Codex](#-documentación-con-codex)
+14. [Estado del avatar y Storage](#estado-del-avatar-y-storage)
+15. [Conceptos de Flutter que aparecen](#-conceptos-de-flutter-que-aparecen)
+16. [Ejercicios y mejoras propuestas](#-ejercicios-y-mejoras-propuestas)
+17. [Documentación con Codex](#-documentación-con-codex)
 
 ---
 
@@ -59,6 +64,12 @@ flutter run
 | Proyecto Firebase | Ya configurado en `lib/firebase_options.dart` y `android/app/google-services.json` |
 | Plataformas configuradas en Firebase | Android y Web |
 
+Los archivos de configuración Firebase presentes en este repositorio están ignorados por Git.
+En otra copia del proyecto hay que generarlos para el proyecto Firebase correspondiente antes
+de ejecutar `flutter run`. El código de cámara y compresión del avatar está pendiente de
+comprobarse en cada plataforma; la configuración de Firebase para Android y Web no implica que
+ese flujo funcione en todas ellas.
+
 > ℹ️ Si quieres usar **tu propio** proyecto de Firebase, ejecuta `flutterfire configure`: regenerará
 > `firebase_options.dart`. Ese archivo lo genera la herramienta y **no se edita a mano**.
 
@@ -72,6 +83,9 @@ lib/
 ├── MiApp.dart                 ← MaterialApp: rutas (pantallas) y tema global
 ├── DataHolder.dart            ← Singleton con el estado compartido entre pantallas
 ├── firebase_options.dart      ← Configuración de Firebase (autogenerado)
+├── Admins/
+│   ├── DeviceAdmin.dart        ← Plataforma y tamaño total de pantalla en píxeles lógicos
+│   └── StorageAdmin.dart       ← Comprime y sube el avatar a Firebase Storage
 │
 ├── FbObjects/                 ← "Objetos de Firebase": modelos de datos
 │   ├── Perfil.dart            ← Perfil del usuario + su lista de mensajes
@@ -80,10 +94,13 @@ lib/
 ├── views/                     ← Una clase por pantalla
 │   ├── OnBoardingView.dart    ← Pantalla de carga inicial (barra de progreso)
 │   ├── LoginView.dart         ← Inicio de sesión
+│   ├── LoginDesktopView.dart  ← Variante horizontal del inicio de sesión (sin conectar)
 │   ├── RegisterView.dart      ← Registro de usuario nuevo
 │   ├── ProfileView.dart       ← Crear el perfil (edad y altura)
 │   ├── EditProfileView.dart   ← Editar el perfil (nombre, edad y altura)
 │   ├── HomeView.dart          ← Pantalla principal
+│   ├── HomeDesktopView.dart   ← Variante horizontal de Home para más de 1000 píxeles
+│   ├── HomeProfileGate.dart   ← Carga el perfil antes de construir Home tras un refresco
 │   ├── MessagesView.dart      ← Lista de mensajes
 │   └── MessageDetailView.dart ← Detalle de un mensaje
 │
@@ -127,6 +144,7 @@ flowchart TB
     subgraph FB["☁️ Firebase"]
         AUTH[Firebase Auth]
         FS[(Cloud Firestore)]
+        ST[(Firebase Storage)]
     end
 
     UI -->|lee / escribe| DH
@@ -137,6 +155,8 @@ flowchart TB
     V7 -->|actualiza perfil| FS
     P -->|escucha cambios| FS
     M -->|update| FS
+    V7 -->|sube avatar| ST
+    V7 -->|guarda URL del avatar| FS
     TH -.->|estilos| UI
 ```
 
@@ -145,7 +165,7 @@ flowchart TB
 | **Presentación** | Dibujar la interfaz y reaccionar a los toques del usuario | `views/*`, `insLib/*` |
 | **Estado compartido** | Guardar datos que necesitan varias pantallas | `DataHolder.dart` |
 | **Modelos** | Representar los datos y convertirlos a/desde Firestore | `FbObjects/*` |
-| **Backend** | Autenticación y base de datos en la nube | Firebase |
+| **Backend** | Autenticación, datos y archivos del avatar | Firebase Auth, Firestore y Storage |
 
 ---
 
@@ -163,6 +183,12 @@ Todas las pantallas están registradas como **rutas con nombre** en `MiApp.dart`
 | `/HomeView` | `Homeview` |
 | `/Messagesview` | `Messagesview` |
 | `/MessageDetailview` | `Messagedetailview` |
+
+`MiApp.dart` muestra `HomeDesktopView` en la ruta `/HomeView` cuando la anchura supera 1000
+píxeles lógicos. `LoginDesktopView` existe, pero todavía no está conectada a las rutas:
+`/LoginView` sigue mostrando el login original. La vista de escritorio usa
+`/LoginDesktopView` al cerrar sesión; esa ruta debe registrarse antes de usar dicho botón.
+Registro, creación/edición de perfil y mensajes siguen usando las rutas actuales.
 
 ```mermaid
 flowchart LR
@@ -210,8 +236,11 @@ flowchart TB
 
 ## ⏳ Arranque de la app (OnBoarding)
 
-`OnBoardingView` es lo primero que se ve. Simula una carga en 3 pasos (barra de progreso) y
-decide a qué pantalla ir:
+`OnBoardingView` es la ruta inicial normal. Simula una carga en 3 pasos (barra de progreso) y
+decide a qué pantalla ir. Si se refresca directamente `/HomeView` en Web,
+`HomeProfileGate` espera la restauración de Firebase Auth y carga `Perfiles/{uid}` antes de
+construir Home. Si falta sesión muestra Login; si falta el documento muestra ProfileView.
+OnBoarding no navega cuando queda debajo de esa ruta directa.
 
 ```mermaid
 sequenceDiagram
@@ -301,10 +330,14 @@ sequenceDiagram
 - Formulario (`Form` + `TextFormField`) con **nombre**, **edad** y **altura**, relleno con
   `Dataholder.instance.perfilUsuario` en `initState`.
 - Valida con `tryParse` (la altura acepta `1,80` o `1.80`) y teclado numérico.
-- **Avatar** abre la cámara (`image_picker`), convierte el `XFile` en `Image.memory` y lo guarda en
-  `perfilUsuario.avatar`; la cabecera lo muestra en círculo en lugar del icono. De momento solo
-  vive en memoria: no se sube a Storage ni se guarda en Firestore.
-  En iOS la cámara necesita la clave `NSCameraUsageDescription` en `ios/Runner/Info.plist` (ya añadida).
+- **Avatar Cámara** y **Avatar Galería** usan `image_picker` para elegir una foto. La vista la
+  muestra de inmediato con `Image.memory`. Al pulsar **Guardar**, `Storageadmin.subirAvatar()`
+  comprime el archivo y lo sube a `usuarios/{uid}/imagenes/avatar.jpg` en Firebase Storage;
+  después guarda la URL de descarga en `Perfiles/{uid}.urlAvatar`. Al reconstruir el perfil desde
+  Firestore se crea un `Image.network` con esa URL. La cámara en iOS dispone de
+  `NSCameraUsageDescription` en `ios/Runner/Info.plist`.
+- El flujo actual tiene [problemas conocidos](#estado-del-avatar-y-storage) y requiere pruebas
+  en dispositivo.
 - **Guardar** actualiza `perfilUsuario` y `Perfiles/{uid}` (`set` con `merge: true`), muestra un
   `SnackBar` y vuelve atrás. **Cancelar** vuelve sin guardar.
 
@@ -370,6 +403,7 @@ erDiagram
         string name
         int edad
         double altura
+        string urlAvatar "URL de descarga de Storage, si existe"
     }
     MENSAJES {
         string id PK "id autogenerado"
@@ -388,6 +422,7 @@ Perfiles/                      ← colección
     ├── name: "Yony"
     ├── edad: 20
     ├── altura: 1.80
+    ├── urlAvatar: "https://..."  ← solo si se ha guardado una foto
     └── Mensajes/              ← subcolección
         ├── {idMensaje1}
         │   ├── titulo: "Hola"
@@ -424,6 +459,8 @@ classDiagram
         +name String?
         +edad int?
         +altura double?
+        +urlAvatar String?
+        +avatar Image?
         +mensajes List~Mensaje~
         +onMessageReceived Function?
         +fromFirestore()$ Perfil
@@ -446,9 +483,14 @@ classDiagram
         +update(sPerfilUID)
     }
 
+    class Storageadmin {
+        +subirAvatar(XFile) Future~String~
+    }
+
     Dataholder --> Perfil : perfilUsuario
     Dataholder --> Mensaje : mensajeSeleccionado
     Perfil "1" o-- "*" Mensaje : mensajes
+    Dataholder --> Storageadmin : storageadmin
 ```
 
 ### Conversión entre objetos Dart y Firestore
@@ -612,11 +654,30 @@ Paleta principal:
 | [`firebase_core`](https://pub.dev/packages/firebase_core) | Inicializar Firebase | `main.dart` |
 | [`firebase_auth`](https://pub.dev/packages/firebase_auth) | Login, registro y logout | Login, Register, Home, OnBoarding |
 | [`cloud_firestore`](https://pub.dev/packages/cloud_firestore) | Base de datos en tiempo real | Modelos, Profile, Home, Messages |
+| [`firebase_storage`](https://pub.dev/packages/firebase_storage) | Almacenar el avatar | `StorageAdmin.dart` |
+| [`image_picker`](https://pub.dev/packages/image_picker) | Elegir foto de cámara o galería | `EditProfileView.dart` |
+| [`flutter_image_compress`](https://pub.dev/packages/flutter_image_compress) | Comprimir la foto antes de subirla | `StorageAdmin.dart` |
+| [`google_sign_in`](https://pub.dev/packages/google_sign_in) | Dependencia instalada; acceso con Google aún no integrado | — |
 | [`mask_text_input_formatter`](https://pub.dev/packages/mask_text_input_formatter) | Campo con máscara de teléfono | `HomeView` |
 | [`pin_input_text_field`](https://pub.dev/packages/pin_input_text_field) | Campo de PIN | `HomeView` |
 | [`animated_bottom_navigation_bar`](https://pub.dev/packages/animated_bottom_navigation_bar) | Importado para practicar (no se usa todavía) | `HomeView` |
 | [`flutter_quill`](https://pub.dev/packages/flutter_quill) | Editor de texto enriquecido (no se usa todavía) | — |
 | [`cupertino_icons`](https://pub.dev/packages/cupertino_icons) | Iconos estilo iOS | — |
+
+---
+
+## Estado del avatar y Storage
+
+El código de subida está implementado en `lib/Admins/StorageAdmin.dart`: comprime un `XFile`,
+sobrescribe `usuarios/{uid}/imagenes/avatar.jpg` y devuelve su URL. `EditProfileView` guarda esa
+URL en Firestore y `Perfil.fromFirestore` la recupera. La configuración local vincula las reglas
+de `storage.rules`; la conexión al emulador de Storage está comentada.
+
+**Problemas pendientes de corregir:** al guardar un perfil con avatar ya cargado se puede
+forzar un `XFile` nulo; y una
+excepción durante la compresión puede dejar la vista en estado de guardado. Las reglas actuales
+de Storage permiten acceso general hasta el 20 de febrero de 2028, por lo que requieren revisión
+antes de usar datos reales. Consulta [el detalle técnico](docs/avatar-storage.md).
 
 ---
 
@@ -645,9 +706,6 @@ Paleta principal:
 
 Puntos del código que se pueden mejorar. Son buenos ejercicios para clase:
 
-- [ ] **Perfil inexistente en el OnBoarding:** `docSnap.data()!` lanza una excepción si el usuario
-      tiene sesión pero no tiene perfil, así que la comprobación `perfilUsuario == null` nunca llega
-      a cumplirse. ¿Cómo lo arreglarías?
 - [ ] **Ruta inicial:** `MiApp` calcula `rutaInicial` pero luego usa siempre `"/Onboardingview"`.
 - [ ] **Nombre fijo:** `ProfileView` guarda siempre `name: "Yony"`. Añade un campo para el nombre.
 - [ ] **Mensajes de error al usuario:** los errores de login y registro solo salen por consola
