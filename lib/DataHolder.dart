@@ -14,6 +14,7 @@
 // Firestore: escucha en tiempo real el documento "Perfiles/{uid}".
 // =====================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dam2_2627_a/Admins/FirebaseAdmin.dart';
 import 'package:dam2_2627_a/insLib/bot_bars/InsBotBarStyle1.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -30,6 +31,7 @@ class Dataholder {
 
   Storageadmin storageadmin=Storageadmin();
   Deviceadmin? deviceadmin;
+  Firebaseadmin firebaseadmin=Firebaseadmin();
 
   /// Acceso a Cloud Firestore (FirebaseFirestore.instance también es un singleton).
   var db = FirebaseFirestore.instance;
@@ -61,24 +63,21 @@ class Dataholder {
   /// Pestaña seleccionada en la barra (0 Principal, 1 Notifications, 2 Messages).
   int iBotBarIndex=0;
 
-  /// Empieza a ESCUCHAR en tiempo real el documento "Perfiles/{uid}".
-  ///
-  /// snapshots() devuelve un Stream: un "grifo" que emite un evento al
-  /// principio y otro cada vez que el documento cambia en Firestore.
-  /// listen() indica qué hacer con cada evento. Lo llama OnBoardingView
-  /// después de cargar el perfil.
-  void initFirebaseListeners(){
-    final docRef = db.collection("Perfiles").doc(perfilUsuario.uid);
-    // NOTA: de momento solo se imprime por consola (y los errores, también solo
-    // se imprimen). Se podría usar para mantener perfilUsuario al día en vivo.
-    docRef.snapshots().listen(
-          (event) => print("---->>>>current data: ${event.data()}"),
-      onError: (error) => print("Listen failed: $error"),
-    );
-  }
-
   void initDeviceadmin(BuildContext context){
     deviceadmin = Deviceadmin(context);
+  }
+
+  Future<Perfil> descargarPerfil() async {
+    perfilUsuario=await firebaseadmin.descargarPerfil();
+    // Contamos los mensajes no leídos para el badge de la barra inferior.
+    int numNoLeido=0;
+    for(Mensaje m in perfilUsuario.mensajes){
+      if(!m.leido)numNoLeido++;
+    }
+    // Se guarda en Dataholder para que la barra inferior de HomeView lo muestre.
+    sMessagesBadgeText=numNoLeido.toString();
+
+    return perfilUsuario;
   }
 
 

@@ -42,7 +42,6 @@ class _HomeProfileGateState extends State<HomeProfileGate> {
     if (perfil == null) return _HomeDestination.profile;
 
     Dataholder.instance.perfilUsuario = perfil;
-    Dataholder.instance.initFirebaseListeners();
     await perfil.descargarMensajes();
     Dataholder.instance.sMessagesBadgeText = perfil.mensajes
         .where((mensaje) => !mensaje.leido)

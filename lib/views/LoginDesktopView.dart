@@ -58,7 +58,6 @@ class _LoginDesktopViewState extends State<LoginDesktopView> {
       }
 
       Dataholder.instance.perfilUsuario = profile;
-      Dataholder.instance.initFirebaseListeners();
       await profile.descargarMensajes();
       Dataholder.instance.sMessagesBadgeText = profile.mensajes
           .where((Mensaje mensaje) => !mensaje.leido)

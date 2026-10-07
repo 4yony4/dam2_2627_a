@@ -114,9 +114,6 @@ class _Onboardingview extends State<Onboardingview> {
       }
       Dataholder.instance.perfilUsuario=perfil;
 
-      // Escucha en tiempo real el documento del perfil (ver Dataholder).
-      Dataholder.instance.initFirebaseListeners();
-
       {
         print("HEY HEY HEY!!!!!");
         //SI TIENE PERFIL EN LA BASE DATOS

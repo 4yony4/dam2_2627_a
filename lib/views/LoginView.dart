@@ -13,6 +13,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../DataHolder.dart';
 import '../FbObjects/Mensaje.dart';
@@ -50,47 +51,15 @@ class Loginview extends StatelessWidget{
     // usuario inexistente...), Firebase LANZA una excepción. La capturamos aquí
     // para que la app no se cierre; e.code indica el motivo.
     try {
-      await faInstance.signInWithEmailAndPassword(
-          email: usuario,
-          password: pass
-      );
-      print("LOGIN BIEN!!!");
 
-      // Leemos el documento "Perfiles/{uid}" para saber si ya creó su perfil.
-      // .then(...) es otra forma de usar un Future (en lugar de await): la
-      // función se ejecuta cuando llega el resultado.
-      final docRef = db.collection("Perfiles")
-          .doc(FirebaseAuth.instance.currentUser!.uid).withConverter(
-        fromFirestore: Perfil.fromFirestore,
-        toFirestore: (Perfil perfil, _) => perfil.toFirestore(),
-      );
+      Perfil temp=await Dataholder.instance.descargarPerfil();
 
-      final docSnap = await docRef.get();
-
-      Dataholder.instance.perfilUsuario=docSnap.data()!;
-
-      // Escucha en tiempo real el documento del perfil (ver Dataholder).
-      Dataholder.instance.initFirebaseListeners();
-
-      if(Dataholder.instance.perfilUsuario==null){//NO TIENE PERFIL EN LA BASE DE DATOS
+      if(temp==null){//NO TIENE PERFIL EN LA BASE DE DATOS
         Navigator.popAndPushNamed(miContext, "/Profileview");
       }
       else{
-        //SI TIENE PERFIL EN LA BASE DATOS
-        //print("EL UID DEL URUSARIO LOGEADO ES: "+Dataholder.instance.perfilUsuario.altura.toString());
-        // Empieza a escuchar los mensajes del usuario (Perfiles/{uid}/Mensajes).
-        // NOTA: este `await` no espera a que lleguen los mensajes (listen() es
-        // asíncrono), así que la lista puede estar todavía vacía al contarlos.
-        await Dataholder.instance.perfilUsuario.descargarMensajes();
 
-        // Contamos los mensajes no leídos para el badge de la barra inferior.
-        int numNoLeido=0;
-        for(Mensaje m in Dataholder.instance.perfilUsuario.mensajes){
-          if(!m.leido)numNoLeido++;
-        }
 
-        // Se guarda en Dataholder para que la barra inferior de HomeView lo muestre.
-        Dataholder.instance.sMessagesBadgeText=numNoLeido.toString();
 
         Navigator.popAndPushNamed(miContext, "/HomeView");
       }
@@ -142,6 +111,46 @@ class Loginview extends StatelessWidget{
     Navigator.popAndPushNamed(miContext, "/RegisterView");
   }
 
+  /// Inicializa Google Sign-In para que Android lea el cliente OAuth Web de
+  /// google-services.json y después inicia sesión en Firebase.
+  Future<void> funGoogleLogin() async {
+
+    await GoogleSignIn.instance.initialize();
+    final googleUser = await GoogleSignIn.instance.authenticate();
+    final googleAuth = googleUser.authentication;
+    final credential = GoogleAuthProvider.credential(idToken: googleAuth.idToken);
+    await FirebaseAuth.instance.signInWithCredential(credential);
+
+    Perfil p=await Dataholder.instance.descargarPerfil();
+
+    if(p.uid.isNotEmpty){
+      Navigator.popAndPushNamed(miContext, "/HomeView");
+    }
+    else{
+      Navigator.popAndPushNamed(miContext, "/Profileview");
+    }
+
+    /*try {
+
+      if (miContext.mounted) {
+        Navigator.popAndPushNamed(miContext, "/HomeView");
+      }
+    } on GoogleSignInException catch (error) {
+      if (error.code == GoogleSignInExceptionCode.canceled) return;
+      if (miContext.mounted) {
+        ScaffoldMessenger.of(miContext).showSnackBar(
+          SnackBar(content: Text("No se pudo iniciar sesión con Google: ${error.description ?? error.code.name}")),
+        );
+      }
+    } on FirebaseAuthException catch (error) {
+      if (miContext.mounted) {
+        ScaffoldMessenger.of(miContext).showSnackBar(
+          SnackBar(content: Text(error.message ?? "No se pudo iniciar sesión en Firebase")),
+        );
+      }
+    }*/
+  }
+
   /// Dibuja el formulario de login.
   @override
   Widget build(BuildContext context) {
@@ -183,6 +192,8 @@ class Loginview extends StatelessWidget{
                       SizedBox(height: AppEspacios.md),
                       // obscureText: true -> oculta la contraseña con puntos.
                       TextField(obscureText: true,controller:passwordController,decoration: InputDecoration(hintText: "Contraseña",prefixIcon: Icon(Icons.key_rounded)),),
+                      SizedBox(height: AppEspacios.lg),
+                      FilledButton(onPressed: funGoogleLogin, child: Text("Login GOOGLE")),
                       SizedBox(height: AppEspacios.lg),
                       // onPressed recibe la FUNCIÓN (sin paréntesis): se ejecutará al pulsar.
                       FilledButton(onPressed: funClickLogin, child: Text("Login")),

@@ -293,6 +293,10 @@ sequenceDiagram
 - Si el login es correcto, comprueba si existe `Perfiles/{uid}` en Firestore:
   **sí** → `HomeView`, **no** → `ProfileView`.
 - Los errores (`user-not-found`, `wrong-password`) se capturan con `try / on FirebaseAuthException`.
+- El botón **Login GOOGLE** inicializa `google_sign_in`, obtiene un token de Google y lo entrega
+  a Firebase Auth. Si la autenticación termina, abre `/HomeView`, cuya puerta de carga comprueba
+  el perfil. La configuración Android incluye un cliente OAuth Web en `google-services.json`;
+  este flujo aún requiere verificación en un dispositivo.
 
 ### 📝 RegisterView — Crear cuenta
 - Tres campos: usuario (email), contraseña y repetir contraseña.
@@ -657,7 +661,7 @@ Paleta principal:
 | [`firebase_storage`](https://pub.dev/packages/firebase_storage) | Almacenar el avatar | `StorageAdmin.dart` |
 | [`image_picker`](https://pub.dev/packages/image_picker) | Elegir foto de cámara o galería | `EditProfileView.dart` |
 | [`flutter_image_compress`](https://pub.dev/packages/flutter_image_compress) | Comprimir la foto antes de subirla | `StorageAdmin.dart` |
-| [`google_sign_in`](https://pub.dev/packages/google_sign_in) | Dependencia instalada; acceso con Google aún no integrado | — |
+| [`google_sign_in`](https://pub.dev/packages/google_sign_in) | Inicio de sesión con Google (pendiente de prueba en Android) | `LoginView.dart` |
 | [`mask_text_input_formatter`](https://pub.dev/packages/mask_text_input_formatter) | Campo con máscara de teléfono | `HomeView` |
 | [`pin_input_text_field`](https://pub.dev/packages/pin_input_text_field) | Campo de PIN | `HomeView` |
 | [`animated_bottom_navigation_bar`](https://pub.dev/packages/animated_bottom_navigation_bar) | Importado para practicar (no se usa todavía) | `HomeView` |

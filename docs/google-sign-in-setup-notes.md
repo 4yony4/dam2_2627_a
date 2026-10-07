@@ -1,6 +1,21 @@
 # Notas temporales: configuración de Google Sign-In
 
-> Documento de trabajo para el paso de documentación. No es documentación final.
+> Documento de trabajo. Los pasos de consola reflejan una comprobación anterior y deben
+> verificarse de nuevo si aparece un error de proveedor o de credenciales.
+
+## Error `serverClientId must be provided on Android`
+
+`LoginView.funGoogleLogin()` llamaba a `authenticate()` sin inicializar antes
+`GoogleSignIn.instance`. Ahora llama a `initialize()` antes de autenticar. En la configuración
+Android local se ha comprobado que `google-services.json` contiene un cliente OAuth Web
+(`client_type: 3`) y que Gradle genera `default_web_client_id`. El ID procede de ese recurso;
+no se ha duplicado en el código Dart. Tras cambiar la configuración nativa, hay que reconstruir
+e instalar de nuevo la aplicación; un hot reload no regenera los recursos Android.
+
+Si el error persiste, comprueba el `google-services.json` de la variante que ejecutas, el
+`applicationId`, la huella SHA de su firma y que el proveedor Google esté habilitado en Firebase.
+La [documentación del plugin Android](https://pub.dev/packages/google_sign_in_android) describe
+el requisito del cliente OAuth Web y del recurso generado.
 
 ## Datos del proyecto
 
@@ -15,9 +30,9 @@
 
 1. **ID del proyecto** obtenido de `firebase.json` / `lib/firebase_options.dart`.
    Proyecto activo del MCP de Firebase fijado a `dam-daw-lm1`.
-2. **Proveedor Google en Authentication**: consultado con la API de Identity Toolkit
-   (`admin/v2/projects/dam-daw-lm1/defaultSupportedIdpConfigs`). Resultado: **vacío → Google NO está habilitado**.
-   Solo está activo Email/Contraseña. Hay que activarlo a mano (ver abajo).
+2. **Proveedor Google en Authentication**: una comprobación anterior con Identity Toolkit
+   devolvió una lista vacía. Su estado actual no se ha vuelto a verificar; compruébalo en la
+   consola si Firebase rechaza la credencial.
 3. **Huellas SHA del keystore de debug** (`~/.android/debug.keystore`, alias `androiddebugkey`),
    obtenidas con `keytool -list -v`:
    - SHA-1: `43:70:0B:BC:C5:BC:3D:6D:98:7C:7A:2C:AF:48:12:C2:76:E1:EB:3C`
@@ -32,22 +47,24 @@
    `GoogleSignIn.instance.initialize(...)` + `GoogleSignIn.instance.authenticate()`). `flutter pub get` OK.
    `flutter analyze`: mismos 101 avisos que antes (todos previos), ninguno nuevo.
 
-## Pasos manuales pendientes (consola de Firebase)
+## Comprobación del proveedor en la consola de Firebase
 
 1. Abrir <https://console.firebase.google.com/project/dam-daw-lm1/authentication/providers>.
 2. **Authentication → Sign-in method → Añadir proveedor → Google**.
 3. Activar el interruptor **Habilitar**.
 4. Elegir el **correo de asistencia del proyecto** (support email) en el desplegable.
 5. (Opcional) Ajustar el nombre público del proyecto que verá el usuario en la pantalla de consentimiento.
-6. **Guardar**. Firebase crea automáticamente el cliente OAuth de tipo *Web* (client_type 3).
+6. **Guardar** si aún no estaba habilitado. El archivo Android local ya contiene un cliente
+   OAuth de tipo *Web* (`client_type: 3`), pero eso no confirma por sí solo el estado del proveedor.
 
 ## Después de habilitar Google
 
-1. Descargar de nuevo `google-services.json`
+1. Si cambió la configuración en Firebase, descargar de nuevo `google-services.json`
    (Configuración del proyecto → Tus apps → Android → `google-services.json`) y sustituir
    `android/app/google-services.json`. Alternativa: `flutterfire configure` o el MCP `firebase_get_sdk_config`.
-2. Comprobar que `oauth_client` ya **no está vacío** y contiene una entrada con `"client_type": 3`
-   (el *Web client ID*, que en Android se pasa como `serverClientId` a `GoogleSignIn.instance.initialize`).
+2. Comprobar que `oauth_client` contiene una entrada con `"client_type": 3`. Con el plugin de
+   Google Services aplicado, `GoogleSignIn.instance.initialize()` puede leer el ID del recurso
+   Android generado sin pasarlo explícitamente como `serverClientId`.
 3. Web: el *Web client ID* (Consola → Authentication → Google → *Configuración del SDK web*) se puede usar
    como `clientId` en `initialize` o en la meta etiqueta `google-signin-client_id` de `web/index.html`.
 

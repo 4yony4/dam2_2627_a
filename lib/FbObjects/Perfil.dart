@@ -22,7 +22,7 @@ class Perfil {
   var db=FirebaseFirestore.instance;
 
   /// Id del documento = uid del usuario en Firebase Auth.
-  String? uid;
+  String uid="";
   /// Nombre del usuario.
   String? name;
   /// Edad en años.
@@ -44,7 +44,7 @@ class Perfil {
   Function(int numeroMensajes)? onMessageReceived;
 
   /// Constructor con parámetros con nombre (y opcionales): Perfil(uid: ..., name: ...).
-  Perfil({this.uid,this.name, this.edad, this.altura, this.urlAvatar}){
+  Perfil({required this.uid,this.name, this.edad, this.altura, this.urlAvatar}){
     if (urlAvatar != null && urlAvatar!.isNotEmpty) {
       avatar=Image.network(urlAvatar!);
     }
