@@ -52,6 +52,8 @@ class Loginview extends StatelessWidget{
     // para que la app no se cierre; e.code indica el motivo.
     try {
 
+      await FirebaseAuth.instance.signInWithEmailAndPassword(email: usuario, password: pass);
+
       Perfil temp=await Dataholder.instance.descargarPerfil();
 
       if(temp==null){//NO TIENE PERFIL EN LA BASE DE DATOS
@@ -130,25 +132,6 @@ class Loginview extends StatelessWidget{
       Navigator.popAndPushNamed(miContext, "/Profileview");
     }
 
-    /*try {
-
-      if (miContext.mounted) {
-        Navigator.popAndPushNamed(miContext, "/HomeView");
-      }
-    } on GoogleSignInException catch (error) {
-      if (error.code == GoogleSignInExceptionCode.canceled) return;
-      if (miContext.mounted) {
-        ScaffoldMessenger.of(miContext).showSnackBar(
-          SnackBar(content: Text("No se pudo iniciar sesión con Google: ${error.description ?? error.code.name}")),
-        );
-      }
-    } on FirebaseAuthException catch (error) {
-      if (miContext.mounted) {
-        ScaffoldMessenger.of(miContext).showSnackBar(
-          SnackBar(content: Text(error.message ?? "No se pudo iniciar sesión en Firebase")),
-        );
-      }
-    }*/
   }
 
   /// Dibuja el formulario de login.
