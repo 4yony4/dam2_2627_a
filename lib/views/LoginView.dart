@@ -10,6 +10,7 @@
 // No escribe en Dataholder (ver NOTA en funClickLogin).
 // =====================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dam2_2627_a/Admins/DeviceAdmin.dart';
 import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -134,6 +135,16 @@ class Loginview extends StatelessWidget{
 
   }
 
+  void funiOSLogin() async{
+
+    final appleProvider = AppleAuthProvider();
+    if (Dataholder.instance.deviceadmin.isWeb()) {
+      await FirebaseAuth.instance.signInWithPopup(appleProvider);
+    } else {
+      await FirebaseAuth.instance.signInWithProvider(appleProvider);
+    }
+  }
+
   /// Dibuja el formulario de login.
   @override
   Widget build(BuildContext context) {
@@ -176,7 +187,10 @@ class Loginview extends StatelessWidget{
                       // obscureText: true -> oculta la contraseña con puntos.
                       TextField(obscureText: true,controller:passwordController,decoration: InputDecoration(hintText: "Contraseña",prefixIcon: Icon(Icons.key_rounded)),),
                       SizedBox(height: AppEspacios.lg),
-                      FilledButton(onPressed: funGoogleLogin, child: Text("Login GOOGLE")),
+                      if(Dataholder.instance.deviceadmin.isAndroid())
+                        FilledButton(onPressed: funGoogleLogin, child: Text("Login GOOGLE")),
+                      if(Dataholder.instance.deviceadmin.isiOS())
+                        FilledButton(onPressed: funiOSLogin, child: Text("Login APPLE")),
                       SizedBox(height: AppEspacios.lg),
                       // onPressed recibe la FUNCIÓN (sin paréntesis): se ejecutará al pulsar.
                       FilledButton(onPressed: funClickLogin, child: Text("Login")),

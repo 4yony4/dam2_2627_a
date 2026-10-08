@@ -192,7 +192,7 @@ class Miapp extends StatelessWidget {
       "/MessageDetailview":(context) => Messagedetailview(),
     };
 
-    if(Dataholder.instance.deviceadmin!.getDeviceWidth()>1000){
+    if(Dataholder.instance.deviceadmin.getDeviceWidth()>1000){
       rutasApp={
         "/LoginView" : (context) =>  Loginview(),
         "/HomeView" : (context) => HomeProfileGate(homeBuilder: (_) => HomeDesktopView()),

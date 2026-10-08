@@ -227,7 +227,8 @@ class _HomeviewState extends State<Homeview> {
           padding: EdgeInsets.only(bottom: AppEspacios.xl),
           child: Column(
             children: [
-              crearCabecera(),
+              //if(Dataholder.instance.deviceadmin.isAndroid())
+                crearCabecera(),
               // En tablets u horizontal limitamos el ancho del formulario.
               Center(
                 child: ConstrainedBox(

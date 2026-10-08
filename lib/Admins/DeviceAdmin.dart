@@ -22,6 +22,10 @@ class Deviceadmin {
     return defaultTargetPlatform;
   }
 
+  bool isWeb(){
+    return kIsWeb;
+  }
+
   bool isAndroid() {
     return defaultTargetPlatform == TargetPlatform.android;
   }

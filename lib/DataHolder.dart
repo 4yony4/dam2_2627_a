@@ -30,7 +30,7 @@ import 'FbObjects/Perfil.dart';
 class Dataholder {
 
   Storageadmin storageadmin=Storageadmin();
-  Deviceadmin? deviceadmin;
+  late Deviceadmin deviceadmin;
   Firebaseadmin firebaseadmin=Firebaseadmin();
 
   /// Acceso a Cloud Firestore (FirebaseFirestore.instance también es un singleton).
