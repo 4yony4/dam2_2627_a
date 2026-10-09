@@ -27,6 +27,16 @@ class Mapview extends StatelessWidget{
           RichAttributionWidget(
             attributions: [TextSourceAttribution('© OpenStreetMap contributors')],
           ),
+          MarkerLayer(
+            markers: [
+              Marker(
+                point: LatLng(40.5868, -3.300),
+                width: 180,
+                height: 180,
+                child: Image.network(Dataholder.instance.perfilUsuario.urlAvatar!),
+              ),
+            ],
+          ),
         ],
       ),
 
