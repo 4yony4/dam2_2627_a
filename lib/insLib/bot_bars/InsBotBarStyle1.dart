@@ -66,6 +66,13 @@ class _Insbotbarstyle1State extends State<Insbotbarstyle1> {
         });
         Navigator.popAndPushNamed(context, "/Messagesview");
       }
+      case 3: {
+        print("MAPA");
+        setState(() {
+          widget.sBadge2="";
+        });
+        Navigator.popAndPushNamed(context, "/Mapview");
+      }
 
     }
     // Marca como seleccionada la pestaña pulsada.
@@ -97,6 +104,11 @@ class _Insbotbarstyle1State extends State<Insbotbarstyle1> {
           selectedIcon: Badge(isLabelVisible:widget.sBadge2.isNotEmpty, label: Text(widget.sBadge2), child: Icon(Icons.chat_bubble_rounded)),
           icon: Badge(isLabelVisible:widget.sBadge2.isNotEmpty, label: Text(widget.sBadge2), child: Icon(Icons.chat_bubble_outline_rounded)),
           label: 'Messages',
+        ),
+        NavigationDestination(
+          selectedIcon: Badge(isLabelVisible:widget.sBadge2.isNotEmpty, label: Text(widget.sBadge2), child: Icon(Icons.chat_bubble_rounded)),
+          icon: Badge(isLabelVisible:widget.sBadge2.isNotEmpty, label: Text(widget.sBadge2), child: Icon(Icons.chat_bubble_outline_rounded)),
+          label: 'Mapa',
         ),
       ],
     );

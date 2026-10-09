@@ -20,6 +20,7 @@ import 'package:dam2_2627_a/views/HomeProfileGate.dart';
 import 'package:dam2_2627_a/views/HomeView.dart';
 import 'package:dam2_2627_a/views/LoginDesktopView.dart';
 import 'package:dam2_2627_a/views/LoginView.dart';
+import 'package:dam2_2627_a/views/MapView.dart';
 import 'package:dam2_2627_a/views/MessageDetailView.dart';
 import 'package:dam2_2627_a/views/MessagesView.dart';
 import 'package:dam2_2627_a/views/RegisterView.dart';
@@ -190,6 +191,7 @@ class Miapp extends StatelessWidget {
       "/EditProfileview":(context) => Editprofileview(),
       "/Messagesview":(context) => Messagesview(),
       "/MessageDetailview":(context) => Messagedetailview(),
+      "/Mapview":(context) => Mapview(),
     };
 
     if(Dataholder.instance.deviceadmin.getDeviceWidth()>1000){
@@ -202,6 +204,7 @@ class Miapp extends StatelessWidget {
         "/EditProfileview":(context) => Editprofileview(),
         "/Messagesview":(context) => Messagesview(),
         "/MessageDetailview":(context) => Messagedetailview(),
+        "/Mapview":(context) => Mapview(),
       };
     }
 
