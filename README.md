@@ -102,6 +102,7 @@ lib/
 │   ├── HomeDesktopView.dart   ← Variante horizontal de Home para más de 1000 píxeles
 │   ├── HomeProfileGate.dart   ← Carga el perfil antes de construir Home tras un refresco
 │   ├── MessagesView.dart      ← Lista de mensajes
+│   ├── MapView.dart           ← Mapa de OpenStreetMap
 │   └── MessageDetailView.dart ← Detalle de un mensaje
 │
 └── insLib/                    ← "Librería interna": piezas reutilizables
@@ -182,6 +183,7 @@ Todas las pantallas están registradas como **rutas con nombre** en `MiApp.dart`
 | `/EditProfileview` | `Editprofileview` |
 | `/HomeView` | `Homeview` |
 | `/Messagesview` | `Messagesview` |
+| `/Mapview` | `Mapview` |
 | `/MessageDetailview` | `Messagedetailview` |
 
 `MiApp.dart` muestra `HomeDesktopView` en la ruta `/HomeView` cuando la anchura supera 1000
@@ -387,13 +389,19 @@ sequenceDiagram
 - Usa los tokens de `AppTheme.dart` y una animación de entrada con `TweenAnimationBuilder`.
 
 ### 🔻 InsBotBarStyle1 — Barra inferior
-Widget reutilizable (`NavigationBar`) que comparten `HomeView` y `MessagesView`:
+Widget reutilizable (`NavigationBar`) que comparten `HomeView`, `MessagesView` y `Mapview`:
 
 | Índice | Botón | Qué hace |
 |---|---|---|
 | 0 | 🏠 Principal | Va a `/HomeView` |
 | 1 | 🔔 Notifications | Oculta el puntito (badge) de notificaciones |
 | 2 | 💬 Messages | Borra el contador de no leídos y va a `/Messagesview` |
+| 3 | 🗺️ Mapa | Va a `/Mapview` |
+
+`Mapview` usa `flutter_map` con una `TileLayer` de OpenStreetMap, centrada inicialmente en Madrid.
+La atribución se muestra sobre el mapa. Las teselas requieren conexión a Internet; Android ya
+tiene el permiso `INTERNET` en el manifiesto principal. Si la pantalla se abre pero las teselas
+no cargan, comprueba la conexión y las respuestas HTTP del servidor de teselas.
 
 ---
 
@@ -662,6 +670,8 @@ Paleta principal:
 | [`image_picker`](https://pub.dev/packages/image_picker) | Elegir foto de cámara o galería | `EditProfileView.dart` |
 | [`flutter_image_compress`](https://pub.dev/packages/flutter_image_compress) | Comprimir la foto antes de subirla | `StorageAdmin.dart` |
 | [`google_sign_in`](https://pub.dev/packages/google_sign_in) | Inicio de sesión con Google (pendiente de prueba en Android) | `LoginView.dart` |
+| [`flutter_map`](https://pub.dev/packages/flutter_map) | Mapa interactivo con teselas de OpenStreetMap | `MapView.dart` |
+| [`latlong2`](https://pub.dev/packages/latlong2) | Coordenadas del centro inicial del mapa | `MapView.dart` |
 | [`mask_text_input_formatter`](https://pub.dev/packages/mask_text_input_formatter) | Campo con máscara de teléfono | `HomeView` |
 | [`pin_input_text_field`](https://pub.dev/packages/pin_input_text_field) | Campo de PIN | `HomeView` |
 | [`animated_bottom_navigation_bar`](https://pub.dev/packages/animated_bottom_navigation_bar) | Importado para practicar (no se usa todavía) | `HomeView` |

@@ -106,8 +106,8 @@ class _Insbotbarstyle1State extends State<Insbotbarstyle1> {
           label: 'Messages',
         ),
         NavigationDestination(
-          selectedIcon: Badge(isLabelVisible:widget.sBadge2.isNotEmpty, label: Text(widget.sBadge2), child: Icon(Icons.chat_bubble_rounded)),
-          icon: Badge(isLabelVisible:widget.sBadge2.isNotEmpty, label: Text(widget.sBadge2), child: Icon(Icons.chat_bubble_outline_rounded)),
+          selectedIcon: Icon(Icons.map_rounded),
+          icon: Icon(Icons.map_outlined),
           label: 'Mapa',
         ),
       ],
