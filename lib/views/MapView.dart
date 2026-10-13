@@ -32,6 +32,14 @@ class _MapviewState extends State<Mapview> {
     setState(()  {
       marcadores=mtemp;
     });
+    Dataholder.instance.firebaseadmin.onMarkersChanged(funLambda);//suscripcion a los listenes de markers
+  }
+
+  void funLambda(List<Marker> marcadores){
+    print("HA LLEGADO NUEVAS DATOS DE LA BASE DE DATOS");
+    setState(()  {
+      this.marcadores=marcadores;
+    });
   }
 
   /*

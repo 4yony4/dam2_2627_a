@@ -62,7 +62,7 @@ class Firebaseadmin {
     return marcadores;
   }
 
-  void onMarkersChanged(){
+  void onMarkersChanged(Function(List<Marker> marcadores) funcionLambda){
     List<Marker> marcadores=<Marker>[];
     final docRef=db.collection("POIs").limit(20);
     docRef.snapshots().listen(
@@ -78,7 +78,7 @@ class Firebaseadmin {
           );
           marcadores.add(marker);
         }
-        print("1111");
+        funcionLambda(marcadores);
       } ,
       // NOTA: si falla la escucha (por ejemplo, por permisos) solo se imprime.
       onError: (error) => print("Listen failed: $error"),
