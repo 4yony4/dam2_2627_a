@@ -19,6 +19,7 @@ import 'package:dam2_2627_a/insLib/bot_bars/InsBotBarStyle1.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'Admins/DeviceAdmin.dart';
+import 'Admins/GPSAdmin.dart';
 import 'Admins/StorageAdmin.dart';
 import 'FbObjects/Mensaje.dart';
 import 'FbObjects/Perfil.dart';
@@ -32,6 +33,7 @@ class Dataholder {
   Storageadmin storageadmin=Storageadmin();
   late Deviceadmin deviceadmin;
   Firebaseadmin firebaseadmin=Firebaseadmin();
+  Gpsadmin gpsadmin=Gpsadmin();
 
   /// Acceso a Cloud Firestore (FirebaseFirestore.instance también es un singleton).
   var db = FirebaseFirestore.instance;

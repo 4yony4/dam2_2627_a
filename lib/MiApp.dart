@@ -181,6 +181,7 @@ class Miapp extends StatelessWidget {
 
     Dataholder.instance.initDeviceadmin(context);
 
+
     Map<String, Widget Function(BuildContext)> rutasApp=
     {
       "/LoginView" : (context) =>  Loginview(),

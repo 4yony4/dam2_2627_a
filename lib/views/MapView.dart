@@ -1,6 +1,7 @@
 import 'package:dam2_2627_a/DataHolder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../insLib/bot_bars/InsBotBarStyle1.dart';
@@ -27,6 +28,8 @@ class _MapviewState extends State<Mapview> {
   }
 
   void descargarDatos() async{
+    Position position=await Dataholder.instance.gpsadmin.determinePosition();
+    print("---->>>>>> "+position.toString());
     List<Marker> mtemp=await Dataholder.instance.firebaseadmin.descargarPOIs();
 
     setState(()  {
