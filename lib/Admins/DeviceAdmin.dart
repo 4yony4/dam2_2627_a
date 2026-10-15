@@ -1,11 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class Deviceadmin {
 
   BuildContext context;
 
-  Deviceadmin(this.context);
+  Deviceadmin(this.context){
+    print("EL IDIOMA DEL DISPOTIVO ES: "+Intl.systemLocale.toString());
+    //Intl.defaultLocale="es_ES";
+  }
 
   /// Altura total de la pantalla en píxeles lógicos, incluidas las zonas
   /// ocupadas por las barras del sistema.

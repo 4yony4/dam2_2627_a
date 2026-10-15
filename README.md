@@ -415,7 +415,83 @@ y `funLambdaGPS` a `Gpsadmin.realTimePosition`. El primero recibe la lista de ma
 Firestore y llama a `setState`; el segundo recibe cada posición del GPS y escribe un POI en
 `POIs/{uid}`. El listener de Firestore recibe después ese cambio y reconstruye los marcadores.
 Son funciones de Dart ejecutadas en la app; `functions/index.js` solo contiene una plantilla
-comentada de Cloud Functions. Consulta [el flujo completo y sus límites](docs/mapa-gps-firestore.md).
+comentada de Cloud Functions.
+
+**1. Responsabilidad de cada pieza.** `Mapview` coordina los dos administradores guardados en
+`Dataholder`: `Gpsadmin` obtiene posiciones y `Firebaseadmin` lee y escribe `POIs`.
+
+```mermaid
+flowchart LR
+    GPS["Geolocator<br/>GPS del dispositivo"] --> GA["Gpsadmin<br/>permisos y posiciones"]
+    GA --> MV["Mapview<br/>coordina callbacks y dibuja"]
+    MV --> FA["Firebaseadmin<br/>lee, escucha y escribe POIs"]
+    FA <--> FS[("Cloud Firestore<br/>colección POIs")]
+    MV --> FM["FlutterMap<br/>MarkerLayer"]
+    OSM["OpenStreetMap<br/>teselas"] --> FM
+```
+
+**2. Al abrir el mapa.** La posición inicial sirve para comprobar permisos y obtener una lectura,
+pero no centra la cámara. Después se cargan los POIs y se registran las dos escuchas.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant M as Mapview
+    participant G as Gpsadmin
+    participant L as Geolocator
+    participant F as Firebaseadmin
+    participant B as Firestore
+    M->>F: descargarPOIs() sin await en initState
+    Note right of M: Su resultado se descarta
+    M->>G: determinePosition()
+    G->>L: comprobar servicio y permisos
+    G->>L: getCurrentPosition()
+    L-->>G: Position
+    G-->>M: Position
+    Note right of M: No se usa para centrar el mapa
+    M->>F: descargarPOIs()
+    F->>B: get() de POIs.limit(20)
+    B-->>F: documentos
+    F-->>M: List de Marker
+    M->>M: setState() muestra marcadores iniciales
+    M->>F: onMarkersChanged(funLambdaMarcadores)
+    F->>B: snapshots().listen(...)
+    M->>G: realTimePosition(funLambdaGPS)
+    G->>L: getPositionStream(...).listen(...)
+```
+
+Si `determinePosition()` falla, `descargarDatos()` se detiene antes de cargar los marcadores para
+la vista y antes de registrar las escuchas.
+
+**3. Cada nueva posición.** El callback de GPS escribe `POIs/{uid}`. El listener de Firestore
+reconstruye la lista y el callback de marcadores hace que Flutter la dibuje de nuevo. El mismo
+listener también puede recibir cambios hechos por otros clientes.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant L as Geolocator
+    participant G as Gpsadmin
+    participant M as Mapview
+    participant F as Firebaseadmin
+    participant B as Firestore
+    participant V as MarkerLayer
+    L-->>G: nueva Position del stream
+    Note over G: El listener anónimo invoca el callback recibido
+    G-->>M: funLambdaGPS(Position)
+    M->>F: actualizarGPSPerfil(uid, Position, "")
+    F->>B: set() en POIs/{uid}
+    Note over B: geoloc = GeoPoint<br/>titulo = ""
+    B-->>F: snapshot de POIs.limit(20)
+    Note over F: El listener anónimo reconstruye todos los Marker
+    F-->>M: funLambdaMarcadores(List de Marker)
+    M->>M: setState() sustituye marcadores
+    M->>V: build() entrega la lista actual
+```
+
+`Gpsadmin.realTimePosition` usa precisión `bestForNavigation` y `distanceFilter: 2`.
+`actualizarGPSPerfil` guarda `geoloc` y `titulo` vacío con `set()`, sin actualizar `Perfiles/{uid}`.
+Consulta [el detalle técnico y los límites actuales](docs/mapa-gps-firestore.md).
 
 ---
 
