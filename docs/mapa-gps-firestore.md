@@ -6,6 +6,20 @@ En este flujo, una lambda o callback es una función de Dart que se entrega a ot
 
 Las instancias de `Firebaseadmin` y `Gpsadmin` se guardan en `Dataholder.instance`, pero los listeners que crean viven por separado.
 
+### Quién hace cada trabajo
+
+```mermaid
+flowchart LR
+    GPS["Geolocator<br/>GPS del dispositivo"] --> GA["Gpsadmin<br/>permisos y posiciones"]
+    GA --> MV["Mapview<br/>coordina callbacks y dibuja"]
+    MV --> FA["Firebaseadmin<br/>lee, escucha y escribe POIs"]
+    FA <--> FS[("Cloud Firestore<br/>colección POIs")]
+    MV --> FM["FlutterMap<br/>MarkerLayer"]
+    OSM["OpenStreetMap<br/>teselas"] --> FM
+```
+
+Las flechas muestran el intercambio de datos. `Mapview` usa las instancias de los dos administradores guardadas en `Dataholder`; `FlutterMap` recibe los marcadores de la vista y las teselas se descargan aparte de OpenStreetMap.
+
 ## Flujo al abrir el mapa
 
 1. `Mapview.initState()` selecciona la pestaña del mapa, llama a `descargarPOIs()` una vez sin esperar su resultado y arranca `descargarDatos()`. Esa primera llamada no aporta marcadores a la pantalla.
@@ -13,19 +27,60 @@ Las instancias de `Firebaseadmin` y `Gpsadmin` se guardan en `Dataholder.instanc
 3. Después espera `Firebaseadmin.descargarPOIs()`, que hace una lectura puntual de `POIs` con `limit(20)`. Cada documento debe contener `geoloc` como `GeoPoint`; sus coordenadas se convierten en un `Marker` con `Icons.pin_drop`. La vista guarda esa lista con `setState()`.
 4. La vista registra `funLambdaMarcadores` mediante `Firebaseadmin.onMarkersChanged(...)` y `funLambdaGPS` mediante `Gpsadmin.realTimePosition(...)`.
 
+```mermaid
+sequenceDiagram
+    autonumber
+    participant M as Mapview
+    participant G as Gpsadmin
+    participant L as Geolocator
+    participant F as Firebaseadmin
+    participant B as Firestore
+    M->>F: descargarPOIs() sin await en initState
+    Note right of M: Su resultado se descarta
+    M->>G: determinePosition()
+    G->>L: comprobar servicio y permisos
+    G->>L: getCurrentPosition()
+    L-->>G: Position
+    G-->>M: Position
+    Note right of M: No se usa para centrar el mapa
+    M->>F: descargarPOIs()
+    F->>B: get() de POIs.limit(20)
+    B-->>F: documentos
+    F-->>M: List de Marker
+    M->>M: setState() muestra marcadores iniciales
+    M->>F: onMarkersChanged(funLambdaMarcadores)
+    F->>B: snapshots().listen(...)
+    M->>G: realTimePosition(funLambdaGPS)
+    G->>L: getPositionStream(...).listen(...)
+```
+
+Las dos llamadas finales **registran escuchas**; no esperan a que llegue un cambio. Si `determinePosition()` falla, `descargarDatos()` se detiene antes de la lectura usada por la vista y antes de registrar ambas escuchas.
+
 ## Qué hace cada callback
 
-```text
-Geolocator.getPositionStream()
-  → Gpsadmin.realTimePosition: listener anónimo recibe Position
-  → funLambdaGPS(Position) en Mapview
-  → Firebaseadmin.actualizarGPSPerfil(uid, position, "")
-  → set() en POIs/{uid}: {geoloc: GeoPoint, titulo: ""}
-  → Firestore notifica la consulta POIs.limit(20)
-  → Firebaseadmin.onMarkersChanged: listener anónimo reconstruye List<Marker>
-  → funLambdaMarcadores(List<Marker>) en Mapview
-  → setState() → MarkerLayer se redibuja
+```mermaid
+sequenceDiagram
+    autonumber
+    participant L as Geolocator
+    participant G as Gpsadmin
+    participant M as Mapview
+    participant F as Firebaseadmin
+    participant B as Firestore
+    participant V as MarkerLayer
+    L-->>G: nueva Position del stream
+    Note over G: El listener anónimo invoca el callback recibido
+    G-->>M: funLambdaGPS(Position)
+    M->>F: actualizarGPSPerfil(uid, Position, "")
+    F->>B: set() en POIs/{uid}
+    Note over B: geoloc = GeoPoint<br/>titulo = ""
+    B-->>F: snapshot de POIs.limit(20)
+    Note over F: El listener anónimo reconstruye todos los Marker
+    F-->>M: funLambdaMarcadores(List de Marker)
+    M->>M: setState() sustituye marcadores
+    M->>V: build() entrega la lista actual
 ```
+
+En el diagrama, las flechas hacia `funLambdaGPS` y `funLambdaMarcadores` son **llamadas a funciones que la vista pasó como parámetro**. Por eso `Gpsadmin` y `Firebaseadmin` pueden avisar a la vista sin guardar una referencia directa a ella. El mismo listener de Firestore puede activarse por cambios hechos desde otro cliente, aunque no haya llegado una posición nueva de este dispositivo.
 
 `Gpsadmin.realTimePosition` configura `LocationAccuracy.bestForNavigation` y `distanceFilter: 2`: el flujo solicita nuevas posiciones al haber al menos 2 metros de desplazamiento, sujeto al comportamiento del proveedor de ubicación. Su función anónima llama al callback recibido por parámetro con cada `Position`. No devuelve una suscripción a la vista.
 
