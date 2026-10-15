@@ -29,7 +29,7 @@ class _MapviewState extends State<Mapview> {
 
   void descargarDatos() async{
     Position position=await Dataholder.instance.gpsadmin.determinePosition();
-    print("---->>>>>> "+position.toString());
+    //print("---->>>>>> "+position.toString());
 
     List<Marker> mtemp=await Dataholder.instance.firebaseadmin.descargarPOIs();
 

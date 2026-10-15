@@ -14,6 +14,7 @@ en la que el usuario:
 3. 💬 **Ve su lista de mensajes** en tiempo real y puede añadir mensajes nuevos.
 4. 🔎 **Abre el detalle** de cualquier mensaje pulsando sobre él.
 5. 🖼️ **Elige un avatar** desde la cámara o la galería y, al guardar el perfil, intenta subirlo a Firebase Storage.
+6. 🗺️ **Consulta POIs en un mapa** y, con permiso de ubicación, publica su posición en Firestore.
 
 > ⚠️ El flujo del avatar tiene fallos conocidos al volver a guardar una foto ya cargada.
 > Consulta [Estado del avatar y Storage](#estado-del-avatar-y-storage) antes de probarlo.
@@ -43,6 +44,7 @@ en la que el usuario:
 15. [Conceptos de Flutter que aparecen](#-conceptos-de-flutter-que-aparecen)
 16. [Ejercicios y mejoras propuestas](#-ejercicios-y-mejoras-propuestas)
 17. [Documentación con Codex](#-documentación-con-codex)
+18. [Mapa, GPS y callbacks](#mapa-gps-y-callbacks)
 
 ---
 
@@ -85,6 +87,8 @@ lib/
 ├── firebase_options.dart      ← Configuración de Firebase (autogenerado)
 ├── Admins/
 │   ├── DeviceAdmin.dart        ← Plataforma y tamaño total de pantalla en píxeles lógicos
+│   ├── FirebaseAdmin.dart      ← Lectura y escucha de POIs; escritura de posición
+│   ├── GPSAdmin.dart           ← Permisos y flujo de posiciones del dispositivo
 │   └── StorageAdmin.dart       ← Comprime y sube el avatar a Firebase Storage
 │
 ├── FbObjects/                 ← "Objetos de Firebase": modelos de datos
@@ -399,9 +403,19 @@ Widget reutilizable (`NavigationBar`) que comparten `HomeView`, `MessagesView` y
 | 3 | 🗺️ Mapa | Va a `/Mapview` |
 
 `Mapview` usa `flutter_map` con una `TileLayer` de OpenStreetMap, centrada inicialmente en Madrid.
-La atribución se muestra sobre el mapa. Las teselas requieren conexión a Internet; Android ya
+Muestra hasta 20 documentos de `POIs` como marcadores y escucha sus cambios en Firestore.
+La atribución está comentada en el código y no se muestra actualmente. Las teselas requieren conexión a Internet; Android ya
 tiene el permiso `INTERNET` en el manifiesto principal. Si la pantalla se abre pero las teselas
 no cargan, comprueba la conexión y las respuestas HTTP del servidor de teselas.
+
+### Mapa, GPS y callbacks
+
+`Mapview` pasa dos métodos como callbacks: `funLambdaMarcadores` a `Firebaseadmin.onMarkersChanged`
+y `funLambdaGPS` a `Gpsadmin.realTimePosition`. El primero recibe la lista de marcadores de
+Firestore y llama a `setState`; el segundo recibe cada posición del GPS y escribe un POI en
+`POIs/{uid}`. El listener de Firestore recibe después ese cambio y reconstruye los marcadores.
+Son funciones de Dart ejecutadas en la app; `functions/index.js` solo contiene una plantilla
+comentada de Cloud Functions. Consulta [el flujo completo y sus límites](docs/mapa-gps-firestore.md).
 
 ---
 
@@ -672,6 +686,7 @@ Paleta principal:
 | [`google_sign_in`](https://pub.dev/packages/google_sign_in) | Inicio de sesión con Google (pendiente de prueba en Android) | `LoginView.dart` |
 | [`flutter_map`](https://pub.dev/packages/flutter_map) | Mapa interactivo con teselas de OpenStreetMap | `MapView.dart` |
 | [`latlong2`](https://pub.dev/packages/latlong2) | Coordenadas del centro inicial del mapa | `MapView.dart` |
+| [`geolocator`](https://pub.dev/packages/geolocator) | Permisos, posición inicial y flujo GPS | `GPSAdmin.dart`, `MapView.dart` |
 | [`mask_text_input_formatter`](https://pub.dev/packages/mask_text_input_formatter) | Campo con máscara de teléfono | `HomeView` |
 | [`pin_input_text_field`](https://pub.dev/packages/pin_input_text_field) | Campo de PIN | `HomeView` |
 | [`animated_bottom_navigation_bar`](https://pub.dev/packages/animated_bottom_navigation_bar) | Importado para practicar (no se usa todavía) | `HomeView` |
