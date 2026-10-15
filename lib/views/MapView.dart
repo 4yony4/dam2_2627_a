@@ -30,19 +30,29 @@ class _MapviewState extends State<Mapview> {
   void descargarDatos() async{
     Position position=await Dataholder.instance.gpsadmin.determinePosition();
     print("---->>>>>> "+position.toString());
+
     List<Marker> mtemp=await Dataholder.instance.firebaseadmin.descargarPOIs();
 
     setState(()  {
       marcadores=mtemp;
     });
-    Dataholder.instance.firebaseadmin.onMarkersChanged(funLambda);//suscripcion a los listenes de markers
+    Dataholder.instance.firebaseadmin.onMarkersChanged(funLambdaMarcadores);//suscripcion a los listenes de markers
+    Dataholder.instance.gpsadmin.realTimePosition(funLambdaGPS);
   }
 
-  void funLambda(List<Marker> marcadores){
-    print("HA LLEGADO NUEVAS DATOS DE LA BASE DE DATOS");
+  void funLambdaMarcadores(List<Marker> marcadores){
+    //print("HA LLEGADO NUEVAS DATOS DE LA BASE DE DATOS");
     setState(()  {
       this.marcadores=marcadores;
     });
+  }
+
+  void funLambdaGPS(Position position){
+    //print("POSICION AHORA ES: ---->>>>>> "+position.toString());
+    Dataholder.instance.firebaseadmin.actualizarGPSPerfil(
+        Dataholder.instance.perfilUsuario.uid,
+        position,""
+    );
   }
 
   /*

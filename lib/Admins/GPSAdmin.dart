@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:geolocator/geolocator.dart';
 
 class Gpsadmin {
@@ -41,6 +43,19 @@ class Gpsadmin {
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     return await Geolocator.getCurrentPosition();
+  }
+
+  void realTimePosition(Function(Position position) funcionLambda){
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.bestForNavigation,
+      distanceFilter: 2,
+    );
+
+    Geolocator.getPositionStream(locationSettings: locationSettings).listen(
+            (Position? position) {
+              funcionLambda(position!);
+
+        });
   }
 
 }

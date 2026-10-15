@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../FbObjects/Perfil.dart';
@@ -83,6 +84,16 @@ class Firebaseadmin {
       // NOTA: si falla la escucha (por ejemplo, por permisos) solo se imprime.
       onError: (error) => print("Listen failed: $error"),
     );
+  }
+
+  void actualizarGPSPerfil(String uid,Position position,String titulo)async{
+    GeoPoint point=GeoPoint(position.latitude,position.longitude);
+    final mensajes = db.collection("POIs").doc(uid);
+    Map<String,dynamic> poi={
+      "geoloc":point,
+      "titulo":titulo
+    };
+    await mensajes.set(poi);
   }
 
 }
