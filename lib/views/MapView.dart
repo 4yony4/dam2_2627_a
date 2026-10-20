@@ -23,6 +23,7 @@ class _MapviewState extends State<Mapview> {
     super.initState();
     Dataholder.instance.iBotBarIndex=3;
     Dataholder.instance.firebaseadmin.descargarPOIs();
+    Dataholder.instance.apisadmin.getEarthQuakes();
     descargarDatos();
 
   }
