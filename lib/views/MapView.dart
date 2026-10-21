@@ -1,3 +1,4 @@
+import 'package:dam2_2627_a/APIObjects/EarthQuake.dart';
 import 'package:dam2_2627_a/DataHolder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -23,7 +24,7 @@ class _MapviewState extends State<Mapview> {
     super.initState();
     Dataholder.instance.iBotBarIndex=3;
     Dataholder.instance.firebaseadmin.descargarPOIs();
-    Dataholder.instance.apisadmin.getEarthQuakes();
+
     descargarDatos();
 
   }
@@ -34,11 +35,33 @@ class _MapviewState extends State<Mapview> {
 
     List<Marker> mtemp=await Dataholder.instance.firebaseadmin.descargarPOIs();
 
+    List<Earthquake> terremotos=await Dataholder.instance.apisadmin.getEarthQuakes();
+
+    for(Earthquake terremoto in terremotos){
+      terremoto.onDetailsViewed=terremotoPresionado;
+      //print("NUMERO DE MARCADORES= "+terremoto.coordenada.toString());
+      Marker marker=Marker(
+          point: terremoto.coordenada,
+          child: IconButton(onPressed: terremoto.onMarkerPressed, icon: Icon(Icons.crisis_alert)),
+
+      );
+      mtemp.add(marker);
+    }
+
     setState(()  {
       marcadores=mtemp;
     });
-    Dataholder.instance.firebaseadmin.onMarkersChanged(funLambdaMarcadores);//suscripcion a los listenes de markers
+    //Dataholder.instance.firebaseadmin.onMarkersChanged(funLambdaMarcadores);//suscripcion a los listenes de markers
     Dataholder.instance.gpsadmin.realTimePosition(funLambdaGPS);
+  }
+
+  Earthquake? terremotoVisible;
+  void terremotoPresionado(Earthquake terremoto){
+    setState(() {
+      if(terremotoVisible==terremoto)terremotoVisible=null;
+      else terremotoVisible=terremoto;
+    });
+
   }
 
   void funLambdaMarcadores(List<Marker> marcadores){
@@ -56,6 +79,23 @@ class _MapviewState extends State<Mapview> {
     );
   }
 
+  Widget panelDetallesTerremoto(BuildContext context){
+    return
+      Positioned(
+        left: 50,
+        top: 100,
+        child: Container(
+          color: Colors.deepOrangeAccent,
+          child: Column(
+            children: [
+              Text(terremotoVisible!.titulo),
+              Text(terremotoVisible!.magnitud.toString())
+            ],
+          ),
+        )
+      );
+  }
+
   /*
   Road: https://mt.google.com/vt/lyrs=m&x={x}&y={y}&z={z}
   Hybrid: https://mt.google.com/vt/lyrs=y&x={x}&y={y}&z={z}
@@ -66,22 +106,27 @@ class _MapviewState extends State<Mapview> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: FlutterMap(
-        options: const MapOptions(
-          initialCenter: LatLng(40.4168, -3.7038), // Madrid
-          initialZoom: 5,
-        ),
+      body: Stack(
         children: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'com.newton.dam2_2627_a',
-          ),
-          /*RichAttributionWidget(
+          FlutterMap(
+            options: const MapOptions(
+              initialCenter: LatLng(40.4168, -3.7038), // Madrid
+              initialZoom: 5,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.newton.dam2_2627_a',
+              ),
+              /*RichAttributionWidget(
             attributions: [TextSourceAttribution('© OpenStreetMap contributors')],
           ),*/
-          MarkerLayer(
-            markers: marcadores,
+              MarkerLayer(
+                markers: marcadores,
+              ),
+            ],
           ),
+          if(terremotoVisible!=null)panelDetallesTerremoto(context),
         ],
       ),
       bottomNavigationBar: Insbotbarstyle1(

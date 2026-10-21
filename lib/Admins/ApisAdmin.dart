@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 
 class Apisadmin {
 
-  Future<void> getEarthQuakes() async {
+  Future<List<Earthquake>> getEarthQuakes() async {
     print("EMPIEZO LA DESCARGA");
     // Parse the entire URI, including the scheme
     final httpPackageUrl = Uri.parse('https://earthquake.usgs.gov/'
@@ -23,7 +23,8 @@ class Apisadmin {
       terremotos.add(new Earthquake(d));
     }
 
-    print(terremotos.length);
+    return terremotos;
+    //print(terremotos.length);
 
 // Specifically create a URI with the https scheme
     //Uri.https('dart.dev', '/f/packages/http.json');

@@ -19,6 +19,7 @@ import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pin_input_text_field/pin_input_text_field.dart';
 
@@ -70,6 +71,11 @@ class _HomeviewState extends State<Homeview> {
     super.initState();
     // Se guarda en Dataholder porque la barra se crea en build() leyendo de ahí.
     Dataholder.instance.iBotBarIndex=0;
+    Dataholder.instance.gpsadmin.realTimePosition(funLambdaGPS);
+
+  }
+
+  void funLambdaGPS(Position p){
 
   }
 
