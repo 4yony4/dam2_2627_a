@@ -414,8 +414,10 @@ no cargan, comprueba la conexión y las respuestas HTTP del servidor de teselas.
 y `funLambdaGPS` a `Gpsadmin.realTimePosition`. El primero recibe la lista de marcadores de
 Firestore y llama a `setState`; el segundo recibe cada posición del GPS y escribe un POI en
 `POIs/{uid}`. El listener de Firestore recibe después ese cambio y reconstruye los marcadores.
-Son funciones de Dart ejecutadas en la app; `functions/index.js` solo contiene una plantilla
-comentada de Cloud Functions.
+Son funciones de Dart ejecutadas en la app. `functions/main.py` define funciones HTTP
+en Python 3.12, independientes de este flujo del mapa. `addmessage` recibe el parámetro
+`text` y añade un documento con el campo `original` a la colección `Textos`; responde
+con HTTP 400 si falta el parámetro. Su despliegue está pendiente de verificar.
 
 **1. Responsabilidad de cada pieza.** `Mapview` coordina los dos administradores guardados en
 `Dataholder`: `Gpsadmin` obtiene posiciones y `Firebaseadmin` lee y escribe `POIs`.

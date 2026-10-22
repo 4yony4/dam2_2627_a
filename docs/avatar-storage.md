@@ -17,4 +17,4 @@
 - Las reglas actuales de `storage.rules` permiten leer y escribir cualquier ruta hasta el 20 de febrero de 2028. Deben revisarse antes de usar datos reales: el código no limita el acceso a los archivos del propietario.
 - La cámara tiene `NSCameraUsageDescription` en iOS. La compatibilidad de cámara, galería y compresión en cada plataforma aún requiere pruebas en dispositivo.
 
-No hay una Cloud Function activa en `functions/index.js`; el archivo contiene únicamente la plantilla comentada.
+`functions/main.py` define un ejemplo HTTP de Cloud Functions, pero no procesa los avatares.

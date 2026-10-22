@@ -2,7 +2,7 @@
 
 ## Qué significa «lambda» aquí
 
-En este flujo, una lambda o callback es una función de Dart que se entrega a otro método para que este la invoque cuando llegue un dato. `Mapview` pasa sus métodos `funLambdaMarcadores` y `funLambdaGPS`; los `listen(...)` de Firestore y Geolocator usan además funciones anónimas para recibir eventos. Todo se ejecuta en el cliente Flutter. El archivo `functions/index.js` contiene solo el ejemplo comentado de Firebase Cloud Functions: no exporta una función que procese posiciones.
+En este flujo, una lambda o callback es una función de Dart que se entrega a otro método para que este la invoque cuando llegue un dato. `Mapview` pasa sus métodos `funLambdaMarcadores` y `funLambdaGPS`; los `listen(...)` de Firestore y Geolocator usan además funciones anónimas para recibir eventos. Todo se ejecuta en el cliente Flutter. `functions/main.py` define un ejemplo HTTP independiente: no procesa posiciones.
 
 Las instancias de `Firebaseadmin` y `Gpsadmin` se guardan en `Dataholder.instance`, pero los listeners que crean viven por separado.
 

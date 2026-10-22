@@ -17,6 +17,7 @@ class Mapview extends StatefulWidget{
 class _MapviewState extends State<Mapview> {
 
   List<Marker> marcadores=<Marker>[];
+  Earthquake? terremotoVisible;
 
   @override
   void initState() {
@@ -55,7 +56,7 @@ class _MapviewState extends State<Mapview> {
     Dataholder.instance.gpsadmin.realTimePosition(funLambdaGPS);
   }
 
-  Earthquake? terremotoVisible;
+
   void terremotoPresionado(Earthquake terremoto){
     setState(() {
       if(terremotoVisible==terremoto)terremotoVisible=null;
