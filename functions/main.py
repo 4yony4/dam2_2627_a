@@ -5,7 +5,7 @@
 from firebase_functions import firestore_fn, https_fn
 from firebase_functions.options import set_global_options
 from firebase_admin import firestore, initialize_app
-
+import google.cloud.firestore
 # For cost control, you can set the maximum number of containers that can be
 # running at the same time. This helps mitigate the impact of unexpected
 # traffic spikes by instead downgrading performance. This limit is a per-function
