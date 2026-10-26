@@ -15,6 +15,7 @@
 // =====================================================================
 import 'package:dam2_2627_a/DataHolder.dart';
 import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
+import 'package:dam2_2627_a/views/ChargeView.dart';
 import 'package:dam2_2627_a/views/HomeDesktopView.dart';
 import 'package:dam2_2627_a/views/HomeProfileGate.dart';
 import 'package:dam2_2627_a/views/HomeView.dart';
@@ -193,6 +194,7 @@ class Miapp extends StatelessWidget {
       "/Messagesview":(context) => Messagesview(),
       "/MessageDetailview":(context) => Messagedetailview(),
       "/Mapview":(context) => Mapview(),
+      "/ChargeView":(context) => const ChargeView(),
     };
 
     if(Dataholder.instance.deviceadmin.getDeviceWidth()>1000){
@@ -206,6 +208,7 @@ class Miapp extends StatelessWidget {
         "/Messagesview":(context) => Messagesview(),
         "/MessageDetailview":(context) => Messagedetailview(),
         "/Mapview":(context) => Mapview(),
+        "/ChargeView":(context) => const ChargeView(),
       };
     }
 

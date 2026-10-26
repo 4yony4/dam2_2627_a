@@ -73,6 +73,9 @@ class _Insbotbarstyle1State extends State<Insbotbarstyle1> {
         });
         Navigator.popAndPushNamed(context, "/Mapview");
       }
+      case 4: {
+        Navigator.popAndPushNamed(context, "/ChargeView");
+      }
 
     }
     // Marca como seleccionada la pestaña pulsada.
@@ -109,6 +112,11 @@ class _Insbotbarstyle1State extends State<Insbotbarstyle1> {
           selectedIcon: Icon(Icons.map_rounded),
           icon: Icon(Icons.map_outlined),
           label: 'Mapa',
+        ),
+        NavigationDestination(
+          selectedIcon: Icon(Icons.payment_rounded),
+          icon: Icon(Icons.payment_outlined),
+          label: 'Cobro',
         ),
       ],
     );

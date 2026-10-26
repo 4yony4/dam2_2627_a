@@ -22,6 +22,7 @@ import 'Admins/ApisAdmin.dart';
 import 'Admins/DeviceAdmin.dart';
 import 'Admins/GPSAdmin.dart';
 import 'Admins/StorageAdmin.dart';
+import 'Admins/StripeAdmin.dart';
 import 'FbObjects/Mensaje.dart';
 import 'FbObjects/Perfil.dart';
 
@@ -36,6 +37,7 @@ class Dataholder {
   Firebaseadmin firebaseadmin=Firebaseadmin();
   Gpsadmin gpsadmin=Gpsadmin();
   Apisadmin apisadmin=Apisadmin();
+  Stripeadmin stripeadmin =Stripeadmin();
 
   /// Acceso a Cloud Firestore (FirebaseFirestore.instance también es un singleton).
   var db = FirebaseFirestore.instance;

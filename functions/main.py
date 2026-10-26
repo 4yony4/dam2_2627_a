@@ -60,3 +60,37 @@ def makeuppercase(event: firestore_fn.Event[firestore_fn.DocumentSnapshot | None
     print(f"Uppercasing {event.params['pushId']}: {original}")
     upper = original.upper()
     event.data.reference.update({"uppercase": upper})
+
+@https_fn.on_request()
+def createPaymentIntent(req: https_fn.Request) -> https_fn.Response:
+    # Grab the amount parameter.
+
+    if req.auth is None:
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.UNAUTHENTICATED,
+            message="Debes iniciar sesión para pagar.",
+        )
+
+    data = req.data
+    if not isinstance(data, dict):
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+            message="Faltan los datos del pago.",
+        )
+
+    amount = data.get("amount")
+    currency = data.get("currency")
+
+
+    if amount is None:
+        return https_fn.Response("No amount parameter provided", status=400)
+    if currency is None:
+        return https_fn.Response("No currency parameter provided", status=400)
+
+    firestore_client = firestore.client()
+
+    # Push the new message into Cloud Firestore using the Firebase Admin SDK.
+    _, doc_ref = firestore_client.collection("Textos").add({"original": original,"autor":autor})
+
+    # Send back a message that we've successfully written the message
+    return https_fn.Response(f"Message with ID {doc_ref.id} added.")

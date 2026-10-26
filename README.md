@@ -107,6 +107,7 @@ lib/
 │   ├── HomeProfileGate.dart   ← Carga el perfil antes de construir Home tras un refresco
 │   ├── MessagesView.dart      ← Lista de mensajes
 │   ├── MapView.dart           ← Mapa de OpenStreetMap
+│   ├── ChargeView.dart        ← Formulario inicial para una prueba de cobro
 │   └── MessageDetailView.dart ← Detalle de un mensaje
 │
 └── insLib/                    ← "Librería interna": piezas reutilizables
@@ -188,6 +189,7 @@ Todas las pantallas están registradas como **rutas con nombre** en `MiApp.dart`
 | `/HomeView` | `Homeview` |
 | `/Messagesview` | `Messagesview` |
 | `/Mapview` | `Mapview` |
+| `/ChargeView` | `ChargeView` |
 | `/MessageDetailview` | `Messagedetailview` |
 
 `MiApp.dart` muestra `HomeDesktopView` en la ruta `/HomeView` cuando la anchura supera 1000
@@ -393,7 +395,7 @@ sequenceDiagram
 - Usa los tokens de `AppTheme.dart` y una animación de entrada con `TweenAnimationBuilder`.
 
 ### 🔻 InsBotBarStyle1 — Barra inferior
-Widget reutilizable (`NavigationBar`) que comparten `HomeView`, `MessagesView` y `Mapview`:
+Widget reutilizable (`NavigationBar`) que comparten `HomeView`, `MessagesView`, `Mapview` y `ChargeView`:
 
 | Índice | Botón | Qué hace |
 |---|---|---|
@@ -401,6 +403,14 @@ Widget reutilizable (`NavigationBar`) que comparten `HomeView`, `MessagesView` y
 | 1 | 🔔 Notifications | Oculta el puntito (badge) de notificaciones |
 | 2 | 💬 Messages | Borra el contador de no leídos y va a `/Messagesview` |
 | 3 | 🗺️ Mapa | Va a `/Mapview` |
+| 4 | 💳 Cobro | Va a `/ChargeView` |
+
+`ChargeView` permite introducir un importe positivo en euros con hasta dos decimales. Al pulsar
+**Pagar**, llama a `Stripeadmin.cobrar(importeEuros)`: el administrador convierte el importe a
+céntimos, solicita un `PaymentIntent` mediante la Cloud Function callable `createPaymentIntent`
+con `amount` y `currency: eur`, y abre la hoja de pago de Stripe con el `clientSecret` recibido.
+La función de servidor todavía no está implementada en este proyecto; hasta que exista y tenga
+configurada la clave secreta de Stripe, el intento mostrará un error y no se realizará ningún cobro.
 
 `Mapview` usa `flutter_map` con una `TileLayer` de OpenStreetMap, centrada inicialmente en Madrid.
 Muestra hasta 20 documentos de `POIs` como marcadores y escucha sus cambios en Firestore.
@@ -758,6 +768,8 @@ Paleta principal:
 | [`firebase_core`](https://pub.dev/packages/firebase_core) | Inicializar Firebase | `main.dart` |
 | [`firebase_auth`](https://pub.dev/packages/firebase_auth) | Login, registro y logout | Login, Register, Home, OnBoarding |
 | [`cloud_firestore`](https://pub.dev/packages/cloud_firestore) | Base de datos en tiempo real | Modelos, Profile, Home, Messages |
+| [`cloud_functions`](https://pub.dev/packages/cloud_functions) | Solicitar al servidor el PaymentIntent de prueba | `StripeAdmin.dart` |
+| [`flutter_stripe`](https://pub.dev/packages/flutter_stripe) | Mostrar la hoja de pago de Stripe | `StripeAdmin.dart` |
 | [`firebase_storage`](https://pub.dev/packages/firebase_storage) | Almacenar el avatar | `StorageAdmin.dart` |
 | [`image_picker`](https://pub.dev/packages/image_picker) | Elegir foto de cámara o galería | `EditProfileView.dart` |
 | [`flutter_image_compress`](https://pub.dev/packages/flutter_image_compress) | Comprimir la foto antes de subirla | `StorageAdmin.dart` |
