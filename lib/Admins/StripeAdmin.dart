@@ -2,9 +2,10 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
 class Stripeadmin {
+  late final Future<void> _initialization;
 
   Stripeadmin() {
-    initStripeConnection();
+    _initialization = initStripeConnection();
   }
 
   Future<void> initStripeConnection() async {
@@ -32,7 +33,15 @@ class Stripeadmin {
         'Máximo dos decimales',
       );
     }
+    if (centimos < 50 || centimos > 99999999) {
+      throw ArgumentError.value(
+        importeEuros,
+        'importeEuros',
+        'Debe estar entre 0,50 € y 999.999,99 €',
+      );
+    }
 
+    await _initialization;
     final response = await FirebaseFunctions.instance
         .httpsCallable('createPaymentIntent')
         .call<Map<String, dynamic>>({'amount': centimos, 'currency': 'eur'});

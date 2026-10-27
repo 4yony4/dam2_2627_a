@@ -1,5 +1,6 @@
 import 'package:dam2_2627_a/DataHolder.dart';
 import 'package:dam2_2627_a/insLib/bot_bars/InsBotBarStyle1.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 
 /// Pantalla inicial de la prueba de cobro.
@@ -32,6 +33,12 @@ class _ChargeViewState extends State<ChargeView> {
     if (amount == null || amount <= 0) {
       return 'Introduce un importe mayor que cero';
     }
+    if (amount < 0.50) {
+      return 'El importe mínimo es 0,50 €';
+    }
+    if (amount > 999999.99) {
+      return 'El importe máximo es 999.999,99 €';
+    }
     if (!RegExp(r'^\d+([,.]\d{1,2})?$').hasMatch(value!.trim())) {
       return 'Usa como máximo dos decimales';
     }
@@ -50,6 +57,11 @@ class _ChargeViewState extends State<ChargeView> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Pago completado')));
+    } on FirebaseFunctionsException catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.message ?? 'No se pudo crear el pago')),
+      );
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

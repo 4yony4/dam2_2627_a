@@ -405,12 +405,18 @@ Widget reutilizable (`NavigationBar`) que comparten `HomeView`, `MessagesView`, 
 | 3 | 🗺️ Mapa | Va a `/Mapview` |
 | 4 | 💳 Cobro | Va a `/ChargeView` |
 
-`ChargeView` permite introducir un importe positivo en euros con hasta dos decimales. Al pulsar
+`ChargeView` permite introducir entre 0,50 € y 999.999,99 € con hasta dos decimales. Al pulsar
 **Pagar**, llama a `Stripeadmin.cobrar(importeEuros)`: el administrador convierte el importe a
 céntimos, solicita un `PaymentIntent` mediante la Cloud Function callable `createPaymentIntent`
 con `amount` y `currency: eur`, y abre la hoja de pago de Stripe con el `clientSecret` recibido.
-La función de servidor todavía no está implementada en este proyecto; hasta que exista y tenga
-configurada la clave secreta de Stripe, el intento mostrará un error y no se realizará ningún cobro.
+La función de servidor está definida en `functions/main.py` y valida el importe en céntimos y
+la moneda `eur`. También interpreta el formato `Int64Value` con el que Firebase puede enviar
+enteros desde Android. Para realizar la prueba debe desplegarse con `stripe` instalado desde
+`functions/requirements.txt` y con `STRIPE_SECRET_KEY` configurada como secreto de Firebase.
+El cobro completo todavía no se ha verificado.
+En Android, `MainActivity` hereda de `FlutterFragmentActivity` y los temas de arranque y ejecución
+usan AppCompat, requisitos de `flutter_stripe`. Tras cambiar esta configuración nativa hay que
+recompilar la app; un hot reload no aplica los cambios de Android.
 
 `Mapview` usa `flutter_map` con una `TileLayer` de OpenStreetMap, centrada inicialmente en Madrid.
 Muestra hasta 20 documentos de `POIs` como marcadores y escucha sus cambios en Firestore.
