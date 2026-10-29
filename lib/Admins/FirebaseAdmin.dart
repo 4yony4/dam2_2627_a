@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 
 import '../FbObjects/Perfil.dart';
+import '../FbObjects/Transaccion.dart';
 
 class Firebaseadmin {
 
@@ -94,6 +95,22 @@ class Firebaseadmin {
       "titulo":titulo
     };
     await mensajes.set(poi);
+  }
+
+  Future<void> addTransaction(Transaccion transaction) async{
+    print("------->>>>>>>>>>!!!!!!!! "+transaction.toFirestore().toString());
+    final transactions=db.collection("Perfiles/"+fa.currentUser!.uid+"/Transactions");
+    DocumentReference reference=await transactions.add(transaction.toFirestore());
+
+    reference.snapshots().listen(
+            (event) {
+          print("ESTADO DE LA TRASACCION HA CAMBIADO: "+event.data().toString());
+        }
+    );
+  }
+
+  void getTransactions(){
+
   }
 
 }

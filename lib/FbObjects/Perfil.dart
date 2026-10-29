@@ -12,9 +12,11 @@
 // Se guarda en Dataholder.instance.perfilUsuario.
 // =====================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dam2_2627_a/DataHolder.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'Mensaje.dart';
+import 'Transaccion.dart';
 
 /// Perfil del usuario logueado. Clase modelo (no es un widget).
 class Perfil {
@@ -170,6 +172,12 @@ class Perfil {
       }
     }
 
+  }
+
+  Future<void> agregarNuevaTransaction(String sClientSecret, String sCurrency, int iCents) async{
+    Transaccion transaccion=Transaccion(sUid: "",sEstado: "Incomplete",
+        sClientSecret: sClientSecret,iCents: iCents, sCurrency: sCurrency);
+    await Dataholder.instance.firebaseadmin.addTransaction(transaccion);
   }
 
 

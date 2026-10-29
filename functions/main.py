@@ -1,14 +1,14 @@
 # Welcome to Cloud Functions for Firebase for Python!
 # To get started, simply uncomment the below code or create your own.
 # Deploy with `firebase deploy`
-
 import re
-
+import logging
 import stripe
 from firebase_functions import firestore_fn, https_fn
 from firebase_functions.options import set_global_options
 from firebase_admin import firestore, initialize_app
 from firebase_functions.params import SecretParam
+from google.cloud.firestore_v1.base_query import FieldFilter
 import google.cloud.firestore
 
 # For cost control, you can set the maximum number of containers that can be
@@ -19,6 +19,7 @@ import google.cloud.firestore
 set_global_options(max_instances=10)
 
 STRIPE_SECRET_KEY = SecretParam("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = SecretParam("STRIPE_WEBHOOK_SECRET")
 
 initialize_app()
 #
@@ -123,7 +124,95 @@ def createPaymentIntent(req: https_fn.CallableRequest) -> dict:
         amount=amount,
         currency="eur",
         automatic_payment_methods={"enabled": True},
-        metadata={"firebaseUid": req.auth.uid},
+        metadata={"profileUid": req.auth.uid},
     )
 
     return {"clientSecret": intent.client_secret}
+
+
+@https_fn.on_request(secrets=[STRIPE_WEBHOOK_SECRET, STRIPE_SECRET_KEY])
+def stripeWebhook(req: https_fn.Request) -> https_fn.Response:
+    if req.method != "POST":
+        return https_fn.Response("Método no permitido", status=405)
+
+    signature = req.headers.get("Stripe-Signature")
+    if not signature:
+        return https_fn.Response("Falta la firma", status=400)
+
+    try:
+        # La firma debe comprobarse con el cuerpo original, sin convertirlo a JSON.
+        event = stripe.Webhook.construct_event(
+            req.data,
+            signature,
+            STRIPE_WEBHOOK_SECRET.value,
+        )
+    except (ValueError, stripe.SignatureVerificationError):
+        return https_fn.Response("Firma o contenido inválido", status=400)
+
+    tipos_admitidos = {
+        "payment_intent.succeeded",
+        "payment_intent.payment_failed",
+        "payment_intent.processing",
+        "payment_intent.canceled",
+    }
+    if event["type"] not in tipos_admitidos:
+        return https_fn.Response("Evento ignorado", status=200)
+
+    intent_id = event["data"]["object"]["id"]
+
+    # Consultamos el estado actual: Stripe puede entregar eventos repetidos
+    # o en distinto orden.
+    stripe.api_key = STRIPE_SECRET_KEY.value
+    try:
+        intent = stripe.PaymentIntent.retrieve(intent_id)
+    except stripe.StripeError:
+        logging.exception("No se pudo consultar PaymentIntent %s", intent_id)
+        return https_fn.Response("Error al consultar Stripe", status=503)
+
+    intent_data = intent.to_dict()
+    profileUid = (intent_data.get("metadata") or {}).get("profileUid")
+    client_secret = intent_data.get("client_secret")
+
+    if not profileUid:
+        # Es un PaymentIntent ajeno al flujo de esta app.
+        return https_fn.Response("Sin usuario de la app", status=200)
+
+    if not client_secret:
+        logging.error("PaymentIntent %s sin client_secret", intent_id)
+        return https_fn.Response("No se puede localizar la transacción", status=503)
+
+    transactions = (
+        firestore.client()
+        .collection("Perfiles")
+        .document(profileUid)
+        .collection("Transactions")
+    )
+    docs = list(
+        transactions
+        .where(filter=FieldFilter("sClientSecret", "==", client_secret))
+        .limit(2)
+        .stream()
+    )
+
+    if len(docs) != 1:
+        # Si el documento aún no se ha creado, Stripe reintentará el webhook.
+        logging.error(
+            "Se encontraron %s transacciones para PaymentIntent %s",
+            len(docs),
+            intent_id,
+        )
+        return https_fn.Response("Transacción no localizada de forma única", status=503)
+
+    doc = docs[0]
+    cambios = {
+        "sEstado": intent["status"],
+        "iCents": intent["amount"],
+        "sCurrency": intent["currency"],
+    }
+
+    # Evita escrituras y avisos repetidos en el listener.
+    actual = doc.to_dict() or {}
+    if any(actual.get(campo) != valor for campo, valor in cambios.items()):
+        doc.reference.update(cambios)
+
+    return https_fn.Response("OK", status=200)

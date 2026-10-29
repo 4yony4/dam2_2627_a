@@ -1,4 +1,5 @@
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:dam2_2627_a/DataHolder.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 
 class Stripeadmin {
@@ -56,6 +57,10 @@ class Stripeadmin {
         merchantDisplayName: 'MI APP 1',
       ),
     );
+
+
+    await Dataholder.instance.perfilUsuario.agregarNuevaTransaction(clientSecret, "eur", centimos);
+
     await Stripe.instance.presentPaymentSheet();
   }
 }
