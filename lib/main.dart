@@ -11,9 +11,17 @@
 // =====================================================================
 import 'package:dam2_2627_a/MiApp.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import 'firebase_options.dart';
+
+
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint('Mensaje recibido en segundo plano: ${message.messageId}');
+}
 
 /// Función principal: lo primero que se ejecuta al abrir la app.
 ///
@@ -32,8 +40,24 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // Solicita permiso en iOS y Android 13 o superior.
+  await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
+  // Útil para enviar una notificación de prueba desde Firebase Console.
+  final token = await FirebaseMessaging.instance.getToken();
+  debugPrint('Token FCM: $token');
+
+
   // runApp() recibe el widget raíz y lo dibuja ocupando toda la pantalla.
   runApp(Miapp());
+
 }
 
 // NOTA: MyApp, MyHomePage y _MyHomePageState son el ejemplo del contador que
