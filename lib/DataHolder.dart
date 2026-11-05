@@ -20,6 +20,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'Admins/ApisAdmin.dart';
 import 'Admins/DeviceAdmin.dart';
+import 'Admins/FCMAdmin.dart';
 import 'Admins/GPSAdmin.dart';
 import 'Admins/StorageAdmin.dart';
 import 'Admins/StripeAdmin.dart';
@@ -38,6 +39,7 @@ class Dataholder {
   Gpsadmin gpsadmin=Gpsadmin();
   Apisadmin apisadmin=Apisadmin();
   Stripeadmin stripeadmin =Stripeadmin();
+  Fcmadmin fcmadmin=Fcmadmin();
 
   /// Acceso a Cloud Firestore (FirebaseFirestore.instance también es un singleton).
   var db = FirebaseFirestore.instance;

@@ -9,6 +9,7 @@
 // Las rutas (pantallas), el tema y la primera pantalla se configuran en
 // MiApp.dart; la primera pantalla real es OnBoardingView.
 // =====================================================================
+import 'package:dam2_2627_a/DataHolder.dart';
 import 'package:dam2_2627_a/MiApp.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -18,17 +19,14 @@ import 'firebase_options.dart';
 
 
 
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  debugPrint('Mensaje recibido en segundo plano: ${message.messageId}');
-}
+
 
 /// Función principal: lo primero que se ejecuta al abrir la app.
 ///
 /// Es `async` porque tiene que ESPERAR (`await`) a que Firebase termine de
 /// inicializarse antes de mostrar ninguna pantalla: si una vista usara Auth
 /// o Firestore sin Firebase inicializado, la app fallaría.
-void main() async{
+Future<void> main() async{
 
   // Obligatorio cuando hay código asíncrono (como Firebase) ANTES de runApp():
   // asegura que el "puente" entre Dart y la plataforma nativa (Android/Web)
@@ -41,22 +39,13 @@ void main() async{
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Solicita permiso en iOS y Android 13 o superior.
-  await FirebaseMessaging.instance.requestPermission(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-
-  // Útil para enviar una notificación de prueba desde Firebase Console.
-  final token = await FirebaseMessaging.instance.getToken();
-  debugPrint('Token FCM: $token');
-
+  await Dataholder.instance.fcmadmin.iniciar();
 
   // runApp() recibe el widget raíz y lo dibuja ocupando toda la pantalla.
   runApp(Miapp());
+
+  await Dataholder.instance.fcmadmin.comprobarNotificacionInicial();
+  await Dataholder.instance.fcmadmin.mostrarToken();
 
 }
 
