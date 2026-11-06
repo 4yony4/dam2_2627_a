@@ -9,6 +9,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 class Fcmadmin {
 
+  Function(RemoteMessage message)? onPushReceived;
+
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
   Future<void> iniciar() async {
@@ -24,6 +26,7 @@ class Fcmadmin {
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       debugPrint('Notificación abierta: ${message.messageId}');
+      onPushReceived?.call(message);
     });
   }
 
@@ -35,6 +38,8 @@ class Fcmadmin {
 
     print(contenido);
 
+    onPushReceived?.call(message);
+
   }
 
 
@@ -45,12 +50,15 @@ class Fcmadmin {
       debugPrint(
         'App abierta desde una notificación: ${message.messageId}',
       );
+
+      onPushReceived?.call(message);
     }
   }
 
-  Future<void> mostrarToken() async {
+  Future<String?> mostrarToken() async {
     final token = await _messaging.getToken();
     debugPrint('Token FCM: $token');
+    return token;
   }
 
 

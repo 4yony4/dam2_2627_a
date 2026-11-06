@@ -14,6 +14,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/DataHolder.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:geolocator/geolocator.dart';
 
 import 'Mensaje.dart';
 import 'Transaccion.dart';
@@ -37,6 +38,9 @@ class Perfil {
   /// guardada en Firestore al volver a cargar el perfil.
   Image? avatar;
 
+  String? sTokenMovil;
+  GeoPoint? gpsPosition;
+
   /// URL de descarga del avatar en Firebase Storage, persistida en Firestore.
   String? urlAvatar;
   /// CALLBACK: una función guardada en una variable. El perfil la llama cuando
@@ -46,7 +50,8 @@ class Perfil {
   Function(int numeroMensajes)? onMessageReceived;
 
   /// Constructor con parámetros con nombre (y opcionales): Perfil(uid: ..., name: ...).
-  Perfil({required this.uid,this.name, this.edad, this.altura, this.urlAvatar}){
+  Perfil({required this.uid,this.name, this.edad, this.altura,
+    this.urlAvatar,this.sTokenMovil,this.gpsPosition}){
     if (urlAvatar != null && urlAvatar!.isNotEmpty) {
       avatar=Image.network(urlAvatar!);
     }
@@ -76,6 +81,8 @@ class Perfil {
       edad: (data?['edad'] as num?)?.toInt(),
       altura: (data?['altura'] as num?)?.toDouble(),
       urlAvatar:data?['urlAvatar'] as String?,
+      sTokenMovil:data?['sTokenMovil'] as String?,
+      gpsPosition:data?['gpsPosition'] as GeoPoint?,
     );
   }
 
@@ -87,6 +94,8 @@ class Perfil {
       if (edad != null) "edad": edad,
       if (altura != null) "altura": altura,
       if (urlAvatar != null) "urlAvatar": urlAvatar,
+      if (sTokenMovil != null) "sTokenMovil": sTokenMovil,
+      if (gpsPosition != null) "gpsPosition": gpsPosition,
     };
   }
   

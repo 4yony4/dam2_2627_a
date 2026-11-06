@@ -181,7 +181,7 @@ class Miapp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     Dataholder.instance.initDeviceadmin(context);
-
+    Dataholder.instance.initGPSUpdate();
 
     Map<String, Widget Function(BuildContext)> rutasApp=
     {

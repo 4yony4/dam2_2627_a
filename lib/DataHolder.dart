@@ -17,6 +17,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/Admins/FirebaseAdmin.dart';
 import 'package:dam2_2627_a/insLib/bot_bars/InsBotBarStyle1.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:geolocator_platform_interface/src/models/position.dart';
 
 import 'Admins/ApisAdmin.dart';
 import 'Admins/DeviceAdmin.dart';
@@ -75,8 +76,13 @@ class Dataholder {
     deviceadmin = Deviceadmin(context);
   }
 
+  void initGPSUpdate(){
+    gpsadmin.realTimePosition(updatePerfilGPS);
+  }
+
   Future<Perfil> descargarPerfil() async {
-    perfilUsuario=await firebaseadmin.descargarPerfil();
+    String? sTokenMovil= await fcmadmin.mostrarToken();
+    perfilUsuario=await firebaseadmin.descargarPerfil(sTokenMovil);
     // Contamos los mensajes no leídos para el badge de la barra inferior.
     int numNoLeido=0;
     for(Mensaje m in perfilUsuario.mensajes){
@@ -86,6 +92,11 @@ class Dataholder {
     sMessagesBadgeText=numNoLeido.toString();
 
     return perfilUsuario;
+  }
+
+  void updatePerfilGPS(Position position){
+    perfilUsuario.gpsPosition=GeoPoint(position.latitude, position.longitude);
+    firebaseadmin.actualizarPerfil(perfilUsuario);
   }
 
 

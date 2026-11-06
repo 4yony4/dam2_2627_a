@@ -15,12 +15,13 @@ class Firebaseadmin {
   FirebaseFirestore db=FirebaseFirestore.instance;
   FirebaseAuth fa=FirebaseAuth.instance;
 
+
   Firebaseadmin(){
 
   }
 
 
-  Future<Perfil> descargarPerfil() async{
+  Future<Perfil> descargarPerfil(String? sTokenMovil) async{
 
     Perfil? perfilTemp;
 
@@ -42,10 +43,21 @@ class Firebaseadmin {
       perfilTemp.descargarMensajes();
     }
 
-    //print("!!!!!!-----EL UID DEL PERFIL ES:"+perfilTemp.edad.toString());
+    if(perfilTemp.sTokenMovil!=sTokenMovil){
+      perfilTemp.sTokenMovil=sTokenMovil;
+      docRef.set(perfilTemp);
+    }
 
     return perfilTemp;
+  }
 
+  void actualizarPerfil(Perfil perfil){
+    final docRef = db.collection("Perfiles")
+        .doc(fa.currentUser!.uid).withConverter(
+      fromFirestore: Perfil.fromFirestore,
+      toFirestore: (Perfil perfil, _) => perfil.toFirestore(),
+    );
+    docRef.set(perfil);
   }
 
   Future<List<Marker>> descargarPOIs() async {

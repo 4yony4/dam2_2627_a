@@ -216,3 +216,192 @@ def stripeWebhook(req: https_fn.Request) -> https_fn.Response:
         doc.reference.update(cambios)
 
     return https_fn.Response("OK", status=200)
+
+
+# INICIO ZONA PUSH CON GPS.
+#----------------------------------------------------------------------------
+#
+
+import logging
+import math
+
+import firebase_admin
+from firebase_admin import firestore, messaging
+from firebase_functions import https_fn
+
+# Si ya inicializas Firebase Admin en tu main.py, conserva una sola inicialización.
+if not firebase_admin._apps:
+    firebase_admin.initialize_app()
+
+
+def distancia_km(lat1, lon1, lat2, lon2):
+    """Distancia sobre la superficie terrestre mediante Haversine."""
+    radio_tierra = 6371.0088
+
+    lat1 = math.radians(lat1)
+    lat2 = math.radians(lat2)
+    delta_lat = lat2 - lat1
+    delta_lon = math.radians(lon2 - lon1)
+
+    a = (
+            math.sin(delta_lat / 2) ** 2
+            + math.cos(lat1)
+            * math.cos(lat2)
+            * math.sin(delta_lon / 2) ** 2
+    )
+
+    a = min(1.0, max(0.0, a))
+    return radio_tierra * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+
+def leer_numero(datos, campo, minimo, maximo):
+    valor = datos.get(campo)
+
+    if (
+            isinstance(valor, bool)
+            or not isinstance(valor, (int, float))
+            or not math.isfinite(valor)
+            or not minimo <= valor <= maximo
+    ):
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+            message=f"{campo} debe estar entre {minimo} y {maximo}.",
+        )
+
+    return float(valor)
+
+
+@https_fn.on_call(region="us-central1", timeout_sec=120)
+def enviarPushEnRadio(req: https_fn.CallableRequest) -> dict:
+    # Requiere que el usuario haya iniciado sesión en Firebase Auth.
+    if req.auth is None:
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.UNAUTHENTICATED,
+            message="Debes iniciar sesión.",
+        )
+
+    datos = req.data
+    if not isinstance(datos, dict):
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+            message="Debes enviar un objeto con los parámetros.",
+        )
+
+    latitud = leer_numero(datos, "lat", -90, 90)
+    longitud = leer_numero(datos, "lon", -180, 180)
+
+    # Límite de ejemplo: puedes ajustarlo.
+    radio = leer_numero(datos, "radioKm", 0.001, 100)
+
+    titulo = datos.get("titulo")
+    mensaje = datos.get("mensaje")
+    excluir_emisor = datos.get("excluirEmisor", True)
+
+    if (
+            not isinstance(titulo, str)
+            or not titulo.strip()
+            or len(titulo) > 100
+            or not isinstance(mensaje, str)
+            or not mensaje.strip()
+            or len(mensaje) > 1000
+            or not isinstance(excluir_emisor, bool)
+    ):
+        raise https_fn.HttpsError(
+            code=https_fn.FunctionsErrorCode.INVALID_ARGUMENT,
+            message=(
+                "titulo: 1-100 caracteres; mensaje: 1-1000 caracteres; "
+                "excluirEmisor: booleano."
+            ),
+        )
+
+    db = firestore.client()
+
+    # Solo recuperamos los dos campos que necesitamos.
+    perfiles = (
+        db.collection("Perfiles")
+        .select(["gpsPosition", "sTokenMovil"])
+        .stream()
+    )
+
+    tokens = set()
+    perfiles_en_radio = 0
+
+    for documento in perfiles:
+        if excluir_emisor and documento.id == req.auth.uid:
+            continue
+
+        perfil = documento.to_dict() or {}
+        posicion = perfil.get("gpsPosition")
+
+        if not isinstance(posicion, firestore.GeoPoint):
+            continue
+
+        distancia = distancia_km(
+            latitud,
+            longitud,
+            posicion.latitude,
+            posicion.longitude,
+        )
+
+        if distancia > radio:
+            continue
+
+        perfiles_en_radio += 1
+        token = perfil.get("sTokenMovil")
+
+        if isinstance(token, str) and token.strip():
+            tokens.add(token.strip())
+
+    lista_tokens = sorted(tokens)
+    aceptadas_fcm = 0
+    fallidas = 0
+
+    # FCM admite hasta 500 tokens por llamada multicast.
+    for inicio in range(0, len(lista_tokens), 500):
+        lote = lista_tokens[inicio:inicio + 500]
+
+        push = messaging.MulticastMessage(
+            tokens=lote,
+            notification=messaging.Notification(
+                title=titulo.strip(),
+                body=mensaje.strip(),
+            ),
+            # En FCM, todos los valores de data deben ser strings.
+            data={
+                "tipo": "aviso_cercania",
+                "lat": str(latitud),
+                "lon": str(longitud),
+                "radioKm": str(radio),
+            },
+        )
+
+        try:
+            resultado = messaging.send_each_for_multicast(push)
+        except Exception:
+            logging.exception("No se pudo completar un lote de notificaciones")
+            raise https_fn.HttpsError(
+                code=https_fn.FunctionsErrorCode.INTERNAL,
+                message=(
+                    "No se pudo completar el envío. "
+                    "Puede haber notificaciones ya aceptadas; "
+                    "reintentar podría duplicarlas."
+                ),
+            )
+
+        aceptadas_fcm += resultado.success_count
+        fallidas += resultado.failure_count
+
+        for respuesta in resultado.responses:
+            if not respuesta.success:
+                # Registramos el tipo de error sin exponer tokens.
+                logging.warning(
+                    "Error individual de FCM: %s",
+                    type(respuesta.exception).__name__,
+                )
+
+    return {
+        "perfilesEnRadio": perfiles_en_radio,
+        "dispositivosConToken": len(lista_tokens),
+        "aceptadasFCM": aceptadas_fcm,
+        "fallidas": fallidas,
+    }

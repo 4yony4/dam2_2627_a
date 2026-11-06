@@ -99,14 +99,9 @@ class _Onboardingview extends State<Onboardingview> {
       // withConverter: enseña a Firestore a convertir el documento en un objeto
       // Perfil (fromFirestore) y al revés (toFirestore). Así docSnap.data()
       // devuelve directamente un Perfil en vez de un Map.
-      final docRef = db.collection("Perfiles").doc(uid).withConverter(
-        fromFirestore: Perfil.fromFirestore,
-        toFirestore: (Perfil perfil, _) => perfil.toFirestore(),
-      );
-
-      // get() lee el documento UNA sola vez (no en tiempo real). Es un Future: await.
-      final docSnap = await docRef.get();
-      final perfil = docSnap.data();
+      //String? sTokenMovil= await Dataholder.instance.fcmadmin.mostrarToken();
+      //final perfil = await Dataholder.instance.firebaseadmin.descargarPerfil(sTokenMovil);
+      final perfil=await Dataholder.instance.descargarPerfil();
       if (!mounted) return;
       if (perfil == null) {
         Navigator.popAndPushNamed(context, "/Profileview");
@@ -115,7 +110,6 @@ class _Onboardingview extends State<Onboardingview> {
       Dataholder.instance.perfilUsuario=perfil;
 
       {
-        print("HEY HEY HEY!!!!!");
         //SI TIENE PERFIL EN LA BASE DATOS
         //print("EL UID DEL URUSARIO LOGEADO ES: "+Dataholder.instance.perfilUsuario.altura.toString());
         // Empieza a escuchar los mensajes del usuario (Perfiles/{uid}/Mensajes).

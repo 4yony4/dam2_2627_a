@@ -19,6 +19,7 @@ import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
 import 'package:dam2_2627_a/views/HomeView.dart';
 import 'package:dam2_2627_a/views/LoginView.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 import '../DataHolder.dart';
@@ -58,7 +59,19 @@ class _MessagesviewState extends State<Messagesview> {
     // Valor inicial: los mensajes que ya estuvieran descargados.
     iNumeroMensajes=Dataholder.instance.perfilUsuario.mensajes.length;
 
+    Dataholder.instance.fcmadmin.onPushReceived=pushNotificationRebicido;
 
+  }
+
+  void pushNotificationRebicido(RemoteMessage message){
+    Dataholder.instance.perfilUsuario.mensajes.add(
+        Mensaje.initCampos("uid", message.notification?.title,
+            message.notification?.body, true, Timestamp.now())
+    );
+
+    setState(() {
+      iNumeroMensajes++;
+    });
   }
 
   /// itemBuilder de la lista: Flutter lo llama para construir el elemento
