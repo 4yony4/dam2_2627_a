@@ -204,11 +204,15 @@ class _MessagesviewState extends State<Messagesview> {
         false,
         Timestamp.fromDate(DateTime.now()));
 
+    Dataholder.instance.enviarPushEnRadioDeMensaje(mensajeNuevo);
+
     // agregarNuevoMensaje lo añade a la lista local y a Firestore. El listener
     // en tiempo real también recibirá el cambio y llamará a mensajeRecibido.
     setState(() {
       Dataholder.instance.perfilUsuario.agregarNuevoMensaje(mensajeNuevo);
     });
+
+
   }
 
   /// Método que el Perfil llama (callback) cuando cambian los mensajes en

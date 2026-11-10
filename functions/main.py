@@ -4,9 +4,10 @@
 import re
 import logging
 import stripe
+import math
 from firebase_functions import firestore_fn, https_fn
 from firebase_functions.options import set_global_options
-from firebase_admin import firestore, initialize_app
+from firebase_admin import firestore, initialize_app, messaging
 from firebase_functions.params import SecretParam
 from google.cloud.firestore_v1.base_query import FieldFilter
 import google.cloud.firestore
@@ -222,18 +223,6 @@ def stripeWebhook(req: https_fn.Request) -> https_fn.Response:
 #----------------------------------------------------------------------------
 #
 
-import logging
-import math
-
-import firebase_admin
-from firebase_admin import firestore, messaging
-from firebase_functions import https_fn
-
-# Si ya inicializas Firebase Admin en tu main.py, conserva una sola inicialización.
-if not firebase_admin._apps:
-    firebase_admin.initialize_app()
-
-
 def distancia_km(lat1, lon1, lat2, lon2):
     """Distancia sobre la superficie terrestre mediante Haversine."""
     radio_tierra = 6371.0088
@@ -405,3 +394,7 @@ def enviarPushEnRadio(req: https_fn.CallableRequest) -> dict:
         "aceptadasFCM": aceptadas_fcm,
         "fallidas": fallidas,
     }
+
+# FIN ZONA PUSH CON GPS.
+#----------------------------------------------------------------------------
+#

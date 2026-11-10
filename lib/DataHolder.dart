@@ -99,5 +99,17 @@ class Dataholder {
     firebaseadmin.actualizarPerfil(perfilUsuario);
   }
 
+  void enviarPushEnRadioDeMensaje(Mensaje m){
+    fcmadmin.enviarPushEnRadio(
+        lat: perfilUsuario.gpsPosition!.latitude,
+        lon: perfilUsuario.gpsPosition!.longitude,
+        radioKm: 10,
+        titulo: m.titulo!,
+        mensaje: m.cuerpo!,
+      excluirEmisor: false
+    );
+
+  }
+
 
 }

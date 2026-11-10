@@ -180,6 +180,7 @@ class Miapp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+
     Dataholder.instance.initDeviceadmin(context);
     Dataholder.instance.initGPSUpdate();
 
