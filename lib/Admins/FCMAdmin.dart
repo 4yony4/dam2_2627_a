@@ -24,12 +24,12 @@ class Fcmadmin {
       throw StateError('Primero inicia sesión');
     }
 
-    final token = await user.getIdToken(true);
+    /*final token = await user.getIdToken(true);
 
     if (token != null) {
       await Clipboard.setData(ClipboardData(text: token));
       print('Token completo copiado al portapapeles');
-    }
+    }*/
 
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler,);
 

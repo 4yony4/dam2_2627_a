@@ -259,10 +259,41 @@ def leer_numero(datos, campo, minimo, maximo):
 
     return float(valor)
 
+@firestore_fn.on_document_created(document="Perfiles/{perfilID}/Mensajes/{mensajeID}")
+def mensajeCreado(event: firestore_fn.Event[firestore_fn.DocumentSnapshot | None]) -> None:
+
+    # Get the value of "original" if it exists.
+    if event.data is None:
+        return
+    try:
+        datos = event.data.to_dict() or {}
+    except KeyError:
+        # No "original" field, so do nothing.
+        return
+
+
+    titulo = datos.get("titulo")
+    cuerpo = datos.get("cuerpo")
+
+    perfilID=event.params['perfilID']
+    mensajeID=event.params['mensajeID']
+
+    perfil = firestore.client().collection("Perfiles").document(perfilID).get()
+    posicion = (perfil.to_dict() or {}).get("gpsPosition")
+
+    resultado = pushMensajeRadio(
+        latitud=posicion.latitude,
+        longitud=posicion.longitude,
+        radio=10,
+        titulo=titulo.strip(),
+        mensaje=cuerpo.strip(),
+        excluir_emisor=False,
+    )
+
+
 
 @https_fn.on_call(region="us-central1", timeout_sec=120)
 def enviarPushEnRadio(req: https_fn.CallableRequest) -> dict:
-    # Requiere que el usuario haya iniciado sesión en Firebase Auth.
     if req.auth is None:
         raise https_fn.HttpsError(
             code=https_fn.FunctionsErrorCode.UNAUTHENTICATED,
@@ -285,6 +316,12 @@ def enviarPushEnRadio(req: https_fn.CallableRequest) -> dict:
     titulo = datos.get("titulo")
     mensaje = datos.get("mensaje")
     excluir_emisor = datos.get("excluirEmisor", True)
+
+    pushMensajeRadio(latitud,longitud,radio,titulo,mensaje,excluir_emisor)
+
+def pushMensajeRadio(latitud,longitud,radio,titulo,mensaje,excluir_emisor):
+    # Requiere que el usuario haya iniciado sesión en Firebase Auth.
+
 
     if (
             not isinstance(titulo, str)
