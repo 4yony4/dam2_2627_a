@@ -47,3 +47,10 @@ app.*.map.json
 /lib/firebase_options.dart
 #/firebase.json
 /android/app/google-services.json
+# Configuración de Firebase para iOS/macOS (como google-services.json: cada alumno genera la suya)
+/ios/Runner/GoogleService-Info.plist
+/macos/Runner/GoogleService-Info.plist
+
+# Salida de compilación de Gradle y copias de seguridad de Xcode
+/android/build/
+*.backup
