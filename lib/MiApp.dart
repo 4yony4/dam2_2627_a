@@ -10,8 +10,10 @@
 //    AppTheme.dart, para que todas las pantallas compartan colores,
 //    bordes y botones sin repetir estilos.
 //  - Marca "/Onboardingview" como primera pantalla (initialRoute).
-// No usa Dataholder ni Firestore; solo consulta FirebaseAuth para calcular
-// rutaInicial (ver NOTA en build()).
+// En build() también usa Dataholder: crea el DeviceAdmin (para saber el
+// ancho de pantalla y elegir la versión móvil o escritorio) y arranca
+// initGPSUpdate(). Consulta FirebaseAuth para calcular rutaInicial (ver NOTA
+// en build()). Guía: docs/02-navegacion-y-pantallas.md
 // =====================================================================
 import 'package:dam2_2627_a/DataHolder.dart';
 import 'package:dam2_2627_a/insLib/theme/AppTheme.dart';
@@ -183,6 +185,7 @@ class Miapp extends StatelessWidget {
 
     Dataholder.instance.initDeviceadmin(context);
     Dataholder.instance.initGPSUpdate();
+    // NFC se inicia en main.dart (aquí se repetiría en cada rebuild).
 
     Map<String, Widget Function(BuildContext)> rutasApp=
     {

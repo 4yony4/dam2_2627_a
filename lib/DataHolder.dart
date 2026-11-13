@@ -11,7 +11,9 @@
 //    muestra MessageDetailView.
 //  - Datos de la barra inferior (badges e índice seleccionado), que usan
 //    HomeView, MessagesView e Insbotbarstyle1.
-// Firestore: escucha en tiempo real el documento "Perfiles/{uid}".
+//  - Un "Admin" por servicio (firebaseadmin, storageadmin, gpsadmin,
+//    apisadmin, stripeadmin, fcmadmin, nfcadmin, deviceadmin).
+// Guía: docs/01-arquitectura.md
 // =====================================================================
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dam2_2627_a/Admins/FirebaseAdmin.dart';
@@ -23,6 +25,7 @@ import 'Admins/ApisAdmin.dart';
 import 'Admins/DeviceAdmin.dart';
 import 'Admins/FCMAdmin.dart';
 import 'Admins/GPSAdmin.dart';
+import 'Admins/NFCAdmin.dart';
 import 'Admins/StorageAdmin.dart';
 import 'Admins/StripeAdmin.dart';
 import 'FbObjects/Mensaje.dart';
@@ -41,6 +44,7 @@ class Dataholder {
   Apisadmin apisadmin=Apisadmin();
   Stripeadmin stripeadmin =Stripeadmin();
   Fcmadmin fcmadmin=Fcmadmin();
+  Nfcadmin nfcadmin=Nfcadmin();
 
   /// Acceso a Cloud Firestore (FirebaseFirestore.instance también es un singleton).
   var db = FirebaseFirestore.instance;
@@ -69,7 +73,7 @@ class Dataholder {
   bool blNotificacionesBadge=true;
   /// Texto del badge de "Messages" (nº de no leídos). "" = no se muestra.
   String sMessagesBadgeText="";
-  /// Pestaña seleccionada en la barra (0 Principal, 1 Notifications, 2 Messages).
+  /// Pestaña seleccionada en la barra (0 Principal, 1 Notifications, 2 Messages, 3 Mapa, 4 Cobro).
   int iBotBarIndex=0;
 
   void initDeviceadmin(BuildContext context){

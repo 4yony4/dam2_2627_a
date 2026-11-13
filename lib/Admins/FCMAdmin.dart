@@ -18,19 +18,6 @@ class Fcmadmin {
 
   Future<void> iniciar() async {
 
-    final user = FirebaseAuth.instance.currentUser;
-
-    if (user == null) {
-      throw StateError('Primero inicia sesión');
-    }
-
-    /*final token = await user.getIdToken(true);
-
-    if (token != null) {
-      await Clipboard.setData(ClipboardData(text: token));
-      print('Token completo copiado al portapapeles');
-    }*/
-
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler,);
 
     await _messaging.requestPermission(

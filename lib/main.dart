@@ -2,10 +2,15 @@
 // main.dart — PUNTO DE ENTRADA DE LA APP
 // ---------------------------------------------------------------------
 // Es el primer código que se ejecuta: Dart siempre empieza por main().
-// Su trabajo es muy corto:
+// Su trabajo, en orden:
 //   1. Preparar el motor de Flutter (WidgetsFlutterBinding).
 //   2. Conectar la app con nuestro proyecto de Firebase (Firebase.initializeApp).
-//   3. Lanzar el widget raíz Miapp (MiApp.dart) con runApp().
+//   3. Iniciar NFC (NFCAdmin) y notificaciones push (FCMAdmin).
+//   4. Lanzar el widget raíz Miapp (MiApp.dart) con runApp().
+//   5. Comprobar si la app se abrió desde una notificación y mostrar el token.
+// ⚠️ Todo lo que va antes de runApp() NO debe lanzar excepciones: si falla,
+// la app se queda en negro (ver docs/09-notificaciones-push-fcm.md).
+// Guía: docs/01-arquitectura.md
 // Las rutas (pantallas), el tema y la primera pantalla se configuran en
 // MiApp.dart; la primera pantalla real es OnBoardingView.
 // =====================================================================
@@ -38,6 +43,10 @@ Future<void> main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  // NFC: imprime el tag que ha abierto la app y escucha tags nuevos.
+  // Va antes de runApp para recoger el tag que ha abierto la app. Guía: docs/11-nfc.md
+  await Dataholder.instance.nfcadmin.iniciar();
 
   await Dataholder.instance.fcmadmin.iniciar();
 

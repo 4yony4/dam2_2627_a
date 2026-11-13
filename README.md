@@ -1,50 +1,68 @@
-# 📱 dam2_2627_a — App de mensajes con Flutter + Firebase
+# 📱 dam2_2627_a — App multiplataforma con Flutter + Firebase
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)
 ![Dart](https://img.shields.io/badge/Dart-%5E3.11-0175C2?logo=dart&logoColor=white)
-![Firebase Auth](https://img.shields.io/badge/Firebase-Auth-FFCA28?logo=firebase&logoColor=black)
-![Cloud Firestore](https://img.shields.io/badge/Cloud-Firestore-FFA000?logo=firebase&logoColor=black)
+![Firebase](https://img.shields.io/badge/Firebase-Auth%20·%20Firestore%20·%20Storage-FFCA28?logo=firebase&logoColor=black)
+![Cloud Functions](https://img.shields.io/badge/Cloud%20Functions-Python%203.12-3776AB?logo=python&logoColor=white)
+![FCM](https://img.shields.io/badge/Push-FCM-FFA000?logo=firebase&logoColor=black)
+![Stripe](https://img.shields.io/badge/Pagos-Stripe-635BFF?logo=stripe&logoColor=white)
+![NFC](https://img.shields.io/badge/Android-NFC-3DDC84?logo=android&logoColor=white)
 ![Curso](https://img.shields.io/badge/Curso-DAM2%202026%2F27-92B77B)
 
-Proyecto de clase de **2º de DAM** (Desarrollo de Aplicaciones Multiplataforma). Es una app sencilla
-en la que el usuario:
+![Portada del proyecto](docs/img/ilustraciones/00-portada.jpg)
 
-1. 🔐 **Se registra o inicia sesión** con email y contraseña (Firebase Authentication).
-2. 👤 **Crea su perfil** (edad y altura), que se guarda en Cloud Firestore.
-3. 💬 **Ve su lista de mensajes** en tiempo real y puede añadir mensajes nuevos.
-4. 🔎 **Abre el detalle** de cualquier mensaje pulsando sobre él.
-5. 🖼️ **Elige un avatar** desde la cámara o la galería y, al guardar el perfil, intenta subirlo a Firebase Storage.
-6. 🗺️ **Consulta POIs en un mapa** y, con permiso de ubicación, publica su posición en Firestore.
+Proyecto de clase de **2º de DAM** (Desarrollo de Aplicaciones Multiplataforma). Empezó como una app
+de mensajes y, semana a semana, ha ido sumando piezas reales de una app profesional: login con
+varios proveedores, base de datos en tiempo real, subida de fotos, mapa con GPS, una API externa,
+funciones en la nube, notificaciones push por cercanía, pagos con tarjeta y lectura de NFC.
 
-> ⚠️ El flujo del avatar tiene fallos conocidos al volver a guardar una foto ya cargada.
-> Consulta [Estado del avatar y Storage](#estado-del-avatar-y-storage) antes de probarlo.
-
-> 🎯 **Objetivo didáctico:** ver en un proyecto pequeño y completo cómo se conectan las piezas
-> típicas de una app real: pantallas, navegación, estado compartido, autenticación, base de datos
-> en tiempo real y un sistema de estilos.
+> 🎯 **Objetivo de este repositorio:** que puedas entender **todo** lo que se ha hecho, por qué se ha
+> hecho así y qué falla todavía. El código está comentado en español y cada módulo tiene su propia
+> **guía didáctica** en [`docs/`](docs/README.md) con diagramas, paso a paso, ejercicios y autoevaluación.
 
 ---
 
 ## 📑 Índice
 
-1. [Puesta en marcha](#-puesta-en-marcha)
-2. [Estructura de carpetas](#-estructura-de-carpetas)
-3. [Arquitectura general](#-arquitectura-general)
-4. [Flujo de navegación](#-flujo-de-navegación)
-5. [Arranque de la app (OnBoarding)](#-arranque-de-la-app-onboarding)
-6. [Las pantallas una a una](#-las-pantallas-una-a-una)
-7. [Modelo de datos en Firestore](#-modelo-de-datos-en-firestore)
-8. [Clases del proyecto](#-clases-del-proyecto)
-9. [Estado compartido: `Dataholder`](#-estado-compartido-dataholder)
-10. [Mensajes en tiempo real](#-mensajes-en-tiempo-real)
-11. [De la lista al detalle](#-de-la-lista-al-detalle)
-12. [Sistema de estilos (tema)](#-sistema-de-estilos-tema)
-13. [Dependencias](#-dependencias)
-14. [Estado del avatar y Storage](#estado-del-avatar-y-storage)
-15. [Conceptos de Flutter que aparecen](#-conceptos-de-flutter-que-aparecen)
-16. [Ejercicios y mejoras propuestas](#-ejercicios-y-mejoras-propuestas)
-17. [Documentación con Codex](#-documentación-con-codex)
-18. [Mapa, GPS y callbacks](#mapa-gps-y-callbacks)
+1. [¿Qué hace la app?](#-qué-hace-la-app)
+2. [Puesta en marcha](#-puesta-en-marcha)
+3. [Mapa del proyecto](#-mapa-del-proyecto)
+4. [Línea de tiempo del curso](#-línea-de-tiempo-del-curso)
+5. [Guías por módulo](#-guías-por-módulo)
+6. [Estructura de carpetas](#-estructura-de-carpetas)
+7. [Dependencias](#-dependencias)
+8. [Aprende con el tutor IA](#-aprende-con-el-tutor-ia)
+9. [Fallos conocidos](#-fallos-conocidos)
+10. [Ejercicios propuestos](#-ejercicios-propuestos)
+
+---
+
+## ✨ ¿Qué hace la app?
+
+| | Funcionalidad | Guía |
+|---|---|---|
+| 🔐 | **Registro e inicio de sesión** con email/contraseña, Google (Android) y Apple (iOS) | [04](docs/04-autenticacion.md) |
+| 👤 | **Perfil** en Firestore (nombre, edad, altura, avatar, posición, token del móvil) | [03](docs/03-firestore-modelo-datos.md) |
+| 💬 | **Mensajes en tiempo real**: lista, detalle y estado leído/no leído | [02](docs/02-navegacion-y-pantallas.md) · [03](docs/03-firestore-modelo-datos.md) |
+| 🖼️ | **Avatar** desde cámara o galería, comprimido y subido a Firebase Storage | [05](docs/05-storage-avatar.md) |
+| 🗺️ | **Mapa** con puntos de interés, tu posición GPS y **terremotos** de una API pública | [06](docs/06-mapa-gps.md) · [07](docs/07-api-http-terremotos.md) |
+| ☁️ | **Cloud Functions en Python**: lógica en el servidor, triggers de Firestore | [08](docs/08-cloud-functions-python.md) |
+| 🔔 | **Notificaciones push** y avisos a los móviles que están **dentro de un radio** | [09](docs/09-notificaciones-push-fcm.md) |
+| 💳 | **Cobros con tarjeta** con Stripe y confirmación por webhook | [10](docs/10-pagos-stripe.md) |
+| 📶 | **NFC**: la app se abre al acercar un tag y lee su identificador | [11](docs/11-nfc.md) |
+| 🖥️ | **Diseño adaptable**: pantallas distintas para móvil y escritorio/web | [02](docs/02-navegacion-y-pantallas.md) |
+
+### 📸 Capturas (Android)
+
+| Login | Registro | Inicio | Mensajes |
+|:---:|:---:|:---:|:---:|
+| <img src="docs/img/capturas/01-login.png" width="180" alt="Pantalla de login"> | <img src="docs/img/capturas/02-registro.png" width="180" alt="Pantalla de registro"> | <img src="docs/img/capturas/03-home.png" width="180" alt="Pantalla de inicio"> | <img src="docs/img/capturas/04-mensajes.png" width="180" alt="Lista de mensajes"> |
+
+| Detalle | Mapa | Cobro |
+|:---:|:---:|:---:|
+| <img src="docs/img/capturas/05-detalle.png" width="180" alt="Detalle de un mensaje"> | <img src="docs/img/capturas/06-mapa.jpg" width="180" alt="Mapa con puntos de interés"> | <img src="docs/img/capturas/07-cobro.png" width="180" alt="Pantalla de cobro"> |
+
+> Capturas hechas en un móvil Android real con una cuenta de pruebas (versión *debug*).
 
 ---
 
@@ -58,802 +76,291 @@ flutter pub get
 flutter run
 ```
 
-**Requisitos**
-
-| Herramienta | Versión |
+| Herramienta | Versión / nota |
 |---|---|
 | Flutter SDK | 3.x (Dart `^3.11.0`) |
-| Proyecto Firebase | Ya configurado en `lib/firebase_options.dart` y `android/app/google-services.json` |
-| Plataformas configuradas en Firebase | Android y Web |
+| Android | `minSdk` 24 (el valor por defecto de Flutter; lo exige `nfc_manager`) |
+| Firebase | Plataformas registradas: Android, Web, iOS, macOS y Windows (`firebase.json`) |
+| Cloud Functions | Python 3.12 y Firebase CLI — ver [guía 08](docs/08-cloud-functions-python.md) |
 
-Los archivos de configuración Firebase presentes en este repositorio están ignorados por Git.
-En otra copia del proyecto hay que generarlos para el proyecto Firebase correspondiente antes
-de ejecutar `flutter run`. El código de cámara y compresión del avatar está pendiente de
-comprobarse en cada plataforma; la configuración de Firebase para Android y Web no implica que
-ese flujo funcione en todas ellas.
+> ⚠️ **Los archivos de configuración de Firebase no están en Git** (`lib/firebase_options.dart`,
+> `android/app/google-services.json`, `GoogleService-Info.plist`). En tu copia, genera los tuyos con
+> `flutterfire configure` apuntando a tu proyecto de Firebase. Ese archivo lo genera la herramienta
+> y **no se edita a mano**. Para Google Sign-In, cada alumno debe registrar su huella SHA
+> ([guía 04](docs/04-autenticacion.md)).
 
-> ℹ️ Si quieres usar **tu propio** proyecto de Firebase, ejecuta `flutterfire configure`: regenerará
-> `firebase_options.dart`. Ese archivo lo genera la herramienta y **no se edita a mano**.
+> 💡 ¿No ves tus `print()`? Mira la habilidad [`probar-en-movil`](.claude/skills/probar-en-movil/SKILL.md):
+> `adb logcat -s flutter`.
+
+---
+
+## 🗺 Mapa del proyecto
+
+Toda la app sigue la misma idea: las **pantallas** no hablan directamente con Firebase ni con
+Android; piden las cosas al **`Dataholder`** (un *singleton*, la "mochila compartida" de la app), que
+tiene un **Admin** especializado para cada servicio.
+
+![Capas de la arquitectura](docs/img/ilustraciones/01-arquitectura.jpg)
+
+```mermaid
+flowchart TB
+    subgraph UI["🖼 Pantallas · lib/views/"]
+        V1["Login · Registro · Perfil"]
+        V2["Home · Mensajes · Detalle"]
+        V3["Mapa"]
+        V4["Cobro"]
+    end
+
+    DH[("🎒 Dataholder<br/>singleton")]
+
+    subgraph ADM["🧰 Admins · lib/Admins/"]
+        A1["FirebaseAdmin"]
+        A2["StorageAdmin"]
+        A3["GPSAdmin"]
+        A4["ApisAdmin"]
+        A5["FCMAdmin"]
+        A6["StripeAdmin"]
+        A7["NFCAdmin"]
+        A8["DeviceAdmin"]
+    end
+
+    subgraph MOD["📦 Modelos"]
+        M1["Perfil · Mensaje · Transaccion"]
+        M2["Earthquake"]
+    end
+
+    subgraph EXT["🌐 Servicios externos"]
+        E1["Firebase Auth"]
+        E2["Cloud Firestore"]
+        E3["Firebase Storage"]
+        E4["Cloud Functions Python"]
+        E5["FCM push"]
+        E6["Stripe"]
+        E7["API USGS terremotos"]
+        E8["Android nativo NFC"]
+    end
+
+    UI --> DH --> ADM
+    ADM --> MOD
+    A1 --> E1
+    A1 --> E2
+    A2 --> E3
+    A4 --> E7
+    A5 --> E5
+    A5 --> E4
+    A6 --> E4
+    A7 --> E8
+    E4 --> E2
+    E4 --> E5
+    E4 --> E6
+```
+
+👉 La explicación completa (capas, patrón Admin, orden de arranque en `main.dart`) está en
+**[🏛 01 · Arquitectura](docs/01-arquitectura.md)**.
+
+---
+
+## 🕰 Línea de tiempo del curso
+
+Así ha crecido el proyecto, según el historial de Git. Cada hito tiene su guía.
+
+```mermaid
+timeline
+    title dam2_2627_a · septiembre a noviembre de 2026
+    Septiembre : Pantallas base y navegación (02)
+               : Firestore, descarga y serialización (03)
+               : Lista y cuadrícula de mensajes (02)
+    1ª quincena octubre : Listeners en tiempo real y tema global (03, 12)
+                        : Avatar con Firebase Storage (05)
+                        : DeviceAdmin y pantallas de escritorio (02)
+                        : Login con Google y Apple (04)
+                        : Mapa y GPS (06)
+    2ª quincena octubre : API HTTP de terremotos (07)
+                        : Cloud Functions en Python (08)
+                        : Pagos con Stripe y webhook (10)
+    Noviembre : Notificaciones push FCM (09)
+              : Push por radio con la posición GPS (08, 09)
+              : NFC que abre la app (11)
+```
+
+---
+
+## 📚 Guías por módulo
+
+Todas siguen la misma plantilla: 🎯 objetivos · 🧠 conceptos · 📁 archivos · 🗺 diagramas ·
+👣 paso a paso · ⚙️ configuración · 🧪 cómo probar · 🐞 fallos conocidos · 🛠 ejercicios · ❓ autoevaluación.
+Índice completo y ruta de lectura recomendada: **[docs/README.md](docs/README.md)**.
+
+| | Guía | Qué aprendes |
+|---|---|---|
+| <img src="docs/img/ilustraciones/01-arquitectura.jpg" width="110"> | [01 · Arquitectura](docs/01-arquitectura.md) | Capas, singleton `Dataholder`, patrón Admin, arranque |
+| <img src="docs/img/ilustraciones/02-navegacion.jpg" width="110"> | [02 · Navegación y pantallas](docs/02-navegacion-y-pantallas.md) | Rutas con nombre, OnBoarding, cada pantalla, escritorio |
+| <img src="docs/img/ilustraciones/03-firestore.jpg" width="110"> | [03 · Firestore y modelo de datos](docs/03-firestore-modelo-datos.md) | Colecciones, conversión Dart↔Firestore, tiempo real, reglas |
+| <img src="docs/img/ilustraciones/04-autenticacion.jpg" width="110"> | [04 · Autenticación](docs/04-autenticacion.md) | Email, Google, Apple y el perfil del usuario |
+| <img src="docs/img/ilustraciones/05-storage.jpg" width="110"> | [05 · Storage y avatar](docs/05-storage-avatar.md) | Cámara, compresión y subida de archivos |
+| <img src="docs/img/ilustraciones/06-mapa-gps.jpg" width="110"> | [06 · Mapa y GPS](docs/06-mapa-gps.md) | Permisos, Streams de posición, `flutter_map` |
+| <img src="docs/img/ilustraciones/07-api-terremotos.jpg" width="110"> | [07 · API HTTP: terremotos](docs/07-api-http-terremotos.md) | HTTP, JSON/GeoJSON, de JSON a objetos |
+| <img src="docs/img/ilustraciones/08-functions.jpg" width="110"> | [08 · Cloud Functions en Python](docs/08-cloud-functions-python.md) | Serverless, triggers, secretos, Postman |
+| <img src="docs/img/ilustraciones/09-push.jpg" width="110"> | [09 · Notificaciones push (FCM)](docs/09-notificaciones-push-fcm.md) | Token, estados de la app, push por radio |
+| <img src="docs/img/ilustraciones/10-pagos.jpg" width="110"> | [10 · Pagos con Stripe](docs/10-pagos-stripe.md) | PaymentIntent, PaymentSheet, webhook |
+| <img src="docs/img/ilustraciones/11-nfc.jpg" width="110"> | [11 · NFC](docs/11-nfc.md) | Intents de Android, Kotlin, MethodChannel |
+| <img src="docs/img/ilustraciones/12-tema.jpg" width="110"> | [12 · Tema y estilos](docs/12-tema-y-estilos.md) | Tokens de diseño y `ThemeData` |
+| <img src="docs/img/ilustraciones/13-glosario.jpg" width="110"> | [13 · Glosario](docs/13-glosario.md) | Todas las palabras técnicas, con analogías |
 
 ---
 
 ## 🗂 Estructura de carpetas
 
 ```
-lib/
-├── main.dart                  ← Punto de entrada: inicializa Firebase y lanza Miapp
-├── MiApp.dart                 ← MaterialApp: rutas (pantallas) y tema global
-├── DataHolder.dart            ← Singleton con el estado compartido entre pantallas
-├── firebase_options.dart      ← Configuración de Firebase (autogenerado)
-├── Admins/
-│   ├── DeviceAdmin.dart        ← Plataforma y tamaño total de pantalla en píxeles lógicos
-│   ├── FirebaseAdmin.dart      ← Lectura y escucha de POIs; escritura de posición
-│   ├── GPSAdmin.dart           ← Permisos y flujo de posiciones del dispositivo
-│   └── StorageAdmin.dart       ← Comprime y sube el avatar a Firebase Storage
-│
-├── FbObjects/                 ← "Objetos de Firebase": modelos de datos
-│   ├── Perfil.dart            ← Perfil del usuario + su lista de mensajes
-│   └── Mensaje.dart           ← Un mensaje (título, cuerpo, leído, fecha)
-│
-├── views/                     ← Una clase por pantalla
-│   ├── OnBoardingView.dart    ← Pantalla de carga inicial (barra de progreso)
-│   ├── LoginView.dart         ← Inicio de sesión
-│   ├── LoginDesktopView.dart  ← Variante horizontal del inicio de sesión (sin conectar)
-│   ├── RegisterView.dart      ← Registro de usuario nuevo
-│   ├── ProfileView.dart       ← Crear el perfil (edad y altura)
-│   ├── EditProfileView.dart   ← Editar el perfil (nombre, edad y altura)
-│   ├── HomeView.dart          ← Pantalla principal
-│   ├── HomeDesktopView.dart   ← Variante horizontal de Home para más de 1000 píxeles
-│   ├── HomeProfileGate.dart   ← Carga el perfil antes de construir Home tras un refresco
-│   ├── MessagesView.dart      ← Lista de mensajes
-│   ├── MapView.dart           ← Mapa de OpenStreetMap
-│   ├── ChargeView.dart        ← Formulario inicial para una prueba de cobro
-│   └── MessageDetailView.dart ← Detalle de un mensaje
-│
-└── insLib/                    ← "Librería interna": piezas reutilizables
-    ├── bot_bars/
-    │   └── InsBotBarStyle1.dart  ← Barra de navegación inferior
-    └── theme/
-        └── AppTheme.dart         ← Colores, espaciados, radios y textos de la app
+dam2_2627_a/
+├── lib/
+│   ├── main.dart                 ← Punto de entrada: Firebase, NFC, FCM y runApp()
+│   ├── MiApp.dart                ← MaterialApp: rutas con nombre y tema global
+│   ├── DataHolder.dart           ← Singleton con el estado compartido y todos los Admins
+│   ├── firebase_options.dart     ← Generado por flutterfire (no está en Git)
+│   ├── Admins/                   ← Un "Admin" por servicio
+│   │   ├── FirebaseAdmin.dart    ← Perfil, POIs, transacciones en Firestore
+│   │   ├── StorageAdmin.dart     ← Subida del avatar a Storage
+│   │   ├── DeviceAdmin.dart      ← Plataforma, tamaño de pantalla, idioma
+│   │   ├── GPSAdmin.dart         ← Permisos y posición GPS
+│   │   ├── ApisAdmin.dart        ← Llamada HTTP a la API de terremotos
+│   │   ├── FCMAdmin.dart         ← Notificaciones push
+│   │   ├── StripeAdmin.dart      ← Pagos
+│   │   └── NFCAdmin.dart         ← Lectura de tags NFC
+│   ├── FbObjects/                ← Modelos que se guardan en Firestore
+│   │   ├── Perfil.dart
+│   │   ├── Mensaje.dart
+│   │   └── Transaccion.dart
+│   ├── APIObjects/
+│   │   └── EarthQuake.dart       ← Modelo de un terremoto de la API
+│   ├── views/                    ← Todas las pantallas (Login, Home, Mensajes, Mapa, Cobro…)
+│   └── insLib/                   ← Widgets reutilizables y tema
+│       ├── bot_bars/InsBotBarStyle1.dart
+│       └── theme/AppTheme.dart
+├── functions/                    ← Cloud Functions en Python (main.py, requirements.txt)
+├── android/app/src/main/
+│   ├── AndroidManifest.xml       ← Permisos (Internet, ubicación, NFC) e intent-filters
+│   ├── kotlin/…/MainActivity.kt  ← Código nativo: canal NFC hacia Dart
+│   └── res/xml/nfc_tech_filter.xml
+├── docs/                         ← Guías didácticas, ilustraciones y capturas
+├── .claude/                      ← Tutor IA (agente) y habilidades para Claude Code
+├── .codex/                       ← Habilidades para Codex
+├── firebase.json                 ← Configuración de Firebase CLI (Functions, Storage, emuladores, Hosting)
+├── firestore.rules · storage.rules · firestore.indexes.json
+└── pubspec.yaml                  ← Dependencias de Flutter
 ```
-
----
-
-## 🏛 Arquitectura general
-
-La app se organiza en **capas**. Cada capa solo habla con la de al lado:
-
-```mermaid
-flowchart TB
-    subgraph UI["🎨 Capa de presentación (lib/views + lib/insLib)"]
-        direction LR
-        V1[OnBoardingView]
-        V2[LoginView / RegisterView]
-        V3[ProfileView]
-        V7[EditProfileView]
-        V4[HomeView]
-        V5[MessagesView]
-        V6[MessageDetailView]
-        BB[InsBotBarStyle1]
-        TH[AppTheme]
-    end
-
-    subgraph STATE["🧠 Estado compartido"]
-        DH[(Dataholder<br/>singleton)]
-    end
-
-    subgraph MODEL["📦 Modelos (lib/FbObjects)"]
-        P[Perfil]
-        M[Mensaje]
-    end
-
-    subgraph FB["☁️ Firebase"]
-        AUTH[Firebase Auth]
-        FS[(Cloud Firestore)]
-        ST[(Firebase Storage)]
-    end
-
-    UI -->|lee / escribe| DH
-    DH --> P
-    P -->|contiene muchos| M
-    V2 -->|login / registro| AUTH
-    V3 -->|guarda perfil| FS
-    V7 -->|actualiza perfil| FS
-    P -->|escucha cambios| FS
-    M -->|update| FS
-    V7 -->|sube avatar| ST
-    V7 -->|guarda URL del avatar| FS
-    TH -.->|estilos| UI
-```
-
-| Capa | Responsabilidad | Archivos |
-|---|---|---|
-| **Presentación** | Dibujar la interfaz y reaccionar a los toques del usuario | `views/*`, `insLib/*` |
-| **Estado compartido** | Guardar datos que necesitan varias pantallas | `DataHolder.dart` |
-| **Modelos** | Representar los datos y convertirlos a/desde Firestore | `FbObjects/*` |
-| **Backend** | Autenticación, datos y archivos del avatar | Firebase Auth, Firestore y Storage |
-
----
-
-## 🧭 Flujo de navegación
-
-Todas las pantallas están registradas como **rutas con nombre** en `MiApp.dart`:
-
-| Ruta | Pantalla |
-|---|---|
-| `/Onboardingview` | `Onboardingview` *(ruta inicial)* |
-| `/LoginView` | `Loginview` |
-| `/RegisterView` | `Registerview` |
-| `/Profileview` | `Profileview` |
-| `/EditProfileview` | `Editprofileview` |
-| `/HomeView` | `Homeview` |
-| `/Messagesview` | `Messagesview` |
-| `/Mapview` | `Mapview` |
-| `/ChargeView` | `ChargeView` |
-| `/MessageDetailview` | `Messagedetailview` |
-
-`MiApp.dart` muestra `HomeDesktopView` en la ruta `/HomeView` cuando la anchura supera 1000
-píxeles lógicos. `LoginDesktopView` existe, pero todavía no está conectada a las rutas:
-`/LoginView` sigue mostrando el login original. La vista de escritorio usa
-`/LoginDesktopView` al cerrar sesión; esa ruta debe registrarse antes de usar dicho botón.
-Registro, creación/edición de perfil y mensajes siguen usando las rutas actuales.
-
-```mermaid
-flowchart LR
-    START([▶️ Abrir app]) --> OB[OnBoarding<br/>⏳ cargando]
-
-    OB -->|no hay sesión| LOGIN[🔐 Login]
-    OB -->|sesión iniciada| HOME[🏠 Home]
-
-    LOGIN -->|Registrarse| REG[📝 Registro]
-    REG -->|Cancelar| LOGIN
-    REG -->|cuenta creada| PROF[👤 Perfil]
-
-    LOGIN -->|login OK + sin perfil| PROF
-    LOGIN -->|login OK + con perfil| HOME
-    PROF -->|Confirmar| HOME
-
-    HOME <-->|barra inferior| MSG[💬 Mensajes]
-    MSG -->|pulsar un mensaje| DET[🔎 Detalle]
-    DET -->|⬅ atrás| MSG
-    HOME -->|Logout| LOGIN
-```
-
-### `popAndPushNamed` vs `pushNamed`
-
-La app usa dos formas de navegar. Es importante entender la diferencia:
-
-```mermaid
-flowchart TB
-    subgraph A["Navigator.popAndPushNamed — SUSTITUYE la pantalla"]
-        direction LR
-        a1["Pila: [Login]"] --> a2["Pila: [Home]"]
-    end
-    subgraph B["Navigator.pushNamed — APILA la pantalla"]
-        direction LR
-        b1["Pila: [Mensajes]"] --> b2["Pila: [Mensajes, Detalle]"]
-    end
-```
-
-- **`popAndPushNamed`**: quita la pantalla actual y pone la nueva. No se puede volver atrás
-  (tiene sentido tras hacer login: no queremos volver al login con el botón atrás).
-- **`pushNamed`**: pone la nueva pantalla **encima**. El botón ⬅ del AppBar vuelve a la anterior.
-  Se usa para abrir el **detalle de un mensaje**.
-
----
-
-## ⏳ Arranque de la app (OnBoarding)
-
-`OnBoardingView` es la ruta inicial normal. Simula una carga en 3 pasos (barra de progreso) y
-decide a qué pantalla ir. Si se refresca directamente `/HomeView` en Web,
-`HomeProfileGate` espera la restauración de Firebase Auth y carga `Perfiles/{uid}` antes de
-construir Home. Si falta sesión muestra Login; si falta el documento muestra ProfileView.
-OnBoarding no navega cuando queda debajo de esa ruta directa.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant U as 👤 Usuario
-    participant OB as OnBoardingView
-    participant AUTH as Firebase Auth
-    participant FS as Firestore
-    participant DH as Dataholder
-
-    U->>OB: Abre la app
-    OB->>OB: recursos1() → 20%
-    OB->>OB: recursos2() → 80%
-    OB->>OB: recursos3() → 100%
-    OB->>AUTH: ¿currentUser?
-    alt No hay sesión
-        OB->>U: Ir a /LoginView
-    else Hay sesión
-        OB->>FS: get Perfiles/{uid}
-        FS-->>OB: documento del perfil
-        OB->>DH: perfilUsuario = Perfil
-        OB->>DH: initFirebaseListeners()
-        OB->>FS: descargarMensajes() (listener)
-        FS-->>DH: lista de mensajes
-        OB->>DH: sMessagesBadgeText = nº no leídos
-        OB->>U: Ir a /HomeView
-    end
-```
-
----
-
-## 🖼 Las pantallas una a una
-
-### 🔐 LoginView — Iniciar sesión
-```
-┌──────────────────────────┐
-│ MI APP DAM2627           │  ← AppBar verde (tema global)
-├──────────────────────────┤
-│ ╭──────────────────────╮ │
-│ │        (🔒)          │ │  ← tarjeta centrada
-│ │       LOGIN          │ │
-│ │ 👤 Usuario           │ │
-│ │ 🔑 Contraseña ●●●●●● │ │
-│ │ [█████ Login █████]  │ │  ← acción principal (FilledButton)
-│ │     Registrarse      │ │  ← acción secundaria (TextButton)
-│ ╰──────────────────────╯ │
-└──────────────────────────┘
-```
-- Llama a `FirebaseAuth.signInWithEmailAndPassword`.
-- Si el login es correcto, comprueba si existe `Perfiles/{uid}` en Firestore:
-  **sí** → `HomeView`, **no** → `ProfileView`.
-- Los errores (`user-not-found`, `wrong-password`) se capturan con `try / on FirebaseAuthException`.
-- El botón **Login GOOGLE** inicializa `google_sign_in`, obtiene un token de Google y lo entrega
-  a Firebase Auth. Si la autenticación termina, abre `/HomeView`, cuya puerta de carga comprueba
-  el perfil. La configuración Android incluye un cliente OAuth Web en `google-services.json`;
-  este flujo aún requiere verificación en un dispositivo.
-
-### 📝 RegisterView — Crear cuenta
-- Tres campos: usuario (email), contraseña y repetir contraseña.
-- Si las contraseñas no coinciden, no hace nada (lo imprime por consola).
-- Llama a `createUserWithEmailAndPassword` y, si va bien, va a `ProfileView`.
-
-### 👤 ProfileView — Crear perfil
-- Pide **edad** y **altura** dentro de una tarjeta, con los botones `[ Salir ]  [█ Confirmar █]`.
-- Crea un objeto `Perfil` y lo guarda en `Perfiles/{uid}` con `toFirestore()`.
-- Después navega a `HomeView`. El botón **Salir** cierra la app (`exit(0)`).
-
-### 🏠 HomeView — Pantalla principal
-```
-┌──────────────────────────┐
-│ ☰  HOMEVIEW          ⋮  │  ← menú lateral (Drawer) y menú de opciones
-├──────────────────────────┤
-│ ▓▓ BIENVENIDO <nombre> ▓▓│  ← cabecera con degradado verde
-╰─┬──────────────────────┬─╯
-  │ 👤 NOMBRE            │  ← tarjeta superpuesta: cambiar el nombre
-  │ +# (###) ###-##-##   │  ← campo con máscara de teléfono
-  │      ○ ○ ○ ○         │  ← PIN de 4 dígitos
-  │ [█ Guardar █][Logout]│
-  └──────────────────────┘
-├──────────────────────────┤
-│  🏠      🔔      💬(3)   │  ← barra inferior con badges
-└──────────────────────────┘
-```
-- **Guardar** actualiza el nombre del perfil en Firestore.
-- **Logout** cierra sesión (`FirebaseAuth.signOut()`) y vuelve a `LoginView`.
-- El menú **⋮ → Perfil** abre `EditProfileView`; al volver, el saludo se refresca con el nombre nuevo.
-- Muestra ejemplos de paquetes externos: `mask_text_input_formatter` y `pin_input_text_field`.
-
-### ✏️ EditProfileView — Editar perfil
-- Se abre desde el menú de tres puntos de `HomeView` (opción **Perfil**).
-- Formulario (`Form` + `TextFormField`) con **nombre**, **edad** y **altura**, relleno con
-  `Dataholder.instance.perfilUsuario` en `initState`.
-- Valida con `tryParse` (la altura acepta `1,80` o `1.80`) y teclado numérico.
-- **Avatar Cámara** y **Avatar Galería** usan `image_picker` para elegir una foto. La vista la
-  muestra de inmediato con `Image.memory`. Al pulsar **Guardar**, `Storageadmin.subirAvatar()`
-  comprime el archivo y lo sube a `usuarios/{uid}/imagenes/avatar.jpg` en Firebase Storage;
-  después guarda la URL de descarga en `Perfiles/{uid}.urlAvatar`. Al reconstruir el perfil desde
-  Firestore se crea un `Image.network` con esa URL. La cámara en iOS dispone de
-  `NSCameraUsageDescription` en `ios/Runner/Info.plist`.
-- El flujo actual tiene [problemas conocidos](#estado-del-avatar-y-storage) y requiere pruebas
-  en dispositivo.
-- **Guardar** actualiza `perfilUsuario` y `Perfiles/{uid}` (`set` con `merge: true`), muestra un
-  `SnackBar` y vuelve atrás. **Cancelar** vuelve sin guardar.
-
-### 💬 MessagesView — Lista de mensajes
-```
-┌──────────────────────────┐
-│ ╭──────────────────────╮ │
-│ │ 🐱  Título       ›   │ │  ← cada tarjeta es pulsable
-│ │     Cuerpo (máx. 2…) │ │
-│ ╰──────────────────────╯ │
-│ ╭──────────────────────╮ │
-│ │ 🐱  Título       ›   │ │
-│ │     Cuerpo (máx. 2…) │ │
-│ ╰──────────────────────╯ │
-│                     (+)  │  ← añade un mensaje nuevo
-├──────────────────────────┤
-│  🏠      🔔      💬      │
-└──────────────────────────┘
-```
-- Usa `ListView.separated` con un `itemBuilder` (`creadorDeItem`) y un `separatorBuilder`.
-- Al entrar marca todos los mensajes como **leídos** y borra el badge.
-- El botón ➕ crea un `Mensaje` y lo sube a Firestore.
-- Al **pulsar una fila** se abre el detalle (ver [De la lista al detalle](#-de-la-lista-al-detalle)).
-- Contiene también `crearGrid()`, un ejemplo de `GridView` que se deja para practicar.
-
-### 🔎 MessageDetailView — Detalle de un mensaje
-```
-┌──────────────────────────┐
-│ ⬅ Detalle del mensaje    │
-├──────────────────────────┤
-│ (✉)            [✓ Leído] │  ← cabecera con degradado verde
-│ Título del mensaje       │
-│ 🕒 01/10/2026 · 14:05    │
-╰─┬──────────────────────┬─╯
-  │ 📝 MENSAJE           │   ← tarjeta superpuesta (con animación)
-  │ ──────────────────── │
-  │ Cuerpo del mensaje,  │
-  │ se puede seleccionar │
-  │ y copiar.            │
-  └──────────────────────┘
-```
-- Lee el mensaje elegido de `Dataholder.instance.mensajeSeleccionado`.
-- Usa los tokens de `AppTheme.dart` y una animación de entrada con `TweenAnimationBuilder`.
-
-### 🔻 InsBotBarStyle1 — Barra inferior
-Widget reutilizable (`NavigationBar`) que comparten `HomeView`, `MessagesView`, `Mapview` y `ChargeView`:
-
-| Índice | Botón | Qué hace |
-|---|---|---|
-| 0 | 🏠 Principal | Va a `/HomeView` |
-| 1 | 🔔 Notifications | Oculta el puntito (badge) de notificaciones |
-| 2 | 💬 Messages | Borra el contador de no leídos y va a `/Messagesview` |
-| 3 | 🗺️ Mapa | Va a `/Mapview` |
-| 4 | 💳 Cobro | Va a `/ChargeView` |
-
-`ChargeView` permite introducir entre 0,50 € y 999.999,99 € con hasta dos decimales. Al pulsar
-**Pagar**, llama a `Stripeadmin.cobrar(importeEuros)`: el administrador convierte el importe a
-céntimos, solicita un `PaymentIntent` mediante la Cloud Function callable `createPaymentIntent`
-con `amount` y `currency: eur`, y abre la hoja de pago de Stripe con el `clientSecret` recibido.
-La función de servidor está definida en `functions/main.py` y valida el importe en céntimos y
-la moneda `eur`. También interpreta el formato `Int64Value` con el que Firebase puede enviar
-enteros desde Android. Para realizar la prueba debe desplegarse con `stripe` instalado desde
-`functions/requirements.txt` y con `STRIPE_SECRET_KEY` configurada como secreto de Firebase.
-El cobro completo todavía no se ha verificado.
-En Android, `MainActivity` hereda de `FlutterFragmentActivity` y los temas de arranque y ejecución
-usan AppCompat, requisitos de `flutter_stripe`. Tras cambiar esta configuración nativa hay que
-recompilar la app; un hot reload no aplica los cambios de Android.
-
-`Mapview` usa `flutter_map` con una `TileLayer` de OpenStreetMap, centrada inicialmente en Madrid.
-Muestra hasta 20 documentos de `POIs` como marcadores y escucha sus cambios en Firestore.
-La atribución está comentada en el código y no se muestra actualmente. Las teselas requieren conexión a Internet; Android ya
-tiene el permiso `INTERNET` en el manifiesto principal. Si la pantalla se abre pero las teselas
-no cargan, comprueba la conexión y las respuestas HTTP del servidor de teselas.
-
-### Mapa, GPS y callbacks
-
-`Mapview` pasa dos métodos como callbacks: `funLambdaMarcadores` a `Firebaseadmin.onMarkersChanged`
-y `funLambdaGPS` a `Gpsadmin.realTimePosition`. El primero recibe la lista de marcadores de
-Firestore y llama a `setState`; el segundo recibe cada posición del GPS y escribe un POI en
-`POIs/{uid}`. El listener de Firestore recibe después ese cambio y reconstruye los marcadores.
-Son funciones de Dart ejecutadas en la app. `functions/main.py` define funciones HTTP
-en Python 3.12, independientes de este flujo del mapa. `addmessage` recibe el parámetro
-`text` y añade un documento con el campo `original` a la colección `Textos`; responde
-con HTTP 400 si falta el parámetro. Su despliegue está pendiente de verificar.
-
-**1. Responsabilidad de cada pieza.** `Mapview` coordina los dos administradores guardados en
-`Dataholder`: `Gpsadmin` obtiene posiciones y `Firebaseadmin` lee y escribe `POIs`.
-
-```mermaid
-flowchart LR
-    GPS["Geolocator<br/>GPS del dispositivo"] --> GA["Gpsadmin<br/>permisos y posiciones"]
-    GA --> MV["Mapview<br/>coordina callbacks y dibuja"]
-    MV --> FA["Firebaseadmin<br/>lee, escucha y escribe POIs"]
-    FA <--> FS[("Cloud Firestore<br/>colección POIs")]
-    MV --> FM["FlutterMap<br/>MarkerLayer"]
-    OSM["OpenStreetMap<br/>teselas"] --> FM
-```
-
-**2. Al abrir el mapa.** La posición inicial sirve para comprobar permisos y obtener una lectura,
-pero no centra la cámara. Después se cargan los POIs y se registran las dos escuchas.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant M as Mapview
-    participant G as Gpsadmin
-    participant L as Geolocator
-    participant F as Firebaseadmin
-    participant B as Firestore
-    M->>F: descargarPOIs() sin await en initState
-    Note right of M: Su resultado se descarta
-    M->>G: determinePosition()
-    G->>L: comprobar servicio y permisos
-    G->>L: getCurrentPosition()
-    L-->>G: Position
-    G-->>M: Position
-    Note right of M: No se usa para centrar el mapa
-    M->>F: descargarPOIs()
-    F->>B: get() de POIs.limit(20)
-    B-->>F: documentos
-    F-->>M: List de Marker
-    M->>M: setState() muestra marcadores iniciales
-    M->>F: onMarkersChanged(funLambdaMarcadores)
-    F->>B: snapshots().listen(...)
-    M->>G: realTimePosition(funLambdaGPS)
-    G->>L: getPositionStream(...).listen(...)
-```
-
-Si `determinePosition()` falla, `descargarDatos()` se detiene antes de cargar los marcadores para
-la vista y antes de registrar las escuchas.
-
-**3. Cada nueva posición.** El callback de GPS escribe `POIs/{uid}`. El listener de Firestore
-reconstruye la lista y el callback de marcadores hace que Flutter la dibuje de nuevo. El mismo
-listener también puede recibir cambios hechos por otros clientes.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant L as Geolocator
-    participant G as Gpsadmin
-    participant M as Mapview
-    participant F as Firebaseadmin
-    participant B as Firestore
-    participant V as MarkerLayer
-    L-->>G: nueva Position del stream
-    Note over G: El listener anónimo invoca el callback recibido
-    G-->>M: funLambdaGPS(Position)
-    M->>F: actualizarGPSPerfil(uid, Position, "")
-    F->>B: set() en POIs/{uid}
-    Note over B: geoloc = GeoPoint<br/>titulo = ""
-    B-->>F: snapshot de POIs.limit(20)
-    Note over F: El listener anónimo reconstruye todos los Marker
-    F-->>M: funLambdaMarcadores(List de Marker)
-    M->>M: setState() sustituye marcadores
-    M->>V: build() entrega la lista actual
-```
-
-`Gpsadmin.realTimePosition` usa precisión `bestForNavigation` y `distanceFilter: 2`.
-`actualizarGPSPerfil` guarda `geoloc` y `titulo` vacío con `set()`, sin actualizar `Perfiles/{uid}`.
-Consulta [el detalle técnico y los límites actuales](docs/mapa-gps-firestore.md).
-
----
-
-## 🔥 Modelo de datos en Firestore
-
-```mermaid
-erDiagram
-    PERFILES ||--o{ MENSAJES : "subcolección"
-    PERFILES {
-        string uid PK "id del documento = uid de Firebase Auth"
-        string name
-        int edad
-        double altura
-        string urlAvatar "URL de descarga de Storage, si existe"
-    }
-    MENSAJES {
-        string id PK "id autogenerado"
-        string titulo
-        string cuerpo
-        bool leido
-        timestamp enviado
-    }
-```
-
-Rutas en la base de datos:
-
-```
-Perfiles/                      ← colección
-└── {uid}                      ← documento (un perfil por usuario)
-    ├── name: "Yony"
-    ├── edad: 20
-    ├── altura: 1.80
-    ├── urlAvatar: "https://..."  ← solo si se ha guardado una foto
-    └── Mensajes/              ← subcolección
-        ├── {idMensaje1}
-        │   ├── titulo: "Hola"
-        │   ├── cuerpo: "..."
-        │   ├── leido: false
-        │   └── enviado: Timestamp
-        └── {idMensaje2} ...
-```
-
-> 💡 El **id del documento del perfil es el mismo `uid`** que da Firebase Auth. Así, a partir del
-> usuario con sesión iniciada se encuentra su perfil directamente: `Perfiles/{uid}`.
-
----
-
-## 🧩 Clases del proyecto
-
-```mermaid
-classDiagram
-    direction LR
-
-    class Dataholder {
-        <<singleton>>
-        +instance$ Dataholder
-        +perfilUsuario Perfil
-        +mensajeSeleccionado Mensaje?
-        +blNotificacionesBadge bool
-        +sMessagesBadgeText String
-        +iBotBarIndex int
-        +initFirebaseListeners()
-    }
-
-    class Perfil {
-        +uid String?
-        +name String?
-        +edad int?
-        +altura double?
-        +urlAvatar String?
-        +avatar Image?
-        +mensajes List~Mensaje~
-        +onMessageReceived Function?
-        +fromFirestore()$ Perfil
-        +toFirestore() Map
-        +descargarMensajes()
-        +agregarNuevoMensaje(Mensaje m)
-        +marcarMensajesLeidos()
-        +setOnMessageReceived(callback)
-    }
-
-    class Mensaje {
-        +uid String?
-        +titulo String?
-        +cuerpo String?
-        +leido bool
-        +enviado Timestamp?
-        +Mensaje(uid, fila)
-        +initCampos(...)
-        +toFirestore() Map
-        +update(sPerfilUID)
-    }
-
-    class Storageadmin {
-        +subirAvatar(XFile) Future~String~
-    }
-
-    Dataholder --> Perfil : perfilUsuario
-    Dataholder --> Mensaje : mensajeSeleccionado
-    Perfil "1" o-- "*" Mensaje : mensajes
-    Dataholder --> Storageadmin : storageadmin
-```
-
-### Conversión entre objetos Dart y Firestore
-
-Firestore guarda **mapas** (`clave: valor`). Los modelos tienen métodos para convertir en los dos
-sentidos:
-
-```mermaid
-flowchart LR
-    OBJ["🧱 Objeto Dart<br/>Perfil / Mensaje"] -- "toFirestore()" --> MAP["🗺 Map&lt;String, dynamic&gt;"]
-    MAP -- "set() / add()" --> FS[(Firestore)]
-    FS -- "get() / snapshots()" --> SNAP["📄 DocumentSnapshot"]
-    SNAP -- "fromFirestore() / Mensaje(id, fila)" --> OBJ
-```
-
----
-
-## 🧠 Estado compartido: `Dataholder`
-
-Varias pantallas necesitan los mismos datos (el perfil, los badges, el mensaje elegido...).
-En lugar de pasarlos de pantalla en pantalla, se guardan en **una única instancia** accesible
-desde cualquier sitio: el patrón **Singleton**.
-
-```dart
-class Dataholder {
-  Dataholder._();                                      // constructor privado: nadie más puede crear otro
-  static final Dataholder instance = Dataholder._();   // la ÚNICA instancia
-  ...
-}
-
-// Uso desde cualquier pantalla:
-Dataholder.instance.perfilUsuario.name;
-```
-
-```mermaid
-flowchart TB
-    DH[(Dataholder.instance)]
-    OB[OnBoardingView] -- "escribe perfilUsuario<br/>y sMessagesBadgeText" --> DH
-    HOME[HomeView] -- "lee perfilUsuario.name" --> DH
-    MSG[MessagesView] -- "lee mensajes<br/>escribe mensajeSeleccionado" --> DH
-    DET[MessageDetailView] -- "lee mensajeSeleccionado" --> DH
-    BB[InsBotBarStyle1] -- "lee badges e índice" --> DH
-```
-
----
-
-## 📡 Mensajes en tiempo real
-
-`Perfil.descargarMensajes()` no descarga los mensajes una sola vez: se **suscribe** a la colección
-con `snapshots().listen(...)`. Cada vez que cambia algo en Firestore (desde este móvil o desde
-otro), se ejecuta el código del listener.
-
-```mermaid
-sequenceDiagram
-    participant MV as MessagesView
-    participant P as Perfil
-    participant FS as Firestore
-
-    MV->>P: setOnMessageReceived(mensajeRecibido)
-    Note over P,FS: El listener se creó en el OnBoarding
-    MV->>P: agregarNuevoMensaje(m) (botón ➕)
-    P->>FS: add(m.toFirestore())
-    FS-->>P: 🔔 snapshot con la colección actualizada
-    P->>P: mensajes.clear() + rellenar de nuevo
-    P->>MV: onMessageReceived(mensajes.length)
-    MV->>MV: setState(...) → la lista se redibuja
-```
-
-> 🔑 **Idea clave:** el **callback** `onMessageReceived` es cómo el modelo (`Perfil`) avisa a la
-> vista (`MessagesView`) de que hay datos nuevos, sin que el modelo tenga que conocer la vista.
-
-### Ciclo de vida de un mensaje
-
-```mermaid
-stateDiagram-v2
-    [*] --> NoLeido : ➕ agregarNuevoMensaje()<br/>leido = false
-    NoLeido --> Leido : entrar en MessagesView<br/>marcarMensajesLeidos()
-    Leido --> [*]
-    NoLeido : 🔵 No leído (cuenta en el badge 💬)
-    Leido : ✅ Leído
-```
-
----
-
-## 🔎 De la lista al detalle
-
-Cómo funciona el paso de `MessagesView` a `MessageDetailView`:
-
-```mermaid
-sequenceDiagram
-    actor U as 👤 Usuario
-    participant MV as MessagesView
-    participant DH as Dataholder
-    participant N as Navigator
-    participant DV as MessageDetailView
-
-    U->>MV: pulsa la fila nº "indice"
-    MV->>DH: mensajeSeleccionado = mensajes[indice]
-    MV->>N: pushNamed("/MessageDetailview")
-    N->>DV: crea la pantalla (encima de la lista)
-    DV->>DH: lee mensajeSeleccionado
-    DV-->>U: muestra título, estado, fecha y cuerpo
-    U->>N: ⬅ atrás
-    N-->>MV: vuelve a la lista
-```
-
-Código clave (en `MessagesView.creadorDeItem`):
-
-```dart
-return GestureDetector(
-  onTap: () {
-    Dataholder.instance.mensajeSeleccionado = Dataholder.instance.perfilUsuario.mensajes[indice];
-    Navigator.pushNamed(context, "/MessageDetailview");
-  },
-  child: ... // el diseño de la fila
-);
-```
-
----
-
-## 🎨 Sistema de estilos (tema)
-
-En lugar de escribir colores y tamaños "a mano" en cada pantalla, se centralizan en
-`lib/insLib/theme/AppTheme.dart` (**design tokens**). Si mañana cambia el color de la app,
-se cambia en un solo sitio.
-
-| Clase | Qué guarda | Ejemplo |
-|---|---|---|
-| `AppColores` | Paleta de colores | `AppColores.principal` (verde de la app) |
-| `AppEspacios` | Márgenes y separaciones (4, 8, 16, 24, 32...) | `AppEspacios.md` |
-| `AppRadios` | Redondeo de esquinas | `AppRadios.tarjeta` |
-| `AppTextos` | Estilos de texto | `AppTextos.tituloCabecera` |
-
-Además, `MiApp.crearTema()` construye un **`ThemeData` global** con esos tokens: AppBar, campos de
-texto, botones, tarjetas, barra inferior, Drawer... Gracias a eso **cada pantalla apenas necesita
-estilos propios**: un `TextField` o un `FilledButton` ya salen con el aspecto de la app.
-
-```mermaid
-flowchart LR
-    T[AppTheme.dart<br/>🎨 tokens] --> G["ThemeData global<br/>MiApp.crearTema()"]
-    T --> V[Vistas<br/>uso directo de tokens]
-    G --> W[AppBar, TextField,<br/>botones, tarjetas...]
-```
-
-Paleta principal:
-
-| Muestra | Token | Uso |
-|---|---|---|
-| ![](https://img.shields.io/badge/-%20%20%20%20%20-92B77B) | `AppColores.principal` | AppBar, cabeceras, color de marca |
-| ![](https://img.shields.io/badge/-%20%20%20%20%20-466E3C) | `AppColores.oscuro` | Degradados, iconos destacados |
-
-> ✍️ **Antes / después:** `Color.fromARGB(255, 146, 183, 123)` repetido en varios archivos
-> → `AppColores.principal` definido una sola vez.
 
 ---
 
 ## 📦 Dependencias
 
-| Paquete | Para qué se usa | Dónde |
+| Paquete | Para qué | Dónde |
 |---|---|---|
-| [`firebase_core`](https://pub.dev/packages/firebase_core) | Inicializar Firebase | `main.dart` |
-| [`firebase_auth`](https://pub.dev/packages/firebase_auth) | Login, registro y logout | Login, Register, Home, OnBoarding |
-| [`cloud_firestore`](https://pub.dev/packages/cloud_firestore) | Base de datos en tiempo real | Modelos, Profile, Home, Messages |
-| [`cloud_functions`](https://pub.dev/packages/cloud_functions) | Solicitar al servidor el PaymentIntent de prueba | `StripeAdmin.dart` |
-| [`flutter_stripe`](https://pub.dev/packages/flutter_stripe) | Mostrar la hoja de pago de Stripe | `StripeAdmin.dart` |
-| [`firebase_storage`](https://pub.dev/packages/firebase_storage) | Almacenar el avatar | `StorageAdmin.dart` |
-| [`image_picker`](https://pub.dev/packages/image_picker) | Elegir foto de cámara o galería | `EditProfileView.dart` |
-| [`flutter_image_compress`](https://pub.dev/packages/flutter_image_compress) | Comprimir la foto antes de subirla | `StorageAdmin.dart` |
-| [`google_sign_in`](https://pub.dev/packages/google_sign_in) | Inicio de sesión con Google (pendiente de prueba en Android) | `LoginView.dart` |
-| [`flutter_map`](https://pub.dev/packages/flutter_map) | Mapa interactivo con teselas de OpenStreetMap | `MapView.dart` |
-| [`latlong2`](https://pub.dev/packages/latlong2) | Coordenadas del centro inicial del mapa | `MapView.dart` |
-| [`geolocator`](https://pub.dev/packages/geolocator) | Permisos, posición inicial y flujo GPS | `GPSAdmin.dart`, `MapView.dart` |
-| [`mask_text_input_formatter`](https://pub.dev/packages/mask_text_input_formatter) | Campo con máscara de teléfono | `HomeView` |
-| [`pin_input_text_field`](https://pub.dev/packages/pin_input_text_field) | Campo de PIN | `HomeView` |
-| [`animated_bottom_navigation_bar`](https://pub.dev/packages/animated_bottom_navigation_bar) | Importado para practicar (no se usa todavía) | `HomeView` |
-| [`flutter_quill`](https://pub.dev/packages/flutter_quill) | Editor de texto enriquecido (no se usa todavía) | — |
-| [`cupertino_icons`](https://pub.dev/packages/cupertino_icons) | Iconos estilo iOS | — |
+| `firebase_core` | Conectar con Firebase | `main.dart` |
+| `firebase_auth` | Login | `LoginView`, `RegisterView`, `HomeProfileGate` |
+| `cloud_firestore` | Base de datos | `FirebaseAdmin`, `Perfil`, `Mensaje` |
+| `firebase_storage` | Archivos (avatar) | `StorageAdmin` |
+| `cloud_functions` | Llamar a funciones *callable* | `StripeAdmin`, `FCMAdmin` |
+| `firebase_messaging` | Notificaciones push | `FCMAdmin`, `main.dart` |
+| `google_sign_in` | Login con Google | `LoginView` |
+| `image_picker` · `flutter_image_compress` | Elegir y comprimir la foto | `EditProfileView`, `StorageAdmin` |
+| `flutter_map` · `latlong2` | Mapa OpenStreetMap | `MapView`, `EarthQuake` |
+| `geolocator` | GPS | `GPSAdmin`, `DataHolder`, `Perfil` |
+| `flutter_stripe` | Pagos | `StripeAdmin` |
+| `nfc_manager` | NFC | `NFCAdmin` |
+| `intl` | Idioma y formatos | `DeviceAdmin` |
+
+La lista exacta y las versiones están en [`pubspec.yaml`](pubspec.yaml).
+> ⚠️ `ApisAdmin.dart` usa el paquete `http`, pero **no está declarado** en `pubspec.yaml` (llega de
+> rebote por otra dependencia). Ver [guía 07](docs/07-api-http-terremotos.md).
 
 ---
 
-## Estado del avatar y Storage
+## 🤖 Aprende con el tutor IA
 
-El código de subida está implementado en `lib/Admins/StorageAdmin.dart`: comprime un `XFile`,
-sobrescribe `usuarios/{uid}/imagenes/avatar.jpg` y devuelve su URL. `EditProfileView` guarda esa
-URL en Firestore y `Perfil.fromFirestore` la recupera. La configuración local vincula las reglas
-de `storage.rules`; la conexión al emulador de Storage está comentada.
+![Tutor IA](docs/img/ilustraciones/14-tutor.jpg)
 
-**Problemas pendientes de corregir:** al guardar un perfil con avatar ya cargado se puede
-forzar un `XFile` nulo; y una
-excepción durante la compresión puede dejar la vista en estado de guardado. Las reglas actuales
-de Storage permiten acceso general hasta el 20 de febrero de 2028, por lo que requieren revisión
-antes de usar datos reales. Consulta [el detalle técnico](docs/avatar-storage.md).
+El repositorio incluye un **tutor** preparado para este proyecto. Lee las guías de `docs/`, comprueba
+el código real antes de contestar, te señala el `archivo:línea` exacto y, en los ejercicios, te da
+**pistas** antes que soluciones.
 
----
+**Con Claude Code** (en la carpeta del proyecto):
 
-## 📚 Conceptos de Flutter que aparecen
+```bash
+claude --agent tutor-dam2
+```
 
-| Concepto | Dónde verlo |
+Ejemplos de preguntas:
+
+- *«¿Cómo llega una notificación push a los móviles que están a menos de 10 km?»*
+- *«Explícame el NFC como si no supiera nada de Android.»*
+- *«Quiero añadir un Admin para el acelerómetro, guíame.»*
+- *«¿Por qué al abrir la app me sale la pantalla negra?»*
+
+| Pieza | Qué hace |
 |---|---|
-| `StatelessWidget` vs `StatefulWidget` | `LoginView` (stateless) vs `MessagesView` (stateful) |
-| `setState()` para redibujar | `MessagesView.mensajeRecibido`, `OnBoardingView` (barra de progreso) |
-| `initState()` | `OnBoardingView`, `MessagesView`, `HomeView` |
-| Rutas con nombre | `MiApp.dart` |
-| `TextEditingController` | Login, Register, Profile, Home |
-| `async` / `await` / `Future` | Login, Register, OnBoarding, `Perfil` |
-| `try` / `on ... catch` | `LoginView`, `RegisterView` |
-| `Stream` y `listen` (tiempo real) | `Perfil.descargarMensajes()`, `Dataholder.initFirebaseListeners()` |
-| Callbacks (funciones como parámetro) | `Perfil.setOnMessageReceived` |
-| `ListView.separated` y `GridView.builder` | `MessagesView` |
-| Patrón Singleton | `DataHolder.dart` |
-| Widgets reutilizables con parámetros | `InsBotBarStyle1` |
-| Animaciones implícitas | `MessageDetailView` (`TweenAnimationBuilder`) |
-| Tema y design tokens | `AppTheme.dart`, `MiApp.dart` |
+| [`.claude/agents/tutor-dam2.md`](.claude/agents/tutor-dam2.md) | El tutor: cómo explica, qué guía lee para cada tema y sus límites |
+| [`explicar-modulo`](.claude/skills/explicar-modulo/SKILL.md) | Explicación guiada de un módulo con diagrama y pregunta final |
+| [`anadir-admin`](.claude/skills/anadir-admin/SKILL.md) | Receta para integrar un servicio nuevo siguiendo el patrón Admin |
+| [`probar-en-movil`](.claude/skills/probar-en-movil/SKILL.md) | `flutter run`, `logcat`, simular NFC con `adb`, errores típicos |
+| [`documentar-cambios`](.claude/skills/documentar-cambios/SKILL.md) | Mantener este README y `docs/` al día tras cada cambio |
+
+**Con Codex:** las mismas habilidades están en [`.codex/skills/`](.codex/skills/) y
+[`AGENTS.md`](AGENTS.md) le indica que actúe como el tutor. Pídele, por ejemplo:
+**«Usa `$explicar-modulo` con el módulo de pagos»**.
 
 ---
 
-## 🛠 Ejercicios y mejoras propuestas
+## 🐞 Fallos conocidos
 
-Puntos del código que se pueden mejorar. Son buenos ejercicios para clase:
+Este es un proyecto **de aprendizaje**: hay errores reales en el código y no se han escondido. Cada
+guía los explica en su sección 🐞 (qué pasa · por qué · cómo se arreglaría), y son un buen punto de
+partida para ejercicios. Los más importantes:
+
+| Área | Fallo | Guía |
+|---|---|---|
+| 🔒 Seguridad | `firestore.rules` permite leer y escribir **a cualquiera** hasta 2030 (y no se despliega desde `firebase.json`); `storage.rules` igual hasta 2028 | [03](docs/03-firestore-modelo-datos.md) |
+| ☁️ Functions | `enviarPushEnRadio` no devuelve el resultado y `pushMensajeRadio` usa una variable `req` que no existe → error cuando se excluye al emisor | [08](docs/08-cloud-functions-python.md) |
+| 🔔 Push | El botón ➕ de Mensajes provoca **dos** notificaciones (la callable y el trigger `mensajeCreado`) | [09](docs/09-notificaciones-push-fcm.md) |
+| 🗺 GPS | `initGPSUpdate()` se llama dentro de `build()`: abre un Stream nuevo en cada repintado | [06](docs/06-mapa-gps.md) |
+| 🧭 Navegación | Las rutas `/HomeDesktopView` y `/LoginDesktopView` se usan pero no están registradas | [02](docs/02-navegacion-y-pantallas.md) |
+| 🔐 Login | `LoginView` imprime la contraseña en consola; Apple no navega tras el login | [04](docs/04-autenticacion.md) |
+| 🖼 Avatar | Volver a guardar un perfil que ya tiene foto puede fallar (`ficheroCargado!`) | [05](docs/05-storage-avatar.md) |
+| 🌍 API | Fechas fijas en la URL y sin control de errores | [07](docs/07-api-http-terremotos.md) |
+| 💳 Stripe | La transacción se guarda antes de pagar y queda "Incomplete" si se cancela | [10](docs/10-pagos-stripe.md) |
+| 📶 NFC | Verificado con un *intent* simulado; **pendiente de probar con un tag real** | [11](docs/11-nfc.md) |
+
+> 📖 **Caso real resuelto — la pantalla negra.** Al acercar un tag NFC con la sesión cerrada, la app
+> se quedaba en negro: `FCMAdmin.iniciar()` lanzaba una excepción **antes de `runApp()`** y Flutter
+> nunca llegaba a dibujar. Lección: el código que se ejecuta antes de `runApp` no debe poder fallar.
+> Historia completa en la [guía 09](docs/09-notificaciones-push-fcm.md) y la [guía 11](docs/11-nfc.md).
+
+---
+
+## 🛠 Ejercicios propuestos
+
+Ejercicios generales (cada guía tiene además los suyos, de menor a mayor dificultad):
 
 - [ ] **Ruta inicial:** `MiApp` calcula `rutaInicial` pero luego usa siempre `"/Onboardingview"`.
 - [ ] **Nombre fijo:** `ProfileView` guarda siempre `name: "Yony"`. Añade un campo para el nombre.
-- [ ] **Mensajes de error al usuario:** los errores de login y registro solo salen por consola
-      (`print`). Muéstralos con un `SnackBar`.
-- [ ] **Validación de campos:** convertir edad y altura con `int.parse` / `double.parse` falla si el
-      texto no es un número. Usa `tryParse` o un `Form` con validadores.
-- [ ] **Teclado numérico:** los campos de edad y altura deberían usar `keyboardType: TextInputType.number`.
-- [ ] **Idioma de la barra inferior:** "Notifications" y "Messages" están en inglés y el resto de la app en español.
-- [ ] **`nombreController.text = "HOLA HOLA HOLA"`** está dentro de `build()` de `HomeView`, así que el campo se reinicia cada vez que la pantalla se redibuja.
-- [ ] **Notificaciones:** el botón 🔔 de la barra inferior aún no abre ninguna pantalla.
-- [ ] **Borrar mensajes:** añade la opción de eliminar un mensaje desde su detalle.
-- [ ] **Modo oscuro:** añade un `darkTheme` usando los tokens de `AppTheme.dart`.
-- [ ] **Código de plantilla:** `main.dart` todavía contiene `MyApp` y `MyHomePage` del proyecto
-      de ejemplo de Flutter, que no se usan.
+- [ ] **Errores visibles:** los errores de login y registro solo salen por consola (`print`). Muéstralos con un `SnackBar`.
+- [ ] **Validación de campos:** `int.parse` / `double.parse` fallan si el texto no es un número. Usa `tryParse` o un `Form` con validadores.
+- [ ] **Teclado numérico:** edad y altura deberían usar `keyboardType: TextInputType.number`.
+- [ ] **Idioma de la barra inferior:** "Notifications" y "Messages" están en inglés.
+- [ ] **`nombreController.text = "HOLA HOLA HOLA"`** está dentro de `build()` de `HomeView`: el campo se reinicia en cada repintado.
+- [ ] **Pantalla de notificaciones:** el botón 🔔 aún no abre ninguna pantalla; conéctalo con `FCMAdmin.onPushReceived`.
+- [ ] **NFC visible:** muestra el UID del tag en un `SnackBar` en vez de solo en consola.
+- [ ] **Reglas seguras:** escribe reglas de Firestore para que cada usuario solo pueda escribir su `Perfiles/{uid}`.
+- [ ] **Modo oscuro:** añade un `darkTheme` con los tokens de `AppTheme.dart`.
+- [ ] **Código de plantilla:** `main.dart` y `test/widget_test.dart` todavía contienen el contador de ejemplo de Flutter (`MyApp`).
 
 ---
 
-## 📝 Documentación con Codex
+## 📝 Mantener la documentación
 
-Este repositorio incluye la habilidad local [`documentar-cambios`](.codex/skills/documentar-cambios/SKILL.md).
-Las instrucciones de [`AGENTS.md`](AGENTS.md) piden a Codex revisar el impacto documental al terminar tareas que cambien la app, sus dependencias o su configuración. Para hacer una revisión puntual, solicita a Codex: **«Usa `$documentar-cambios` para revisar los cambios y actualizar el README y `docs/`»**.
-
-La habilidad compara los cambios de Git con el código actual y actualiza solo la documentación afectada. Se ejecuta durante una tarea de Codex; no vigila archivos en segundo plano.
+[`AGENTS.md`](AGENTS.md) (Codex) y [`CLAUDE.md`](CLAUDE.md) (Claude Code) piden usar la habilidad
+`documentar-cambios` al terminar cualquier cambio de comportamiento, configuración o dependencias:
+compara los cambios de Git con el código y actualiza solo la documentación afectada.
 
 ---
 
